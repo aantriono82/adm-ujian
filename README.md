@@ -54,7 +54,10 @@ Warna ini otomatis mengikuti mode ASAS (biru), ASAT (hijau), dan ASAJ (ungu); pa
 - **Template Data Lengkap** — menu *Data & Backup → Unduh Template Lengkap* menghasilkan satu .xlsx berisi
   lembar Peserta, Panitia, Korektor, Jadwal_Pengawas, Guru_Piket, dan Susulan (terisi data saat ini). Setelah
   diisi, *Impor Template Lengkap* menampilkan ringkasan per lembar; bagian yang dicentang menggantikan data lama.
-  Jumlah ruang mengikuti banyaknya kolom "Ruang N - Pengawas 1/2".
+  Jumlah ruang mengikuti banyaknya kolom ruang; kolom "Ruang N - Pengawas" saja berarti 1 pengawas per ruang.
   Tab *Jadwal & Pengawas* punya tombol *Unduh Template* yang hanya berisi lembar jadwal, guru piket, dan susulan.
+- **Pengawas per ruang (1 atau 2)** — diatur di tab *Jadwal & Pengawas*. Editor, template, jadwal pengawas,
+  daftar hadir pengawas, berita acara, denah, POS, dan ekspor Excel mengikuti pengaturan ini. Nama pengawas 2
+  tetap tersimpan saat disembunyikan.
 - **Gambar** (logo, TTD, cap) otomatis diperkecil sebelum disimpan agar penyimpanan browser (±5 MB) tidak penuh.
 - **Backup (.json)** divalidasi saat dimuat; data rusak/berbahaya ditolak dan data lama dipulihkan bila gagal.

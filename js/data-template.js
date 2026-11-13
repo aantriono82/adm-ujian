@@ -93,7 +93,8 @@ function downloadFullTemplate(only) {
         ['Korektor', 'Satu baris per mata pelajaran; isi nama guru untuk Kelas VII, VIII, IX.'],
         ['Jadwal_Pengawas', 'Satu baris per SESI. Untuk sesi kedua di hari yang sama, kolom Hari & Tanggal boleh dikosongkan.'],
         ['', 'Banyaknya hari & sesi bebas: tambah atau hapus baris sesuai kebutuhan.'],
-        ['', 'Jumlah ruang mengikuti banyaknya kolom "Ruang N - Pengawas 1/2". Tambah kolom (mis. Ruang 4 - Pengawas 1) bila ruangnya lebih banyak.'],
+        ['', 'Jumlah ruang mengikuti banyaknya kolom ruang. Tambah kolom (mis. "Ruang 4 - Pengawas 1") bila ruangnya lebih banyak.'],
+        ['', '1 pengawas tiap ruang: cukup kolom "Ruang N - Pengawas". 2 pengawas: kolom "Ruang N - Pengawas 1" dan "Ruang N - Pengawas 2".'],
         ['Guru_Piket', 'Satu baris per hari ujian (urutan sama dengan jadwal), maksimal 10 guru per hari.'],
         ['Susulan', 'Satu baris per hari susulan.']
     ], [18, 110]);
@@ -116,12 +117,16 @@ function downloadFullTemplate(only) {
 
     ensureScheduleRooms();
     const n = appState.jumlahRuang;
+    const ppr = getPengawasPerRuang();
     const roomHeads = [];
-    for (let r = 1; r <= n; r++) roomHeads.push(`Ruang ${r} - Pengawas 1`, `Ruang ${r} - Pengawas 2`);
+    for (let r = 1; r <= n; r++) {
+        if (ppr === 1) roomHeads.push(`Ruang ${r} - Pengawas`);
+        else roomHeads.push(`Ruang ${r} - Pengawas 1`, `Ruang ${r} - Pengawas 2`);
+    }
     const jadwal = [['Hari', 'Tanggal', 'Sesi', 'Waktu', 'Mata Pelajaran', ...roomHeads]];
     appState.schedule.forEach(d => d.sesi.forEach((ss, sIdx) => {
         jadwal.push([sIdx === 0 ? d.hari : '', sIdx === 0 ? d.tanggal : '', sIdx + 1, ss.waktu, ss.mapel,
-            ...ss.pengawas.slice(0, n).flatMap(p => [p[0] || '', p[1] || ''])]);
+            ...ss.pengawas.slice(0, n).flatMap(p => [p[0] || '', p[1] || ''].slice(0, ppr))]);
     }));
     add('Jadwal_Pengawas', jadwal, [10, 20, 5, 14, 34, ...roomHeads.map(() => 24)]);
 
@@ -203,15 +208,16 @@ function parseScheduleSheet(rows) {
         mapel: ['matapelajaran', 'mapel']
     }, 'mapel');
     if (!h) return { error: 'kolom "Mata Pelajaran" tidak ditemukan.' };
-    // Kolom pengawas: "Ruang 1 - Pengawas 1", "R1 P2", "Ruang 3 Pengawas 2", ...
+    // Kolom pengawas: "Ruang 1 - Pengawas" (1 pengawas), "Ruang 1 - Pengawas 1", "R1 P2", ...
     const roomCols = [];
     h.norm.forEach((t, j) => {
-        const m = t.match(/^(?:ruang|r)(\d{1,2})(?:pengawas|p)([12])$/);
-        if (m) roomCols.push({ col: j, room: parseInt(m[1], 10) - 1, slot: parseInt(m[2], 10) - 1 });
+        const m = t.match(/^(?:ruang|r)(\d{1,2})(?:pengawas|p)([12])?$/);
+        if (m) roomCols.push({ col: j, room: parseInt(m[1], 10) - 1, slot: m[2] ? parseInt(m[2], 10) - 1 : 0 });
     });
     const valid = roomCols.filter(c => c.room >= 0 && c.room < TPL_MAX_ROOMS);
     if (!valid.length) return { error: 'kolom pengawas (mis. "Ruang 1 - Pengawas 1") tidak ditemukan.' };
     const nRooms = Math.max(...valid.map(c => c.room)) + 1;
+    const ppr = valid.some(c => c.slot === 1) ? 2 : 1;
 
     const days = [];
     rows.slice(h.idx + 1).forEach(row => {
@@ -232,9 +238,12 @@ function parseScheduleSheet(rows) {
     const sesiCount = days.reduce((a, d) => a + d.sesi.length, 0);
     const warnings = [];
     if (days.some(d => !d.hari)) warnings.push('Ada hari ujian tanpa nama hari; isi kolom Hari pada baris sesi pertama tiap hari.');
-    const emptySlots = days.reduce((a, d) => a + d.sesi.reduce((b, ss) => b + ss.pengawas.flat().filter(v => !v).length, 0), 0);
+    const emptySlots = days.reduce((a, d) => a + d.sesi.reduce((b, ss) => b + ss.pengawas.map(p => p.slice(0, ppr)).flat().filter(v => !v).length, 0), 0);
     if (emptySlots) warnings.push(`${emptySlots} kotak pengawas kosong (bisa diisi dengan tombol "Isi Pengawas Kosong Otomatis").`);
-    return { data: { schedule: days, jumlahRuang: nRooms }, info: `${days.length} hari, ${sesiCount} sesi, ${nRooms} ruang`, warnings };
+    return {
+        data: { schedule: days, jumlahRuang: nRooms, pengawasPerRuang: ppr },
+        info: `${days.length} hari, ${sesiCount} sesi, ${nRooms} ruang, ${ppr} pengawas/ruang`, warnings
+    };
 }
 
 function parseRosterSheet(rows) {
@@ -310,6 +319,7 @@ function applyTemplateSection(sec) {
         case 'jadwal':
             appState.schedule = sec.data.schedule;
             appState.jumlahRuang = sec.data.jumlahRuang;
+            appState.pengawasPerRuang = sec.data.pengawasPerRuang;
             appState.schedule.forEach((d, i) => { if (appState.dailyRoster[i] && d.hari) appState.dailyRoster[i].hari = d.hari; });
             break;
         case 'piket': appState.dailyRoster = sec.data; break;

@@ -408,7 +408,7 @@ function renderPOSCompleteHTML(paper) {
          style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9pt; line-height: 1.28;">
         <div>
             <div style="font-weight: 700; text-align: center; margin-bottom: 0.08cm;">BAB VI — PENGAWASAN, TATA TERTIB, DAN SANKSI</div>
-            <p style="text-align: justify;">Setiap ruang diawasi oleh 2 orang pengawas ruang. Pengawas dan peserta wajib mematuhi Tata Tertib yang ditetapkan. Pelanggaran dikenakan sanksi bertahap mulai dari Teguran Lisan, Pencatatan pada Berita Acara, hingga Dikeluarkan dari Ruang Asesmen.</p>
+            <p style="text-align: justify;">Setiap ruang diawasi oleh ${getPengawasPerRuang() === 1 ? '1 (satu) orang' : '2 (dua) orang'} pengawas ruang. Pengawas dan peserta wajib mematuhi Tata Tertib yang ditetapkan. Pelanggaran dikenakan sanksi bertahap mulai dari Teguran Lisan, Pencatatan pada Berita Acara, hingga Dikeluarkan dari Ruang Asesmen.</p>
 
             <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB VII — PEMERIKSAAN DAN PENGOLAHAN HASIL ASESMEN</div>
             <p style="text-align: justify;">Nilai ${escapeHtml(kegiatan.singkatan)} setiap mata pelajaran dihitung pada skala 0–100 dengan pembobotan per bentuk soal sebagai berikut:</p>

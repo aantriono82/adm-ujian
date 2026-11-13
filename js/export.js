@@ -56,8 +56,12 @@ function exportExcelOutput() {
             };
             for (let r = 0; r < appState.jumlahRuang; r++) {
                 const p = ss.pengawas[r] || ["", ""];
-                row[`Ruang ${r + 1} - Pengawas 1`] = p[0];
-                row[`Ruang ${r + 1} - Pengawas 2`] = p[1];
+                if (getPengawasPerRuang() === 1) {
+                    row[`Ruang ${r + 1} - Pengawas`] = p[0];
+                } else {
+                    row[`Ruang ${r + 1} - Pengawas 1`] = p[0];
+                    row[`Ruang ${r + 1} - Pengawas 2`] = p[1];
+                }
             }
             jadwalRowsExcel.push(row);
         });

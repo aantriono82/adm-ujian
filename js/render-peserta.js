@@ -173,12 +173,12 @@ function renderDenahSheetHTML(group, pageIdx, totalPages, paper) {
                 </div>
 
                 <div style="display: flex; justify-content: space-around; align-items: center; gap: 1cm; margin-bottom: 0.35cm; padding: 0 0.8cm;">
+                    ${(getPengawasPerRuang() === 1
+                        ? [roomConfig.pengawas1 === 'PENGAWAS 1' ? 'PENGAWAS' : roomConfig.pengawas1]
+                        : [roomConfig.pengawas1, roomConfig.pengawas2]).map(label => `
                     <div style="width: 4.8cm; border: 1.5px solid #0369a1; background: #e0f2fe; color: #0c4a6e; border-radius: 4px; padding: 5px 8px; text-align: center; font-weight: 700; font-size: 8pt;">
-                        [ MEJA ${escapeHtml(roomConfig.pengawas1)} ]
-                    </div>
-                    <div style="width: 4.8cm; border: 1.5px solid #0369a1; background: #e0f2fe; color: #0c4a6e; border-radius: 4px; padding: 5px 8px; text-align: center; font-weight: 700; font-size: 8pt;">
-                        [ MEJA ${escapeHtml(roomConfig.pengawas2)} ]
-                    </div>
+                        [ MEJA ${escapeHtml(label)} ]
+                    </div>`).join('')}
                 </div>
 
                 <div>${seatGridHTML}</div>

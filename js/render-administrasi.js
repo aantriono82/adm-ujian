@@ -26,16 +26,17 @@ function renderJadwalDanPengawasHTML(paper) {
     }
     const colW = rosterDays.length ? (100 / rosterDays.length).toFixed(1) : 16.6;
 
+    const ppr = getPengawasPerRuang();
     return chunks.map((rooms, cIdx) => {
         const isLast = cIdx === chunks.length - 1;
-        const pw = (57 / (rooms.length * 2)).toFixed(1);
+        const pw = (57 / (rooms.length * ppr)).toFixed(1);
         const rows = schedule.map((d, idx) => d.sesi.map((ss, sIdx) => `
             <tr>
                 ${sIdx === 0 ? `<td rowspan="${d.sesi.length}" style="${td} text-align: center; font-weight: 700;">${idx + 1}</td>
                 <td rowspan="${d.sesi.length}" style="${td} font-weight: 700;">${escapeHtml(d.hari)}, ${escapeHtml(d.tanggal)}</td>` : ''}
                 <td style="${td} text-align: center; white-space: nowrap;">${escapeHtml(ss.waktu)}</td>
                 <td style="${td} font-weight: 700;">${escapeHtml(ss.mapel)}</td>
-                ${rooms.map(r => { const p = ss.pengawas[r] || ['', '']; return `<td style="${td}">${escapeHtml(p[0])}</td><td style="${td}">${escapeHtml(p[1])}</td>`; }).join('')}
+                ${rooms.map(r => { const p = ss.pengawas[r] || ['', '']; return p.slice(0, ppr).map(nm => `<td style="${td}">${escapeHtml(nm)}</td>`).join(''); }).join('')}
             </tr>`).join('')).join('');
         const subTitle = chunks.length > 1 ? `<div style="font-size: 9pt;">(Ruang ${padRoom(rooms[0] + 1)} – ${padRoom(rooms[rooms.length - 1] + 1)} • Lembar ${cIdx + 1} dari ${chunks.length})</div>` : '';
         return `
@@ -56,10 +57,10 @@ function renderJadwalDanPengawasHTML(paper) {
                         <th rowspan="2" style="border: 1px solid #0f172a; padding: 4px; width: 13%;">Hari Dan Tanggal</th>
                         <th rowspan="2" style="border: 1px solid #0f172a; padding: 4px; width: 9%;">Waktu</th>
                         <th rowspan="2" style="border: 1px solid #0f172a; padding: 4px; width: 18%;">Mata Pelajaran</th>
-                        ${rooms.map(r => `<th colspan="2" style="border: 1px solid #0f172a; padding: 4px; text-align: center;">Ruang ${padRoom(r + 1)}</th>`).join('')}
+                        ${rooms.map(r => `<th colspan="${ppr}" style="border: 1px solid #0f172a; padding: 4px; text-align: center;">Ruang ${padRoom(r + 1)}</th>`).join('')}
                     </tr>
                     <tr style="background: #f8fafc; font-weight: 700;">
-                        ${rooms.map(() => `<th style="border: 1px solid #0f172a; padding: 3px; width: ${pw}%;">Pengawas 1</th><th style="border: 1px solid #0f172a; padding: 3px; width: ${pw}%;">Pengawas 2</th>`).join('')}
+                        ${rooms.map(() => (ppr === 1 ? ['Pengawas'] : ['Pengawas 1', 'Pengawas 2']).map(h => `<th style="border: 1px solid #0f172a; padding: 3px; width: ${pw}%;">${h}</th>`).join('')).join('')}
                     </tr>
                 </thead>
                 <tbody>${rows}</tbody>
@@ -240,6 +241,8 @@ function renderDaftarHadirPengawasHTML(paper) {
     const theme = THEMES[setting.theme];
     const chunks = chunkRooms(appState.jumlahRuang, 3);
     const td = 'border: 1px solid #0f172a; padding: 4px;';
+    const ppr = getPengawasPerRuang();
+    const slots = ppr === 1 ? [0] : [0, 1];
 
     return chunks.map((rooms, cIdx) => {
         const nameW = (48 / rooms.length).toFixed(1);
@@ -247,16 +250,16 @@ function renderDaftarHadirPengawasHTML(paper) {
         const rowsHTML = schedule.map((d, idx) => {
             const sesiCount = Math.max(1, d.sesi.length);
             const mapelList = d.sesi.map((ss, i) => `${i + 1}. ${escapeHtml(ss.mapel)}`).join('<br>');
-            return d.sesi.map((ss, sIdx) => [0, 1].map(pIdx => `
+            return d.sesi.map((ss, sIdx) => slots.map(pIdx => `
             <tr>
-                ${sIdx === 0 && pIdx === 0 ? `<td rowspan="${sesiCount * 2}" style="${td} text-align: center; font-weight: 700;">${idx + 1}</td>
-                <td rowspan="${sesiCount * 2}" style="${td} padding: 4px 6px;">
+                ${sIdx === 0 && pIdx === 0 ? `<td rowspan="${sesiCount * ppr}" style="${td} text-align: center; font-weight: 700;">${idx + 1}</td>
+                <td rowspan="${sesiCount * ppr}" style="${td} padding: 4px 6px;">
                     <div style="font-weight: 700;">${escapeHtml(d.hari)},</div>
                     <div style="font-size: 8pt;">${escapeHtml(d.tanggal)}</div>
                     <div style="font-size: 7.2pt; color: #1d4ed8; margin-top: 2px;">${mapelList}</div>
                 </td>` : ''}
-                ${rooms.map(r => { const p = ss.pengawas[r] || ['', '']; return `<td style="${td} font-size: 8pt;">${pIdx === 0 ? `<span style="font-size:6.5pt;color:#64748b;">S${sIdx + 1}</span> ` : ''}${pIdx + 1}. ${escapeHtml(p[pIdx])}</td>
-                <td style="${td} font-size: 7.5pt; color: #64748b;">${pIdx + 1}. .........</td>`; }).join('')}
+                ${rooms.map(r => { const p = ss.pengawas[r] || ['', '']; return `<td style="${td} font-size: 8pt;">${pIdx === 0 ? `<span style="font-size:6.5pt;color:#64748b;">S${sIdx + 1}</span> ` : ''}${ppr === 2 ? `${pIdx + 1}. ` : ''}${escapeHtml(p[pIdx])}</td>
+                <td style="${td} font-size: 7.5pt; color: #64748b;">${ppr === 2 ? `${pIdx + 1}. ` : ''}.........</td>`; }).join('')}
             </tr>`).join('')).join('');
         }).join('');
         const subTitle = chunks.length > 1 ? `<div style="font-size: 9pt;">(Ruang ${padRoom(rooms[0] + 1)} – ${padRoom(rooms[rooms.length - 1] + 1)} • Lembar ${cIdx + 1} dari ${chunks.length})</div>` : '';
@@ -389,18 +392,13 @@ function renderBeritaAcaraHTML(paper) {
                 </div>
                 <table style="width: 100%; border-collapse: collapse; text-align: center;">
                     <tr>
-                        <td style="width: 50%; vertical-align: top;">
-                            <div style="font-weight: 700;">Pengawas I,</div>
+                        ${(getPengawasPerRuang() === 1 ? ['', 'Pengawas Ruang,'] : ['Pengawas I,', 'Pengawas II,']).map(title => `
+                        <td style="width: 50%; vertical-align: top;">${title ? `
+                            <div style="font-weight: 700;">${title}</div>
                             <div style="height: 1.6cm;"></div>
                             <div style="font-weight: 700;">( ............................................................ )</div>
-                            <div>NIP. ....................................................</div>
-                        </td>
-                        <td style="width: 50%; vertical-align: top;">
-                            <div style="font-weight: 700;">Pengawas II,</div>
-                            <div style="height: 1.6cm;"></div>
-                            <div style="font-weight: 700;">( ............................................................ )</div>
-                            <div>NIP. ....................................................</div>
-                        </td>
+                            <div>NIP. ....................................................</div>` : ''}
+                        </td>`).join('')}
                     </tr>
                 </table>
             </div>
