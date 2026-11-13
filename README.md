@@ -5,6 +5,28 @@ semua pustaka, CSS, dan font sudah ada di folder ini.
 
 > Saat menyalin ke komputer/flashdisk lain, salin **seluruh folder** (bukan hanya `index.html`).
 
+## Tampilan
+
+Tampilan menyesuaikan ukuran layar: di desktop, menu, panel pengaturan, dan pratinjau dokumen tampil berdampingan.
+Di tablet dan HP, menu pindah ke tombol ☰ dan tombol **Pengaturan / Pratinjau** di bagian bawah dipakai untuk berpindah tampilan.
+
+**Desktop**
+
+![Tampilan desktop: menu, panel pengaturan, dan pratinjau Kartu Peserta Ujian berdampingan](docs/screenshots/desktop.png)
+
+<table>
+  <tr>
+    <th>Tablet — Pratinjau</th>
+    <th>HP — Pengaturan</th>
+    <th>HP — Pratinjau</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/tablet.png" alt="Tampilan tablet: pratinjau Kartu Peserta Ujian" width="300"></td>
+    <td><img src="docs/screenshots/mobile-pengaturan.png" alt="Tampilan HP: panel pengaturan Mode &amp; Kegiatan" width="220"></td>
+    <td><img src="docs/screenshots/mobile-pratinjau.png" alt="Tampilan HP: pratinjau Kartu Peserta Ujian" width="220"></td>
+  </tr>
+</table>
+
 ## Menjalankan di komputer lokal
 
 ### 1. Ambil kodenya
@@ -106,6 +128,7 @@ js/                     Kode aplikasi, dimuat berurutan:
   pwa.js                  daftar service worker, tombol Pasang Aplikasi, pemberitahuan versi baru
 vendor/                 SheetJS 0.20.3, Lucide, docx (Word), font Inter & Tinos
 build/                  konfigurasi Tailwind, uji otomatis, pembuat paket .deb (make-deb.sh, deb/)
+docs/screenshots/       gambar tampilan untuk README (tidak ikut cache PWA maupun paket .deb)
 ```
 
 ## Untuk pengembang
