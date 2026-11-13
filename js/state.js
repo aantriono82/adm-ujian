@@ -273,14 +273,18 @@ function saveStateNow() {
         const el = document.getElementById('autosave-status');
         if (el) {
             const t = new Date();
-            el.textContent = `Tersimpan otomatis ${String(t.getHours()).padStart(2, '0')}.${String(t.getMinutes()).padStart(2, '0')}`;
-            el.className = 'text-emerald-600 font-semibold';
+            el.textContent = `Tersimpan ${String(t.getHours()).padStart(2, '0')}.${String(t.getMinutes()).padStart(2, '0')}`;
+            el.classList.remove('autosave-err', 'autosave-flash');
+            el.classList.add('autosave-ok');
+            void el.offsetWidth; // mulai ulang animasi titik hijau
+            el.classList.add('autosave-flash');
         }
     } catch (err) {
         const el = document.getElementById('autosave-status');
         if (el) {
             el.textContent = 'Gagal simpan otomatis — gunakan Backup';
-            el.className = 'text-rose-600 font-semibold';
+            el.classList.remove('autosave-ok', 'autosave-flash');
+            el.classList.add('autosave-err');
         }
         if (!storageWarned) {
             storageWarned = true;
@@ -343,4 +347,5 @@ function toggleSidebar() {
         if (textEl) textEl.textContent = 'Sembunyikan Menu';
     }
     refreshIcons();
+    if (typeof refreshZoom === 'function') refreshZoom();
 }

@@ -35,20 +35,88 @@ async function handleDevPhotoUpload(event) {
     }
 }
 
+// Zoom memakai properti CSS `zoom` (bukan transform) supaya area gulir ikut membesar/mengecil
+// dan sisi kiri lembar tidak terpotong saat dokumen lebih lebar dari layar.
+let zoomFitMode = true; // aktif: zoom otomatis menyesuaikan lebar layar
+
 function adjustZoom(delta) {
-    appState.zoom = Math.min(1.5, Math.max(0.5, +(appState.zoom + delta).toFixed(2)));
+    zoomFitMode = false;
+    appState.zoom = Math.min(1.5, Math.max(0.3, +(appState.zoom + delta).toFixed(2)));
     applyZoom();
 }
 
 function resetZoom() {
+    zoomFitMode = false;
     appState.zoom = 1.0;
+    applyZoom();
+}
+
+function fitZoom() {
+    zoomFitMode = true;
+    const wrapper = document.getElementById('preview-wrapper');
+    const container = document.getElementById('sheets-container');
+    if (!wrapper || !container || !wrapper.clientWidth) return;
+    const prev = container.style.zoom;
+    container.style.zoom = '1';
+    const natural = container.scrollWidth;
+    container.style.zoom = prev;
+    const cs = getComputedStyle(wrapper);
+    const avail = wrapper.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    if (natural > 0) appState.zoom = Math.max(0.3, Math.min(1, Math.floor(avail / natural * 100) / 100));
     applyZoom();
 }
 
 function applyZoom() {
     const container = document.getElementById('sheets-container');
-    container.style.transform = `scale(${appState.zoom})`;
+    container.style.zoom = appState.zoom;
     document.getElementById('zoom-label').textContent = Math.round(appState.zoom * 100) + '%';
+    const fitBtn = document.getElementById('zoom-fit-btn');
+    if (fitBtn) fitBtn.classList.toggle('is-active', zoomFitMode);
+}
+
+// Dipanggil setelah dokumen dirender / ukuran jendela berubah
+function refreshZoom() {
+    if (zoomFitMode) fitZoom(); else applyZoom();
+}
+
+// ---------- Menu tarik-turun di header ----------
+function toggleMenu(id, ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById(id);
+    const willOpen = menu.classList.contains('hidden');
+    closeMenus();
+    if (willOpen) menu.classList.remove('hidden');
+}
+
+function closeMenus() {
+    document.querySelectorAll('.menu-panel').forEach(m => m.classList.add('hidden'));
+}
+
+document.addEventListener('click', e => { if (!e.target.closest('[data-menu]')) closeMenus(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+
+// ---------- Layar kecil: Pengaturan / Pratinjau ----------
+function setMobileView(view) {
+    document.body.dataset.mview = view;
+    ['settings', 'preview'].forEach(v => {
+        const b = document.getElementById('mview-' + v);
+        if (b) b.classList.toggle('is-active', v === view);
+    });
+    if (view === 'preview') requestAnimationFrame(refreshZoom);
+}
+
+// ---------- Petunjuk di tab Mode yang bisa ditutup ----------
+const INTRO_TIP_KEY = 'asesmen-intro-tip-hidden';
+function dismissIntroTip() {
+    const el = document.getElementById('intro-tip');
+    if (el) el.classList.add('hidden');
+    try { localStorage.setItem(INTRO_TIP_KEY, '1'); } catch (err) {}
+}
+function applyIntroTipState() {
+    let hidden = false;
+    try { hidden = localStorage.getItem(INTRO_TIP_KEY) === '1'; } catch (err) {}
+    const el = document.getElementById('intro-tip');
+    if (el && hidden) el.classList.add('hidden');
 }
 
 function showToast(msg) {
@@ -71,6 +139,13 @@ function escapeHtml(str) {
 window.onload = function () {
     const restored = loadSavedState();
     initApp();
+    applyIntroTipState();
+    setMobileView('settings');
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { if (zoomFitMode) fitZoom(); }, 120);
+    });
     if (restored) showToast("Data terakhir dipulihkan dari penyimpanan browser.");
 };
 

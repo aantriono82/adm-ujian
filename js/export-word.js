@@ -468,8 +468,8 @@ async function exportWord() {
 
     showToast("Menyiapkan dokumen Microsoft Word (.docx)...");
     const container = document.getElementById('sheets-container');
-    const prevTransform = container.style.transform;
-    container.style.transform = 'none'; // ukur dalam skala 100%, bukan skala zoom
+    const prevZoom = container.style.zoom;
+    container.style.zoom = '1'; // ukur dalam skala 100%, bukan skala zoom
     try {
         await wordWaitForImages(container);
         const blob = await buildDocxBlob(container);
@@ -487,6 +487,6 @@ async function exportWord() {
         console.error(err);
         showToast('Gagal membuat dokumen Word: ' + (err.message || err));
     } finally {
-        container.style.transform = prevTransform;
+        container.style.zoom = prevZoom;
     }
 }

@@ -12,121 +12,145 @@
     <script src="vendor/xlsx.full.min.js"></script>
     <script src="vendor/lucide.min.js"></script>
 </head>
-<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+<body class="h-screen h-[100dvh] flex flex-col overflow-hidden text-slate-800" data-mode="ASAS" data-mview="settings">
 
     <!-- Top Navbar -->
-    <header class="bg-white border-b border-slate-200 px-3 sm:px-4 py-2 flex flex-wrap items-center justify-between gap-2 z-20 no-print shadow-sm shrink-0">
-        <div class="flex items-center gap-2.5">
-            <button onclick="toggleSidebar()" id="btn-toggle-sidebar" class="bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-300 p-2 rounded-xl shadow-sm flex items-center gap-1.5 transition active:scale-95 cursor-pointer" title="Sembunyikan / Tampilkan Panel Pengaturan Kiri">
-                <i data-lucide="panel-left-close" id="icon-toggle-sidebar" class="w-5 h-5 text-blue-600"></i>
-                <span id="text-toggle-sidebar" class="text-xs font-bold hidden sm:inline">Sembunyikan Menu</span>
+    <header class="bg-white/95 backdrop-blur border-b border-slate-200 px-3 sm:px-4 py-2 flex items-center justify-between gap-3 z-30 no-print shadow-sm shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <button onclick="toggleSidebar()" id="btn-toggle-sidebar" class="hidden lg:flex bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 p-2 rounded-xl items-center transition active:scale-95 cursor-pointer" title="Sembunyikan / Tampilkan Panel Pengaturan">
+                <i data-lucide="panel-left-close" id="icon-toggle-sidebar" class="w-5 h-5"></i>
+                <span id="text-toggle-sidebar" class="sr-only">Sembunyikan Menu</span>
             </button>
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-2 rounded-xl shadow-sm hidden sm:flex items-center justify-center">
+            <div class="accent-gradient text-white p-2 rounded-xl shadow-sm hidden sm:flex items-center justify-center shrink-0">
                 <i data-lucide="layers" class="w-5 h-5"></i>
             </div>
-            <div>
+            <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                    <h1 class="font-bold text-sm sm:text-base text-slate-800 leading-tight">Sistem Administrasi Asesmen Sumatif Terpadu</h1>
-                    <span id="nav-mode-pill" class="bg-blue-100 text-blue-800 border border-blue-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">ASAS GANJIL (7, 8, 9)</span>
+                    <h1 class="font-bold text-sm sm:text-base text-slate-800 leading-tight truncate">
+                        <span class="hidden md:inline">Sistem Administrasi Asesmen Sumatif Terpadu</span>
+                        <span class="md:hidden">Asesmen Sumatif Terpadu</span>
+                    </h1>
+                    <span id="nav-mode-pill" class="hidden sm:inline-flex accent-pill text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase whitespace-nowrap">ASAS</span>
                 </div>
-                <p class="text-[11px] text-slate-500"><span id="nav-school-name">Nama Sekolah</span> • 17 Dokumen Lengkap • <span id="autosave-status" class="text-emerald-600 font-semibold">Simpan otomatis aktif</span></p>
+                <p class="text-[11px] text-slate-500 truncate flex items-center gap-1.5">
+                    <span id="nav-school-name" class="truncate">Nama Sekolah</span>
+                    <span class="hidden sm:inline text-slate-300">•</span>
+                    <span id="autosave-status" class="autosave-ok hidden sm:inline-flex items-center gap-1 whitespace-nowrap">Simpan otomatis aktif</span>
+                </p>
             </div>
         </div>
 
-        <!-- Quick Switcher ASAS / ASAT / ASAJ di Navbar -->
-        <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
-            <button onclick="switchAssessmentMode('ASAS')" id="top-mode-ASAS" class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer bg-blue-600 text-white shadow-sm" title="Asesmen Sumatif Akhir Semester Ganjil (Kelas VII, VIII, IX)">
-                ASAS (Ganjil 7,8,9)
-            </button>
-            <button onclick="switchAssessmentMode('ASAT')" id="top-mode-ASAT" class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-700 hover:bg-white" title="Asesmen Sumatif Akhir Tahun Semester Genap (Kelas VII & VIII)">
-                ASAT (Genap 7,8)
-            </button>
-            <button onclick="switchAssessmentMode('ASAJ')" id="top-mode-ASAJ" class="px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-700 hover:bg-white" title="Asesmen Sumatif Akhir Jenjang Semester Genap (Kelas IX)">
-                ASAJ (Genap 9)
-            </button>
+        <!-- Pilihan mode ASAS / ASAT / ASAJ -->
+        <div class="hidden md:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1 shrink-0">
+            <button onclick="switchAssessmentMode('ASAS')" id="top-mode-ASAS" class="mode-seg" title="Asesmen Sumatif Akhir Semester Ganjil — Kelas VII, VIII, IX">ASAS</button>
+            <button onclick="switchAssessmentMode('ASAT')" id="top-mode-ASAT" class="mode-seg" title="Asesmen Sumatif Akhir Tahun — Kelas VII, VIII (Genap)">ASAT</button>
+            <button onclick="switchAssessmentMode('ASAJ')" id="top-mode-ASAJ" class="mode-seg" title="Asesmen Sumatif Akhir Jenjang — Kelas IX (Genap)">ASAJ</button>
         </div>
 
-        <!-- Tombol Output & Backup -->
-        <div class="flex items-center flex-wrap gap-1.5">
-            <button onclick="printPDF()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" title="Cetak atau Simpan sebagai PDF">
-                <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                <span>Cetak / PDF</span>
-            </button>
+        <!-- Aksi: Unduh / Cetak & menu Data -->
+        <div class="flex items-center gap-1.5 shrink-0">
+            <div class="relative" data-menu>
+                <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Unduh / Cetak</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-80"></i>
+                </button>
+                <div id="menu-output" class="menu-panel hidden">
+                    <button onclick="closeMenus(); printPDF()" class="menu-item">
+                        <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="printer" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold text-slate-800">Cetak / PDF</span><span class="block text-[11px] text-slate-500">Hasil paling presisi</span></span>
+                    </button>
+                    <button onclick="closeMenus(); exportWord()" class="menu-item">
+                        <span class="menu-icon bg-blue-50 text-blue-600"><i data-lucide="file-text" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold text-slate-800">Word (.docx)</span><span class="block text-[11px] text-slate-500">Dokumen yang sedang tampil</span></span>
+                    </button>
+                    <button onclick="closeMenus(); exportExcelOutput()" class="menu-item">
+                        <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="sheet" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold text-slate-800">Excel (.xlsx)</span><span class="block text-[11px] text-slate-500">Seluruh data administrasi</span></span>
+                    </button>
+                </div>
+            </div>
 
-            <button onclick="exportWord()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" title="Unduh Dokumen Aktif ke Microsoft Word (.docx)">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                <span>Word (.docx)</span>
-            </button>
-
-            <button onclick="exportExcelOutput()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" title="Unduh Seluruh Tabel Administrasi ke Excel (.xlsx)">
-                <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
-                <span>Excel (.xlsx)</span>
-            </button>
-
-            <button onclick="saveConfigJSON()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Simpan Backup Pengaturan Semester/Tahun (.json)">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                <span class="hidden xl:inline">Backup</span>
-            </button>
-
-            <label class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Muat Pengaturan Semester/Tahun (.json)">
-                <i data-lucide="folder-open" class="w-3.5 h-3.5"></i>
-                <span class="hidden xl:inline">Muat</span>
-                <input type="file" accept=".json" class="hidden" onchange="loadConfigJSON(event)">
-            </label>
-
-            <button onclick="resetAllData()" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer" title="Hapus data tersimpan di browser dan kembali ke data contoh">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                <span class="hidden xl:inline">Reset</span>
-            </button>
-
-            <button onclick="toggleDeveloperModal(true)" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer border border-slate-700" title="Informasi Pengembang Aplikasi">
-                <img id="nav-dev-photo" src="" alt="Foto" class="w-4 h-4 rounded-full object-cover border border-amber-400 bg-red-600">
-                <span class="hidden sm:inline">Pengembang</span>
-            </button>
+            <div class="relative" data-menu>
+                <button onclick="toggleMenu('menu-data', event)" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 p-2 rounded-lg flex items-center transition active:scale-95 cursor-pointer" title="Data: Backup, Muat, Reset" aria-haspopup="true">
+                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                </button>
+                <div id="menu-data" class="menu-panel hidden">
+                    <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</div>
+                    <button onclick="closeMenus(); saveConfigJSON()" class="menu-item">
+                        <span class="menu-icon bg-amber-50 text-amber-600"><i data-lucide="save" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold text-slate-800">Backup (.json)</span><span class="block text-[11px] text-slate-500">Simpan semua isian ke berkas</span></span>
+                    </button>
+                    <label class="menu-item">
+                        <span class="menu-icon bg-slate-100 text-slate-600"><i data-lucide="folder-open" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold text-slate-800">Muat Backup</span><span class="block text-[11px] text-slate-500">Pulihkan dari berkas .json</span></span>
+                        <input type="file" accept=".json" class="hidden" onchange="closeMenus(); loadConfigJSON(event)">
+                    </label>
+                    <div class="my-1 border-t border-slate-100"></div>
+                    <button onclick="closeMenus(); toggleDeveloperModal(true)" class="menu-item">
+                        <img id="nav-dev-photo" src="" alt="Foto" class="w-8 h-8 rounded-lg object-cover bg-red-600 shrink-0">
+                        <span><span class="block font-semibold text-slate-800">Tentang Pengembang</span><span class="block text-[11px] text-slate-500">Profil & kontak</span></span>
+                    </button>
+                    <div class="my-1 border-t border-slate-100"></div>
+                    <button onclick="closeMenus(); resetAllData()" class="menu-item text-rose-700 hover:!bg-rose-50">
+                        <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></span>
+                        <span><span class="block font-semibold">Reset ke Data Contoh</span><span class="block text-[11px] text-rose-500/80">Hapus semua isian di browser ini</span></span>
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
+
+    <!-- Pilihan mode untuk layar kecil -->
+    <div class="md:hidden no-print bg-white border-b border-slate-200 px-3 py-1.5 shrink-0">
+        <div class="grid grid-cols-3 bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
+            <button onclick="switchAssessmentMode('ASAS')" id="top-mode-m-ASAS" class="mode-seg">ASAS</button>
+            <button onclick="switchAssessmentMode('ASAT')" id="top-mode-m-ASAT" class="mode-seg">ASAT</button>
+            <button onclick="switchAssessmentMode('ASAJ')" id="top-mode-m-ASAJ" class="mode-seg">ASAJ</button>
+        </div>
+    </div>
 
     <!-- Main Content Area -->
     <div class="print-layout-wrapper flex-1 flex flex-col lg:flex-row overflow-hidden relative">
         
         <!-- Tombol Melayang Pembuka Sidebar Saat Disembunyikan -->
-        <button onclick="toggleSidebar()" id="floating-open-sidebar" class="hidden fixed left-3 bottom-5 z-40 bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2.5 rounded-xl shadow-xl font-bold text-xs items-center gap-2 border-2 border-white transition active:scale-95 cursor-pointer no-print">
+        <button onclick="toggleSidebar()" id="floating-open-sidebar" class="hidden fixed left-3 bottom-5 z-40 accent-btn text-white px-3.5 py-2.5 rounded-xl shadow-xl font-bold text-xs items-center gap-2 border-2 border-white transition active:scale-95 cursor-pointer no-print">
             <i data-lucide="panel-left-open" class="w-4 h-4"></i>
             <span>Tampilkan Pengaturan</span>
         </button>
 
         <!-- Left Sidebar: Control Panel -->
-        <aside id="left-sidebar" class="w-full lg:w-[450px] xl:w-[490px] bg-white border-r border-slate-200 flex flex-col h-1/2 lg:h-full no-print shrink-0 shadow-sm z-10 transition-all duration-200">
+        <aside id="left-sidebar" class="w-full lg:w-[450px] xl:w-[490px] bg-white border-r border-slate-200 flex flex-col flex-1 min-h-0 lg:flex-none lg:h-full no-print shrink-0 shadow-sm z-10 transition-all duration-200">
             
             <!-- Navigation Tabs (7 Tab Pengaturan Lengkap) -->
-            <div class="grid grid-cols-7 border-b border-slate-200 bg-slate-50 p-1 gap-0.5 text-[10px] font-semibold text-slate-600 shrink-0">
-                <button onclick="switchTab('mode')" id="tab-btn-mode" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 bg-white text-blue-600 shadow-sm transition cursor-pointer">
+            <div class="tab-bar grid grid-cols-7 border-b border-slate-200 bg-white px-1 text-[10px] font-semibold text-slate-500 shrink-0">
+                <button onclick="switchTab('mode')" id="tab-btn-mode" class="tab-btn">
                     <i data-lucide="calendar-cog" class="w-3.5 h-3.5"></i>
-                    <span>1. Mode</span>
+                    <span class="whitespace-nowrap">Mode</span>
                 </button>
-                <button onclick="switchTab('kop')" id="tab-btn-kop" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('kop')" id="tab-btn-kop" class="tab-btn">
                     <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-                    <span>2. KOP/TTD</span>
+                    <span class="whitespace-nowrap">KOP/TTD</span>
                 </button>
-                <button onclick="switchTab('panitia')" id="tab-btn-panitia" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('panitia')" id="tab-btn-panitia" class="tab-btn">
                     <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>
-                    <span>3. Panitia</span>
+                    <span class="whitespace-nowrap">Panitia</span>
                 </button>
-                <button onclick="switchTab('jadwal')" id="tab-btn-jadwal" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('jadwal')" id="tab-btn-jadwal" class="tab-btn">
                     <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
-                    <span>4. Jadwal</span>
+                    <span class="whitespace-nowrap">Jadwal</span>
                 </button>
-                <button onclick="switchTab('peserta')" id="tab-btn-peserta" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('peserta')" id="tab-btn-peserta" class="tab-btn">
                     <i data-lucide="users" class="w-3.5 h-3.5"></i>
-                    <span>5. Peserta</span>
+                    <span class="whitespace-nowrap">Peserta</span>
                 </button>
-                <button onclick="switchTab('ruang')" id="tab-btn-ruang" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('ruang')" id="tab-btn-ruang" class="tab-btn">
                     <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                    <span>6. Ruang</span>
+                    <span class="whitespace-nowrap">Ruang</span>
                 </button>
-                <button onclick="switchTab('laporan')" id="tab-btn-laporan" class="tab-btn py-1.5 px-1 rounded-md flex flex-col items-center gap-0.5 hover:bg-white/60 transition cursor-pointer">
+                <button onclick="switchTab('laporan')" id="tab-btn-laporan" class="tab-btn">
                     <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
-                    <span>7. Nilai/LPJ</span>
+                    <span class="whitespace-nowrap">Nilai/LPJ</span>
                 </button>
             </div>
 
@@ -135,7 +159,8 @@
 
                 <!-- TAB 1: MODE ASESMEN (ASAS / ASAT / ASAJ), SEMESTER & TAHUN PELAJARAN -->
                 <div id="tab-mode" class="tab-content space-y-4">
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 space-y-1.5">
+                    <div id="intro-tip" class="relative bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 pr-9 text-xs text-blue-900 space-y-1.5">
+                        <button onclick="dismissIntroTip()" class="absolute top-2 right-2 p-1 rounded-md text-blue-400 hover:text-blue-700 hover:bg-white/70 cursor-pointer" title="Tutup petunjuk"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                         <div class="font-bold flex items-center gap-1.5 text-blue-800">
                             <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
                             <span>Pengaturan Otomatis Lintas Semester & Tahun</span>
@@ -149,7 +174,7 @@
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-slate-700">1. Pilih Jenis Asesmen Sumatif</label>
                         
-                        <div onclick="switchAssessmentMode('ASAS')" id="card-mode-ASAS" class="border-2 border-blue-600 bg-blue-50/70 rounded-xl p-3 cursor-pointer transition flex items-start gap-3">
+                        <div onclick="switchAssessmentMode('ASAS')" id="card-mode-ASAS" class="mode-card">
                             <div class="bg-blue-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAS</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Semester Ganjil</div>
@@ -157,7 +182,7 @@
                             </div>
                         </div>
 
-                        <div onclick="switchAssessmentMode('ASAT')" id="card-mode-ASAT" class="border border-slate-200 hover:bg-slate-50 rounded-xl p-3 cursor-pointer transition flex items-start gap-3">
+                        <div onclick="switchAssessmentMode('ASAT')" id="card-mode-ASAT" class="mode-card">
                             <div class="bg-emerald-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAT</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Tahun (Kenaikan Kelas)</div>
@@ -165,7 +190,7 @@
                             </div>
                         </div>
 
-                        <div onclick="switchAssessmentMode('ASAJ')" id="card-mode-ASAJ" class="border border-slate-200 hover:bg-slate-50 rounded-xl p-3 cursor-pointer transition flex items-start gap-3">
+                        <div onclick="switchAssessmentMode('ASAJ')" id="card-mode-ASAJ" class="mode-card">
                             <div class="bg-purple-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAJ</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Jenjang (Kelulusan SMP)</div>
@@ -410,7 +435,7 @@
                                         <button onclick="resetLogo('ttdImg')" class="bg-slate-100 hover:bg-slate-200 px-1.5 rounded text-slate-600"><i data-lucide="rotate-ccw" class="w-3 h-3"></i></button>
                                     </div>
                                     <input type="range" id="input-ttd-scale" min="50" max="180" value="100" oninput="updateConfigFromInputs()" class="w-full h-1.5 mt-1.5 bg-slate-200 rounded-lg cursor-pointer">
-                                    <span id="label-ttd-scale" class="text-[9px] text-slate-500">100%</span>
+                                    <span id="label-ttd-scale" class="text-[10px] text-slate-500">100%</span>
                                 </div>
 
                                 <div class="bg-white border border-slate-200 rounded-lg p-2 flex flex-col items-center">
@@ -426,7 +451,7 @@
                                         <button onclick="resetLogo('capImg')" class="bg-slate-100 hover:bg-slate-200 px-1.5 rounded text-slate-600"><i data-lucide="rotate-ccw" class="w-3 h-3"></i></button>
                                     </div>
                                     <input type="range" id="input-cap-scale" min="50" max="180" value="100" oninput="updateConfigFromInputs()" class="w-full h-1.5 mt-1.5 bg-slate-200 rounded-lg cursor-pointer">
-                                    <span id="label-cap-scale" class="text-[9px] text-slate-500">100%</span>
+                                    <span id="label-cap-scale" class="text-[10px] text-slate-500">100%</span>
                                 </div>
                             </div>
                         </div>
@@ -835,14 +860,14 @@
             </div>
 
             <!-- Footer Info Pengembang di Sidebar -->
-            <div class="border-t border-slate-200 bg-slate-50/90 p-2.5 shrink-0 flex items-center justify-between gap-2">
+            <div class="hidden lg:flex border-t border-slate-200 bg-slate-50/90 p-2.5 shrink-0 items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="relative shrink-0 cursor-pointer group" onclick="toggleDeveloperModal(true)">
                         <img id="sidebar-dev-photo" src="" alt="Pramudito Hutomo" class="w-9 h-9 rounded-full object-cover border-2 border-blue-600 shadow-sm bg-red-600">
                         <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
                     </div>
                     <div class="truncate">
-                        <div class="text-[9px] font-bold uppercase tracking-wider text-blue-600 leading-none">Pengembang Sistem</div>
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-blue-600 leading-none">Pengembang Sistem</div>
                         <div class="text-xs font-bold text-slate-800 truncate mt-0.5">Pramudito Hutomo, M.Pd.</div>
                         <div class="text-[10px] text-slate-500 truncate">Waka Kurikulum / Guru PJOK • SMPN 2 Selagai Lingga</div>
                     </div>
@@ -855,19 +880,18 @@
         </aside>
 
         <!-- Right Area: Live Print Sheet Preview & 16-Module Document Selector -->
-        <main class="print-main-area flex-1 flex flex-col bg-slate-200/80 overflow-hidden">
+        <main class="print-main-area flex-1 flex flex-col overflow-hidden min-h-0">
             
-            <!-- 16 Document Module Switcher Bar -->
-            <div class="bg-white border-b border-slate-300 px-3 py-2 flex flex-col gap-2 text-xs text-slate-600 no-print shrink-0 shadow-sm">
-                    <!-- Baris 1: Kategori & Pemilih Cepat 17 Modul Dokumen -->
+            <!-- Bilah pemilih dokumen & zoom -->
+            <div class="bg-white border-b border-slate-200 px-3 py-2 text-xs text-slate-600 no-print shrink-0">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-[11px] font-bold text-slate-500 uppercase mr-1 flex items-center gap-1">
-                            <i data-lucide="files" class="w-3.5 h-3.5 text-blue-600"></i> Pilih Dokumen Output:
+                    <div class="flex items-center gap-1.5 min-w-0 w-full md:w-auto md:flex-1">
+                        <span class="hidden 2xl:flex text-[11px] font-bold text-slate-400 uppercase tracking-wide mr-1 items-center gap-1 whitespace-nowrap">
+                            <i data-lucide="files" class="w-3.5 h-3.5 accent-text"></i> Dokumen
                         </span>
-
                         <!-- Dropdown Cepat Semua 17 Dokumen -->
-                        <select id="doc-mode-select" onchange="setDocMode(this.value)" class="border-2 border-blue-600 bg-blue-50/60 text-blue-950 rounded-lg px-2.5 py-1 text-xs font-bold outline-none cursor-pointer">
+                        <button onclick="stepDocMode(-1)" class="icon-btn" title="Dokumen sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <select id="doc-mode-select" onchange="setDocMode(this.value)" class="doc-select flex-1 min-w-0 w-0 max-w-[440px]">
                             <optgroup label="A. Kartu, Ruang & Nomor Meja">
                                 <option value="kartu">1. Kartu Peserta Ujian</option>
                                 <option value="denah">2. Denah Tempat Duduk Ruang</option>
@@ -894,30 +918,39 @@
                                 <option value="laporan">17. Laporan Akhir Pelaksanaan (Lengkap Sampul, Pengesahan, BAB I-VI)</option>
                             </optgroup>
                         </select>
+                        <button onclick="stepDocMode(1)" class="icon-btn" title="Dokumen berikutnya"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
 
                     <!-- Info & Kontrol Zoom -->
-                    <div class="flex items-center gap-2">
-                        <span id="preview-summary-text" class="hidden xl:inline-block bg-slate-100 border border-slate-300 px-2.5 py-1 rounded-md font-medium text-slate-700 text-[11px]">Memuat...</span>
-                        <div class="flex items-center gap-1 bg-slate-100 border border-slate-200 rounded-lg px-2 py-0.5">
-                            <button onclick="adjustZoom(-0.1)" class="hover:text-blue-600 p-0.5 cursor-pointer" title="Perkecil"><i data-lucide="zoom-out" class="w-3.5 h-3.5"></i></button>
-                            <span id="zoom-label" class="font-bold w-10 text-center text-[11px]">100%</span>
-                            <button onclick="adjustZoom(0.1)" class="hover:text-blue-600 p-0.5 cursor-pointer" title="Perbesar"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="resetZoom()" class="text-[10px] font-semibold text-blue-600 hover:underline ml-1 cursor-pointer">Reset</button>
+                    <div class="flex items-center gap-2 ml-auto">
+                        <span id="preview-summary-text" class="hidden 2xl:inline-block max-w-[360px] truncate text-slate-500 text-[11px]">Memuat...</span>
+                        <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
+                            <button onclick="adjustZoom(-0.1)" class="zoom-btn" title="Perkecil"><i data-lucide="zoom-out" class="w-3.5 h-3.5"></i></button>
+                            <span id="zoom-label" class="font-bold w-10 text-center text-[11px] text-slate-700 tabular-nums">100%</span>
+                            <button onclick="adjustZoom(0.1)" class="zoom-btn" title="Perbesar"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i></button>
+                            <span class="w-px h-4 bg-slate-300 mx-0.5"></span>
+                            <button onclick="fitZoom()" id="zoom-fit-btn" class="zoom-btn text-[11px] font-semibold px-1.5" title="Sesuaikan dengan lebar layar">Pas Lebar</button>
+                            <button onclick="resetZoom()" class="zoom-btn text-[11px] font-semibold px-1.5" title="Ukuran asli 100%">100%</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Scrollable Sheet Container -->
-            <div id="preview-wrapper" class="flex-1 overflow-auto p-4 sm:p-8 flex flex-col items-center gap-8">
-                <div id="sheets-container" class="flex flex-col items-center gap-8 origin-top transition-transform duration-150">
+            <div id="preview-wrapper" class="preview-canvas flex-1 overflow-auto p-4 pt-10 sm:p-8 sm:pt-12">
+                <div id="sheets-container" class="flex flex-col items-center gap-10 w-fit mx-auto">
                     <!-- Lembar-lembar dokumen di-render di sini -->
                 </div>
             </div>
 
         </main>
     </div>
+
+    <!-- Navigasi bawah (layar kecil): beralih Pengaturan / Pratinjau -->
+    <nav class="lg:hidden no-print shrink-0 bg-white border-t border-slate-200 grid grid-cols-2 p-1.5 gap-1.5">
+        <button onclick="setMobileView('settings')" id="mview-settings" class="mview-btn"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Pengaturan</button>
+        <button onclick="setMobileView('preview')" id="mview-preview" class="mview-btn"><i data-lucide="eye" class="w-4 h-4"></i> Pratinjau</button>
+    </nav>
 
     <!-- Modal Informasi Pengembang -->
     <div id="developer-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 no-print">
