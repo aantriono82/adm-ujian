@@ -29,7 +29,7 @@
         <button onclick="toggleNavDrawer(true)" class="icon-btn" title="Buka menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
         <div class="accent-gradient text-white p-1.5 rounded-lg shrink-0"><i data-lucide="layers" class="w-4 h-4"></i></div>
         <div class="min-w-0 flex-1">
-            <div class="text-sm font-bold text-slate-800 truncate">Asesmen Sumatif Terpadu</div>
+            <div class="font-display text-sm text-slate-800 truncate">Asesmen Sumatif Terpadu</div>
         </div>
         <span id="nav-mode-pill" class="accent-pill text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase whitespace-nowrap">ASAS</span>
     </div>
@@ -45,7 +45,7 @@
             <div class="nav-brand">
                 <div class="accent-gradient text-white p-2 rounded-xl shadow-sm shrink-0"><i data-lucide="layers" class="w-5 h-5"></i></div>
                 <div class="nav-label min-w-0">
-                    <div class="text-[13px] font-bold text-slate-800 leading-tight">Asesmen Sumatif Terpadu</div>
+                    <div class="font-display text-[13px] text-slate-800 leading-tight">Asesmen Sumatif Terpadu</div>
                     <div id="nav-school-name" class="text-[11px] text-slate-500 truncate">Nama Sekolah</div>
                 </div>
             </div>
@@ -87,47 +87,47 @@
                 <i data-lucide="wallet" class="w-[18px] h-[18px] shrink-0"></i>
                 <span class="nav-label">Nilai & LPJ</span>
             </button>
+            <div class="relative" data-menu>
+                <button onclick="toggleMenu('menu-data', event)" class="nav-item" title="Data: Backup, Muat, Reset" aria-haspopup="true">
+                    <i data-lucide="database" class="w-[18px] h-[18px] shrink-0"></i>
+                    <span class="nav-label">Data &amp; Backup</span>
+                    <i data-lucide="chevron-right" class="nav-label w-3.5 h-3.5 ml-auto opacity-50"></i>
+                </button>
+                <div id="menu-data" class="menu-panel menu-side hidden">
+                <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</div>
+                <button onclick="closeMenus(); saveConfigJSON()" class="menu-item">
+                    <span class="menu-icon bg-amber-50 text-amber-600"><i data-lucide="save" class="w-4 h-4"></i></span>
+                    <span><span class="block font-semibold text-slate-800">Backup (.json)</span><span class="block text-[11px] text-slate-500">Simpan semua isian ke berkas</span></span>
+                </button>
+                <label class="menu-item">
+                    <span class="menu-icon bg-slate-100 text-slate-600"><i data-lucide="folder-open" class="w-4 h-4"></i></span>
+                    <span><span class="block font-semibold text-slate-800">Muat Backup</span><span class="block text-[11px] text-slate-500">Pulihkan dari berkas .json</span></span>
+                    <input type="file" accept=".json" class="hidden" onchange="closeMenus(); loadConfigJSON(event)">
+                </label>
+                <div class="my-1 border-t border-slate-100"></div>
+                <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Template Excel</div>
+                <button onclick="closeMenus(); downloadFullTemplate()" class="menu-item">
+                    <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="file-down" class="w-4 h-4"></i></span>
+                    <span><span class="block font-semibold text-slate-800">Unduh Template Lengkap</span><span class="block text-[11px] text-slate-500">Peserta, panitia, korektor, pengawas, piket, susulan</span></span>
+                </button>
+                <label class="menu-item">
+                    <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="file-up" class="w-4 h-4"></i></span>
+                    <span><span class="block font-semibold text-slate-800">Impor Template Lengkap</span><span class="block text-[11px] text-slate-500">Muat isian dari berkas .xlsx</span></span>
+                    <input type="file" id="full-template-upload" accept=".xlsx,.xls" class="hidden" onchange="closeMenus(); handleFullTemplateUpload(event)">
+                </label>
+                <div class="my-1 border-t border-slate-100"></div>
+                <button onclick="closeMenus(); resetAllData()" class="menu-item text-rose-700 hover:!bg-rose-50">
+                    <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></span>
+                    <span><span class="block font-semibold">Reset ke Data Contoh</span><span class="block text-[11px] text-rose-500/80">Hapus semua isian di browser ini</span></span>
+                </button>
+                </div>
+            </div>
             </div>
 
             <div class="flex-1"></div>
 
             <div class="nav-list nav-bottom">
                 <div id="autosave-status" class="autosave-ok nav-autosave"><span class="nav-label">Simpan otomatis aktif</span></div>
-                <div class="relative" data-menu>
-                    <button onclick="toggleMenu('menu-data', event)" class="nav-item" title="Data: Backup, Muat, Reset" aria-haspopup="true">
-                        <i data-lucide="database" class="w-[18px] h-[18px] shrink-0"></i>
-                        <span class="nav-label">Data &amp; Backup</span>
-                        <i data-lucide="chevron-right" class="nav-label w-3.5 h-3.5 ml-auto opacity-50"></i>
-                    </button>
-                    <div id="menu-data" class="menu-panel menu-side hidden">
-                    <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</div>
-                    <button onclick="closeMenus(); saveConfigJSON()" class="menu-item">
-                        <span class="menu-icon bg-amber-50 text-amber-600"><i data-lucide="save" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Backup (.json)</span><span class="block text-[11px] text-slate-500">Simpan semua isian ke berkas</span></span>
-                    </button>
-                    <label class="menu-item">
-                        <span class="menu-icon bg-slate-100 text-slate-600"><i data-lucide="folder-open" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Muat Backup</span><span class="block text-[11px] text-slate-500">Pulihkan dari berkas .json</span></span>
-                        <input type="file" accept=".json" class="hidden" onchange="closeMenus(); loadConfigJSON(event)">
-                    </label>
-                    <div class="my-1 border-t border-slate-100"></div>
-                    <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Template Excel</div>
-                    <button onclick="closeMenus(); downloadFullTemplate()" class="menu-item">
-                        <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="file-down" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Unduh Template Lengkap</span><span class="block text-[11px] text-slate-500">Peserta, panitia, korektor, pengawas, piket, susulan</span></span>
-                    </button>
-                    <label class="menu-item">
-                        <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="file-up" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Impor Template Lengkap</span><span class="block text-[11px] text-slate-500">Muat isian dari berkas .xlsx</span></span>
-                        <input type="file" id="full-template-upload" accept=".xlsx,.xls" class="hidden" onchange="closeMenus(); handleFullTemplateUpload(event)">
-                    </label>
-                    <div class="my-1 border-t border-slate-100"></div>
-                    <button onclick="closeMenus(); resetAllData()" class="menu-item text-rose-700 hover:!bg-rose-50">
-                        <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold">Reset ke Data Contoh</span><span class="block text-[11px] text-rose-500/80">Hapus semua isian di browser ini</span></span>
-                    </button>
-                    </div>
-                </div>
                 <button onclick="toggleDeveloperModal(true)" class="nav-item" title="Tentang Pengembang">
                     <img id="nav-dev-photo" src="" alt="Foto" class="w-[22px] h-[22px] rounded-full object-cover bg-red-600 shrink-0 -ml-0.5">
                     <span class="nav-label min-w-0 text-left">
@@ -147,7 +147,7 @@
             <div class="panel-head">
                 <span id="panel-icon" class="panel-icon"></span>
                 <div class="min-w-0 flex-1">
-                    <h2 id="panel-title" class="text-sm font-bold text-slate-900 leading-tight">Mode &amp; Kegiatan</h2>
+                    <h2 id="panel-title" class="text-sm text-slate-900 leading-tight">Mode &amp; Kegiatan</h2>
                     <p id="panel-desc" class="text-[11px] text-slate-500 truncate">Pengaturan</p>
                 </div>
                 <button onclick="toggleSidebar()" class="icon-btn hidden lg:block" title="Tutup panel (pratinjau lebih lebar)"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
@@ -1073,7 +1073,7 @@
 
             <div class="pt-14 pb-5 px-6 space-y-4">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900 leading-tight">Naruti Uzukimi</h2>
+                    <h2 class="font-display text-lg text-slate-900 leading-tight">Naruti Uzukimi</h2>
                     <div class="flex flex-wrap items-center gap-1.5 mt-1">
                         <span class="bg-blue-100 text-blue-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">Guru Matematika</span>
                         <span class="bg-emerald-100 text-emerald-800 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">SMP Negeri 1 Konoha</span>

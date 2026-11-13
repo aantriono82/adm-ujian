@@ -313,7 +313,20 @@ function toggleMenu(id, ev) {
     const menu = document.getElementById(id);
     const willOpen = menu.classList.contains('hidden');
     closeMenus();
-    if (willOpen) menu.classList.remove('hidden');
+    if (!willOpen) return;
+    menu.classList.remove('hidden');
+    // Menu samping sidebar: posisikan fixed agar tidak terpotong overflow sidebar (desktop)
+    if (menu.classList.contains('menu-side')) {
+        if (window.matchMedia('(min-width: 1024px)').matches) {
+            const btn = menu.parentElement.querySelector('button');
+            const nav = document.getElementById('app-nav');
+            const r = btn.getBoundingClientRect();
+            const top = Math.max(8, Math.min(r.top, window.innerHeight - menu.offsetHeight - 8));
+            Object.assign(menu.style, { position: 'fixed', top: top + 'px', left: (nav.getBoundingClientRect().right + 8) + 'px', bottom: 'auto' });
+        } else {
+            menu.style.cssText = '';
+        }
+    }
 }
 
 function closeMenus() {
@@ -321,6 +334,8 @@ function closeMenus() {
 }
 
 document.addEventListener('click', e => { if (!e.target.closest('[data-menu]')) closeMenus(); });
+window.addEventListener('resize', closeMenus);
+document.getElementById('app-nav')?.addEventListener('scroll', closeMenus);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenus(); toggleNavDrawer(false); } });
 
 // ---------- Layar kecil: Pengaturan / Pratinjau ----------

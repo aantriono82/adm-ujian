@@ -2,6 +2,10 @@
         font-family: 'Inter', sans-serif;
         background-color: #f1f5f9;
     }
+    /* Judul antarmuka memakai Poppins; isi, menu & form tetap Inter */
+    .font-display, #panel-title, .section-title {
+        font-family: 'Poppins', 'Inter', sans-serif; font-weight: 600; letter-spacing: 0;
+    }
     .font-serif-formal {
         font-family: 'Tinos', 'Times New Roman', Times, serif;
     }
@@ -115,7 +119,7 @@
     .tab-badge.is-warn { background: #f59e0b; }
 
     /* Menu Data yang muncul di samping sidebar */
-    .menu-panel.menu-side { left: calc(100% + .5rem); right: auto; top: auto; bottom: 0; }
+    .menu-panel.menu-side { left: calc(100% + .5rem); right: auto; top: 0; bottom: auto; }
 
     /* Panel pengaturan */
     .panel-head { display: flex; align-items: center; gap: .7rem; padding: .8rem 1rem; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
@@ -159,7 +163,7 @@
         }
         body.nav-open .app-nav { transform: none; }
         body.nav-open .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 50; background: rgba(15,23,42,.45); }
-        .menu-panel.menu-side { left: .25rem; bottom: calc(100% + .4rem); }
+        .menu-panel.menu-side { left: .25rem; top: calc(100% + .4rem); }
         .nav-collapse-btn { display: none; }
     }
 
@@ -171,7 +175,7 @@
     }
     .section-title {
         display: flex; align-items: center; gap: .5rem;
-        font-size: .8125rem; font-weight: 700; color: #0f172a; letter-spacing: -.005em;
+        font-size: .8125rem; color: #0f172a;
     }
     .section-title::before {
         content: ""; width: 3px; height: .95rem; border-radius: 9999px; background: var(--accent); flex-shrink: 0;
