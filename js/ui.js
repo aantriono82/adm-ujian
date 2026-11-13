@@ -10,6 +10,7 @@ function initApp() {
     renderCommitteeTable();
     renderCorrectorsTable();
     renderScheduleEditor();
+    renderGuruPengawasEditor();
     renderMakeupEditor();
     renderBudgetTable();
     renderStudentTable();
@@ -525,13 +526,18 @@ function fillEmptyProctors() {
         if (v && v !== '-' && !usage.has(v)) usage.set(v, 0);
     };
     const ppr = getPengawasPerRuang();
-    // Nama di kotak pengawas 2 yang tersembunyi (mode 1 pengawas) tetap dipakai sebagai daftar guru
-    appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => { addName(p[0]); addName(p[1]); })));
-    (appState.dailyRoster || []).forEach(r => (r.guru || []).forEach(addName));
-    // Panitia hanya cadangan bila jadwal & guru piket belum berisi nama (agar Kepala Sekolah dkk. tidak otomatis jadi pengawas)
-    if (!usage.size) (appState.committee || []).forEach(c => addName(c.nama));
+    // Sumber utama: guru yang dicentang di Daftar Guru Pengawas
+    const daftar = typeof getActiveGuruNames === 'function' ? getActiveGuruNames() : [];
+    daftar.forEach(addName);
+    if (!daftar.length) {
+        // Nama di kotak pengawas 2 yang tersembunyi (mode 1 pengawas) tetap dipakai sebagai daftar guru
+        appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => { addName(p[0]); addName(p[1]); })));
+        (appState.dailyRoster || []).forEach(r => (r.guru || []).forEach(addName));
+        // Panitia hanya cadangan bila jadwal & guru piket belum berisi nama (agar Kepala Sekolah dkk. tidak otomatis jadi pengawas)
+        if (!usage.size) (appState.committee || []).forEach(c => addName(c.nama));
+    }
     if (!usage.size) {
-        showToast("Belum ada nama guru. Isi minimal satu pengawas atau anggota panitia dulu.");
+        showToast("Belum ada nama guru. Isi Daftar Guru Pengawas atau minimal satu pengawas dulu.");
         return;
     }
     appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => p.slice(0, ppr).forEach(nm => {

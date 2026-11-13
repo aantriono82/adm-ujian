@@ -40,6 +40,7 @@ function renderAll() {
         summaryEl.textContent = `${preset.shortName} • 0 peserta`;
         refreshIcons();
         updateTabBadges();
+        if (typeof refreshGuruPengawasStats === 'function') refreshGuruPengawasStats();
         refreshZoom();
         saveStateSoon();
         return;
@@ -145,6 +146,7 @@ function renderAll() {
     refreshIcons();
     refreshZoom();
     updateTabBadges();
+    if (typeof refreshGuruPengawasStats === 'function') refreshGuruPengawasStats();
     const navSchool = document.getElementById('nav-school-name');
     if (navSchool) navSchool.textContent = appState.kop.sekolah;
     saveStateSoon();

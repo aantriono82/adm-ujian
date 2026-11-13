@@ -200,12 +200,12 @@ async function closeDialog(page, label) {
     const fullTpl = await download(page, () => downloadFullTemplate());
     const fullBuf = fs.readFileSync(fullTpl);
     const sheetNames = await page.evaluate(a => XLSX.read(new Uint8Array(a), { type: 'array' }).SheetNames, Array.from(fullBuf));
-    ok(['Petunjuk', 'Peserta', 'Panitia', 'Korektor', 'Jadwal_Pengawas', 'Guru_Piket', 'Susulan'].every(n => sheetNames.includes(n)),
-        'Template lengkap berisi 7 lembar', sheetNames.join(', '));
+    ok(['Petunjuk', 'Peserta', 'Panitia', 'Korektor', 'Guru_Pengawas', 'Jadwal_Pengawas', 'Guru_Piket', 'Susulan'].every(n => sheetNames.includes(n)),
+        'Template lengkap berisi 8 lembar', sheetNames.join(', '));
 
     const jadwalTpl = await download(page, () => downloadScheduleTemplate());
     const jadwalSheets = await page.evaluate(a => XLSX.read(new Uint8Array(a), { type: 'array' }).SheetNames, Array.from(fs.readFileSync(jadwalTpl)));
-    ok(jadwalSheets.join() === 'Petunjuk,Jadwal_Pengawas,Guru_Piket,Susulan', 'Template jadwal hanya berisi lembar jadwal', jadwalSheets.join(', '));
+    ok(jadwalSheets.join() === 'Petunjuk,Guru_Pengawas,Jadwal_Pengawas,Guru_Piket,Susulan', 'Template jadwal hanya berisi lembar jadwal', jadwalSheets.join(', '));
 
     // Template lengkap lewat tombol impor peserta → lembar "Peserta" yang dibaca, bukan "Petunjuk"
     await upload(EXCEL, 'lengkap.xlsx', fullBuf, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -287,6 +287,94 @@ async function closeDialog(page, label) {
     ok(await page.evaluate(() => appState.pengawasPerRuang === 1 && document.getElementById('input-pengawas-per-ruang').value === '1'),
         'Impor mengubah pengaturan menjadi 1 pengawas per ruang');
     await page.evaluate(() => setPengawasPerRuang(2));
+
+    console.log('6d. Daftar Guru Pengawas & pembagian otomatis (22 ruang, 40 guru)');
+    const gp = await page.evaluate(() => {
+        switchTab('jadwal');
+        appState.guruPengawas = [];
+        const ta = document.getElementById('input-guru-paste');
+        ta.value = 'No\tNama\tNIP\n1\tGuru Satu, S.Pd.\t19800101 200501 1 001\tGuru IPA\n2. Guru Dua\nGuru Dua\n\n' +
+            Array.from({ length: 38 }, (_, i) => `Guru ${i + 3}`).join('\n');
+        addGuruFromPaste();
+        const parsed = appState.guruPengawas.slice(0, 2).map(g => [g.nama, g.nip, g.jabatan].join('|'));
+        const total = appState.guruPengawas.length;
+        const rows = document.querySelectorAll('#guru-pengawas-list [data-guru-row]').length;
+
+        setJumlahRuang(22);
+        setPengawasPerRuang(1);
+        const names = appState.guruPengawas.map(g => g.nama);
+        // Hari 1: 5 guru piket -> sebaiknya tidak mengawas hari itu
+        appState.dailyRoster[0].guru = names.slice(0, 5).concat(Array(5).fill(''));
+        const capOk = document.getElementById('guru-pengawas-capacity').innerText;
+        const res = distributeProctors(getActiveGuruNames());
+        const sessions = appState.schedule.flatMap(d => d.sesi);
+        const allFilled = sessions.every(ss => ss.pengawas.slice(0, 22).every(p => p[0]));
+        const noDup = sessions.every(ss => new Set(ss.pengawas.slice(0, 22).map(p => p[0])).size === 22);
+        const day0 = new Set(appState.schedule[0].sesi.flatMap(ss => ss.pengawas.slice(0, 22).map(p => p[0])));
+        const piketFree = names.slice(0, 5).every(nm => !day0.has(nm));
+        // Ruang berganti: tidak ada guru yang mengawas ruang yang sama di dua sesi berturut-turut
+        let sameRoom = 0;
+        for (let i = 1; i < sessions.length; i++) {
+            for (let r = 0; r < 22; r++) if (sessions[i].pengawas[r][0] === sessions[i - 1].pengawas[r][0]) sameRoom++;
+        }
+        renderAll();
+        const counts = countProctorDuties();
+        const badge = document.querySelector('[data-guru-count="10"]').textContent;
+
+        setPengawasPerRuang(2);
+        const capLow = document.getElementById('guru-pengawas-capacity').innerText;
+        const badgeTab = getTabStatus().jadwal.join('; ');
+        const res2 = distributeProctors(getActiveGuruNames());
+
+        // Isi kosong saja: hanya memakai guru yang dicentang
+        setPengawasPerRuang(1);
+        appState.guruPengawas.forEach((g, i) => { g.aktif = i < 30; });
+        appState.schedule[0].sesi[0].pengawas[0][0] = '';
+        fillEmptyProctors();
+        const refill = appState.schedule[0].sesi[0].pengawas[0][0];
+        const refillActive = names.slice(0, 30).includes(refill);
+
+        // Lampiran III mengambil NIP dari daftar guru
+        setDocMode('sk');
+        const sk = document.getElementById('sheets-container').innerText;
+        return { parsed, total, rows, capOk, res, allFilled, noDup, piketFree, sameRoom, spread: [Math.min(...counts.values()), Math.max(...counts.values())],
+            badge, b10: counts.get(names[10].toLowerCase()), capLow, badgeTab, res2, refillActive, nSesi: sessions.length,
+            nipInSk: /19800101200501\s*1\s*001|198001012005011001/.test(sk) };
+    });
+    ok(gp.total === 40 && gp.rows === 40, 'Tempel 40 nama: judul, nomor & nama ganda dibersihkan', String(gp.total));
+    ok(gp.parsed[0] === 'Guru Satu, S.Pd.|198001012005011001|Guru IPA' && gp.parsed[1].startsWith('Guru Dua|'), 'Kolom Nama, NIP, Jabatan dari Excel dikenali', gp.parsed.join(' / '));
+    ok(/22 guru tiap sesi/.test(gp.capOk) && /cadangan 18/.test(gp.capOk), 'Kapasitas 1 pengawas: cadangan 18 guru', gp.capOk);
+    ok(gp.allFilled && gp.noDup && gp.res.empty === 0, 'Semua 22 ruang terisi, tidak ada guru dobel dalam satu sesi', JSON.stringify(gp.res));
+    ok(gp.spread[1] - gp.spread[0] <= 1, 'Tugas dibagi merata', gp.spread.join('–'));
+    ok(gp.piketFree, 'Guru piket tidak mengawas pada hari piketnya');
+    ok(gp.sameRoom === 0, 'Guru tidak mengawas ruang yang sama dua sesi berturut-turut', String(gp.sameRoom));
+    ok(gp.badge === String(gp.b10), 'Jumlah sesi per guru tampil di daftar', gp.badge);
+    ok(/kurang 4 guru/.test(gp.capLow) && /kurang 4 orang/.test(gp.badgeTab) && gp.res2.empty === 4 * gp.nSesi,
+        '2 pengawas × 22 ruang: peringatan kurang 4 guru & kotak sisa dibiarkan kosong', `${gp.res2.empty} kosong`);
+    ok(gp.refillActive, 'Isi Pengawas Kosong memakai guru yang dicentang');
+    ok(gp.nipInSk, 'NIP dari Daftar Guru tampil di Lampiran III SK');
+
+    const gpTpl = await download(page, () => downloadScheduleTemplate());
+    await page.setInputFiles('#full-template-upload', { name: 'guru.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: fs.readFileSync(gpTpl) });
+    txt = await dialogText(page);
+    ok(txt && /Daftar Guru Pengawas/.test(txt) && /40 guru, 30 bertugas/.test(txt), 'Lembar Guru_Pengawas diunduh & dikenali saat impor', (txt || '').replace(/\s+/g, ' ').slice(0, 160));
+    await closeDialog(page, 'Muat Bagian Terpilih');
+    ok(await page.evaluate(() => appState.guruPengawas.length === 40 && appState.guruPengawas.filter(g => g.aktif).length === 30), 'Impor Guru_Pengawas memulihkan centang bertugas');
+
+    const legacy = await page.evaluate(() => {
+        const snap = JSON.parse(JSON.stringify(appState));
+        delete snap.guruPengawas;
+        snap.schedule[0].sesi[0].pengawas[0] = ['Guru Lama', ''];
+        mergeIntoState(snap);
+        return appState.guruPengawas.some(g => g.nama === 'Guru Lama');
+    });
+    ok(legacy, 'Backup lama tanpa daftar guru: daftar dibentuk dari jadwal');
+
+    await page.click('#guru-pengawas-section button:has-text("Bagi Pengawas Otomatis")');
+    txt = await dialogText(page);
+    ok(txt && /diganti/.test(txt), 'Tombol Bagi Pengawas Otomatis meminta konfirmasi');
+    await closeDialog(page, 'Bagi Sekarang');
+    await page.evaluate(() => { setJumlahRuang(4); setPengawasPerRuang(2); initApp(); });
 
     console.log('7. Muat backup JSON');
     const JSONIN = 'input[onchange*="loadConfigJSON"]';

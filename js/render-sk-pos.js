@@ -62,6 +62,12 @@ function renderSKCompleteHTML(paper) {
                 </table>
             </div>` : '';
     const committeeByName = new Map(committee.map(c => [norm(c.nama), c]));
+    (appState.guruPengawas || []).forEach(g => {
+        const k = norm(g.nama);
+        const c = committeeByName.get(k);
+        if (!c) committeeByName.set(k, { nip: g.nip, jabatanDinas: g.jabatan });
+        else if ((!c.nip || c.nip === '-') && g.nip) committeeByName.set(k, Object.assign({}, c, { nip: g.nip }));
+    });
     const proctorRows = [...proctors.values()].map((pr, i) => {
         const c = committeeByName.get(norm(pr.nama));
         const roomText = [...pr.rooms].sort((a, b) => a - b).map(r => padRoom(r)).join(', ') || '-';

@@ -14,11 +14,12 @@ const TPL_SHEETS = {
     korektor: n => n.includes('korektor') || n.includes('penyusun'),
     susulan: n => n.includes('susulan'),
     piket: n => n.includes('piket'),
-    jadwal: n => (n.includes('jadwal') || n.includes('pengawas')) && !n.includes('susulan') && !n.includes('piket')
+    guru: n => n.includes('gurupengawas') || n.includes('daftarguru'),
+    jadwal: n => (n.includes('jadwal') || n.includes('pengawas')) && !n.includes('susulan') && !n.includes('piket') && !n.includes('guru')
 };
 const TPL_LABELS = {
     peserta: 'Peserta', panitia: 'Panitia', korektor: 'Penyusun Soal & Korektor',
-    jadwal: 'Jadwal & Pengawas Ruang', piket: 'Guru Piket', susulan: 'Jadwal Susulan'
+    guru: 'Daftar Guru Pengawas', jadwal: 'Jadwal & Pengawas Ruang', piket: 'Guru Piket', susulan: 'Jadwal Susulan'
 };
 
 function tplText(v) {
@@ -91,6 +92,8 @@ function downloadFullTemplate(only) {
         ['Peserta', 'Kelas: VII / VIII / IX (atau 7 / 8 / 9). L/P: L atau P. Ruang: angka (1, 2, ...). Nilai boleh kosong.'],
         ['Panitia', 'Satu baris per orang. Jabatan Panitia memakai kata kunci seperti "Penanggung Jawab", "Ketua", "Sekretaris" agar tanda tangan dokumen terisi tepat.'],
         ['Korektor', 'Satu baris per mata pelajaran; isi nama guru untuk Kelas VII, VIII, IX.'],
+        ['Guru_Pengawas', 'Daftar semua guru. Kolom Bertugas: "Ya" bila ikut dibagi tugas mengawas, "Tidak" bila tidak.'],
+        ['', 'Setelah diimpor, klik "Bagi Pengawas Otomatis" di menu Jadwal & Pengawas untuk mengisi seluruh jadwal pengawas.'],
         ['Jadwal_Pengawas', 'Satu baris per SESI. Untuk sesi kedua di hari yang sama, kolom Hari & Tanggal boleh dikosongkan.'],
         ['', 'Banyaknya hari & sesi bebas: tambah atau hapus baris sesuai kebutuhan.'],
         ['', 'Jumlah ruang mengikuti banyaknya kolom ruang. Tambah kolom (mis. "Ruang 4 - Pengawas 1") bila ruangnya lebih banyak.'],
@@ -114,6 +117,11 @@ function downloadFullTemplate(only) {
         ['No', 'Mata Pelajaran', 'Kelas VII', 'Kelas VIII', 'Kelas IX', 'Bentuk Soal', 'Waktu'],
         ...appState.correctors.map((c, i) => [i + 1, c.mapel, c.k7, c.k8, c.k9, c.bentuk || '', c.waktu || ''])
     ], [5, 40, 26, 26, 26, 42, 12]);
+
+    add('Guru_Pengawas', [
+        ['No', 'Nama Lengkap & Gelar', 'NIP', 'Jabatan Dinas', 'Bertugas (Ya/Tidak)'],
+        ...(appState.guruPengawas || []).map((g, i) => [i + 1, g.nama, g.nip || '', g.jabatan || '', g.aktif === false ? 'Tidak' : 'Ya'])
+    ], [5, 34, 22, 24, 18]);
 
     ensureScheduleRooms();
     const n = appState.jumlahRuang;
@@ -150,7 +158,7 @@ function downloadFullTemplate(only) {
 }
 
 function downloadScheduleTemplate() {
-    downloadFullTemplate(['Jadwal_Pengawas', 'Guru_Piket', 'Susulan']);
+    downloadFullTemplate(['Guru_Pengawas', 'Jadwal_Pengawas', 'Guru_Piket', 'Susulan']);
 }
 
 // ---------------------------------------------------------------------------
@@ -246,6 +254,29 @@ function parseScheduleSheet(rows) {
     };
 }
 
+function parseGuruSheet(rows) {
+    const h = findHeader(rows, {
+        nama: ['namalengkapgelar', 'namalengkap', 'namaguru', 'nama'],
+        nip: ['nip', 'nik', 'nuptk'],
+        jabatan: ['jabatandinas', 'jabatan', 'mapel'],
+        aktif: ['bertugas', 'aktif', 'mengawas', 'pengawas']
+    }, 'nama');
+    if (!h) return { error: 'kolom "Nama" tidak ditemukan.' };
+    const raw = [];
+    rows.slice(h.idx + 1).forEach(row => {
+        const nama = cellOf(row, h.map, 'nama');
+        if (!nama) return;
+        const flag = cellOf(row, h.map, 'aktif').toLowerCase();
+        raw.push({ nama, nip: cellOf(row, h.map, 'nip').replace(/^-$/, ''), jabatan: cellOf(row, h.map, 'jabatan') || 'Guru',
+            aktif: !/^(tidak|tdk|t|no|n|0|x|-|false)$/.test(flag) });
+    });
+    const data = sanitizeGuruList(raw);
+    if (!data.length) return { error: 'tidak ada baris yang berisi nama.' };
+    const warnings = raw.length > data.length ? [`${raw.length - data.length} nama ganda dilewati.`] : [];
+    const aktif = data.filter(g => g.aktif).length;
+    return { data, info: `${data.length} guru, ${aktif} bertugas`, warnings };
+}
+
 function parseRosterSheet(rows) {
     const h = findHeader(rows, { hari: ['hari'] }, 'hari');
     if (!h) return { error: 'kolom "Hari" tidak ditemukan.' };
@@ -286,7 +317,7 @@ function parseMakeupSheet(rows) {
 
 function parseFullTemplate(workbook) {
     const sheets = findTemplateSheets(workbook);
-    const parsers = { panitia: parseCommitteeSheet, korektor: parseCorrectorSheet, jadwal: parseScheduleSheet, piket: parseRosterSheet, susulan: parseMakeupSheet };
+    const parsers = { panitia: parseCommitteeSheet, korektor: parseCorrectorSheet, guru: parseGuruSheet, jadwal: parseScheduleSheet, piket: parseRosterSheet, susulan: parseMakeupSheet };
     const sections = [];
     Object.keys(TPL_LABELS).forEach(key => {
         const name = sheets[key];
@@ -322,6 +353,7 @@ function applyTemplateSection(sec) {
             appState.pengawasPerRuang = sec.data.pengawasPerRuang;
             appState.schedule.forEach((d, i) => { if (appState.dailyRoster[i] && d.hari) appState.dailyRoster[i].hari = d.hari; });
             break;
+        case 'guru': appState.guruPengawas = sec.data; break;
         case 'piket': appState.dailyRoster = sec.data; break;
         case 'susulan': appState.makeupSchedule = sec.data; break;
     }
@@ -359,7 +391,7 @@ function handleFullTemplateUpload(event) {
         if (!usable.length) {
             const why = sections.length
                 ? `<ul class="list-disc pl-5 space-y-1">${sections.map(s => `<li><strong>${escapeHtml(s.sheet)}</strong>: ${escapeHtml(s.error)}</li>`).join('')}</ul>`
-                : '<p>Tidak ada lembar bernama Peserta, Panitia, Korektor, Jadwal_Pengawas, Guru_Piket, atau Susulan. Unduh template lengkap dari menu Data &amp; Backup sebagai contoh.</p>';
+                : '<p>Tidak ada lembar bernama Peserta, Panitia, Korektor, Guru_Pengawas, Jadwal_Pengawas, Guru_Piket, atau Susulan. Unduh template lengkap dari menu Data &amp; Backup sebagai contoh.</p>';
             showChoiceDialog({ title: 'Tidak ada data yang dapat diimpor', html: why, buttons: [{ label: 'Tutup', value: null, primary: true }] });
             return;
         }

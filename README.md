@@ -56,6 +56,7 @@ js/                     Kode aplikasi, dimuat berurutan:
   state.js                data aplikasi, simpan otomatis, validasi backup
   image-tools.js          validasi & kompresi gambar unggahan
   ui.js                   inisialisasi, tab, editor panitia/jadwal/anggaran
+  guru-pengawas.js        daftar guru pengawas & pembagian pengawas otomatis
   layout.js               kalkulasi tata letak, kop surat, tanda tangan
   render-*.js             17 dokumen output
   settings.js             handler form pengaturan & unggah gambar

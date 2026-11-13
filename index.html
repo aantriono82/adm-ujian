@@ -621,10 +621,35 @@
                         <p class="text-[10px] text-slate-500">Mengisi ulang hari/tanggal jadwal utama & susulan serta teks rentang tanggal di tab 1. Mapel dan pengawas tidak berubah.</p>
                     </div>
 
+                    <div id="guru-pengawas-section" class="bg-white border border-slate-200 rounded-xl p-3 space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="section-title">Daftar Guru Pengawas</h3>
+                            <span id="guru-pengawas-count" class="text-[11px] font-semibold text-slate-500"></span>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Masukkan semua guru sekali saja, centang yang <strong>bertugas mengawas</strong>, lalu klik <strong>Bagi Pengawas Otomatis</strong>. Tempel satu guru per baris; kolom Nama, NIP, Jabatan bisa langsung disalin dari Excel.</p>
+                        <textarea id="input-guru-paste" rows="3" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none resize-y" placeholder="Contoh:&#10;Hendra Gunawan, S.Pd.&#9;198405172010011007&#10;Nurhayati, S.Pd."></textarea>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addGuruFromPaste()" class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer">Tambahkan ke Daftar</button>
+                            <button onclick="importGuruFromApp()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg px-2 py-1.5 text-[11px] font-semibold cursor-pointer" title="Ambil nama dari kotak pengawas, guru piket, susulan, dan panitia">Ambil dari Jadwal & Panitia</button>
+                        </div>
+                        <div id="guru-pengawas-capacity"></div>
+                        <div class="grid grid-cols-[1.25rem_1fr_8rem_2rem_1.25rem] gap-1.5 text-[10px] font-semibold text-slate-500">
+                            <span title="Bertugas mengawas">✓</span><span>Nama Guru</span><span>NIP</span><span class="text-center" title="Jumlah sesi mengawas">Sesi</span><span></span>
+                        </div>
+                        <div id="guru-pengawas-list" class="space-y-1 max-h-72 overflow-y-auto pr-1"></div>
+                        <div class="flex flex-wrap gap-1.5 text-[11px]">
+                            <button onclick="setAllGuruAktif(true)" class="border border-slate-300 rounded-lg px-2 py-1 font-semibold text-slate-600 hover:text-primary-700 cursor-pointer">Centang Semua</button>
+                            <button onclick="setAllGuruAktif(false)" class="border border-slate-300 rounded-lg px-2 py-1 font-semibold text-slate-600 hover:text-primary-700 cursor-pointer">Hapus Centang</button>
+                            <button onclick="clearGuruList()" class="border border-slate-300 rounded-lg px-2 py-1 font-semibold text-slate-600 hover:text-rose-600 cursor-pointer">Kosongkan Daftar</button>
+                        </div>
+                        <button onclick="autoDistributeProctors()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-2.5 py-2 text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5"><i data-lucide="shuffle" class="w-3.5 h-3.5"></i> Bagi Pengawas Otomatis</button>
+                        <p class="text-[10px] text-slate-500">Mengganti <strong>seluruh</strong> pengawas jadwal utama: tugas dibagi merata, tidak dobel dalam satu sesi, ruang berganti-ganti, dan guru piket hari itu baru dipakai bila guru lain tidak cukup.</p>
+                    </div>
+
                     <div class="space-y-2">
                         <h3 class="section-title">Jadwal Asesmen Utama & Pengawas per Ruang</h3>
-                        <button onclick="fillEmptyProctors()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer" title="Isi kotak pengawas yang masih kosong dari daftar guru yang sudah ada di jadwal & panitia">Isi Pengawas Kosong Otomatis</button>
-                        <p class="text-[10px] text-slate-500">Hanya mengisi kotak yang kosong (mis. setelah jumlah ruang ditambah). Nama yang sudah ada tidak diubah; guru dibagi merata dan tidak dobel dalam satu sesi.</p>
+                        <button onclick="fillEmptyProctors()" class="w-full bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer" title="Isi kotak pengawas yang masih kosong dari Daftar Guru Pengawas">Isi Pengawas Kosong Saja</button>
+                        <p class="text-[10px] text-slate-500">Hanya mengisi kotak yang kosong (mis. setelah jumlah ruang ditambah) dari guru yang dicentang di Daftar Guru Pengawas. Nama yang sudah ada tidak diubah; guru dibagi merata dan tidak dobel dalam satu sesi.</p>
                         <div id="schedule-editor-container" class="space-y-2.5"></div>
                     </div>
 
@@ -1124,6 +1149,7 @@
     <script src="js/state.js"></script>
     <script src="js/image-tools.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/guru-pengawas.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/render-peserta.js"></script>
     <script src="js/render-sk-pos.js"></script>
