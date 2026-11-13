@@ -25,7 +25,7 @@ function renderStudentTable() {
             </td>
             <td class="p-1.5 text-center">
                 <div class="flex items-center gap-1 justify-center">
-                    <input type="text" value="${escapeHtml(st.kelas)}" oninput="appState.students[${idx}].kelas=this.value;renderAll()" onchange="renderStudentTable()" class="w-8 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold" title="Kelas">
+                    <input type="text" value="${escapeHtml(st.kelas)}" oninput="appState.students[${idx}].kelas=this.value;renderAll()" onchange="renderStudentTable()" class="w-14 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold" title="Kelas">
                     <input type="text" value="${escapeHtml(st.ruang)}" oninput="appState.students[${idx}].ruang=this.value;renderAll()" class="w-6 text-center bg-primary-50 text-primary-700 rounded py-0.5 text-[10px] font-bold" title="Ruang">
                 </div>
             </td>
@@ -53,11 +53,15 @@ function addStudentManual() {
     const nama = document.getElementById('new-nama').value.trim();
     const lp = document.getElementById('new-lp').value;
     const nisn = document.getElementById('new-nisn').value.trim();
-    const kelas = document.getElementById('new-kelas').value;
+    const kelas = document.getElementById('new-kelas').value.trim().toUpperCase();
     const ruang = document.getElementById('new-ruang').value.trim() || '1';
 
     if (!nama) {
         showToast("Nama peserta wajib diisi!");
+        return;
+    }
+    if (!gradeOf(kelas)) {
+        showToast("Kelas harus diawali VII, VIII, atau IX (mis. VII.A, VIII.C, IX.G).");
         return;
     }
 
