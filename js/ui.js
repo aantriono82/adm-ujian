@@ -416,14 +416,17 @@ function renderScheduleEditor() {
                 </div>
                 <div class="grid grid-cols-3 gap-1.5">
                     <input type="text" value="${escapeHtml(ss.waktu)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].waktu=this.value;renderAll()" class="border border-slate-300 rounded px-2 py-1 bg-slate-50" placeholder="Waktu">
-                    <input type="text" value="${escapeHtml(ss.mapel)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].mapel=this.value;renderAll()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-slate-50" placeholder="Mata Pelajaran">
+                    <input type="text" value="${escapeHtml(ss.mapel)}" title="${escapeHtml(ss.mapel)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].mapel=this.value;this.title=this.value;renderAll()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-slate-50" placeholder="Mata Pelajaran">
                 </div>
-                <div class="grid grid-cols-3 gap-1.5 text-[10px]">
+                <div class="space-y-1 text-[11px]">
+                    <div class="grid grid-cols-[2.25rem_1fr_1fr] gap-1.5 text-[10px] font-semibold text-slate-500">
+                        <span>Ruang</span><span>Pengawas 1</span><span>Pengawas 2</span>
+                    </div>
                     ${ss.pengawas.slice(0, n).map((pair, rIdx) => `
-                    <div>
-                        <span class="font-bold text-slate-600 block">R.${rIdx + 1}:</span>
-                        <input type="text" value="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;renderAll()" class="w-full border border-slate-200 rounded px-1 py-0.5 mb-0.5" placeholder="Pengawas 1">
-                        <input type="text" value="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;renderAll()" class="w-full border border-slate-200 rounded px-1 py-0.5" placeholder="Pengawas 2">
+                    <div class="grid grid-cols-[2.25rem_1fr_1fr] gap-1.5 items-center">
+                        <span class="font-bold text-slate-600">R.${rIdx + 1}</span>
+                        <input type="text" value="${escapeHtml(pair[0])}" title="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 1">
+                        <input type="text" value="${escapeHtml(pair[1])}" title="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 2">
                     </div>`).join('')}
                 </div>
             </div>`;
@@ -561,11 +564,21 @@ function updateTanggalMulai() {
 function renderMakeupEditor() {
     const container = document.getElementById('makeup-editor-container');
     if (!container) return;
+    const field = (idx, key, ph, extra = '') => {
+        const v = escapeHtml(appState.makeupSchedule[idx][key] || '');
+        return `<input type="text" value="${v}" title="${v}" placeholder="${ph}" oninput="appState.makeupSchedule[${idx}].${key}=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1 ${extra}">`;
+    };
     container.innerHTML = appState.makeupSchedule.map((m, idx) => `
-        <div class="grid grid-cols-3 gap-1.5 border border-slate-200 rounded p-1.5 bg-white text-[11px]">
-            <input type="text" value="${escapeHtml(m.hariTanggal)}" oninput="appState.makeupSchedule[${idx}].hariTanggal=this.value;renderAll()" class="border border-slate-200 rounded px-1.5 py-0.5 font-semibold">
-            <input type="text" value="${escapeHtml(m.mapel)}" oninput="appState.makeupSchedule[${idx}].mapel=this.value;renderAll()" class="border border-slate-200 rounded px-1.5 py-0.5">
-            <input type="text" value="${escapeHtml(m.pengawas)}" oninput="appState.makeupSchedule[${idx}].pengawas=this.value;renderAll()" class="border border-slate-200 rounded px-1.5 py-0.5">
+        <div class="border border-slate-200 rounded-lg p-2 bg-white text-[11px] space-y-1.5">
+            <div class="grid grid-cols-2 gap-1.5">
+                ${field(idx, 'hariTanggal', 'Hari, tanggal', 'font-semibold')}
+                ${field(idx, 'waktu', 'Waktu')}
+            </div>
+            ${field(idx, 'mapel', 'Mata Pelajaran', 'font-semibold')}
+            <div class="grid grid-cols-[1fr_2fr] gap-1.5">
+                ${field(idx, 'ruang', 'Ruang')}
+                ${field(idx, 'pengawas', 'Pengawas')}
+            </div>
         </div>
     `).join('');
 }

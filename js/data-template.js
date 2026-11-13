@@ -67,10 +67,12 @@ function cellOf(row, map, field) {
 // ---------------------------------------------------------------------------
 // UNDUH TEMPLATE
 // ---------------------------------------------------------------------------
-function downloadFullTemplate() {
+// only: daftar lembar yang dibuat (selain Petunjuk); kosong = semua lembar
+function downloadFullTemplate(only) {
     if (!ensureXLSX()) return;
     const wb = XLSX.utils.book_new();
     const add = (name, aoa, cols) => {
+        if (only && name !== 'Petunjuk' && !only.includes(name)) return;
         const ws = XLSX.utils.aoa_to_sheet(aoa);
         ws['!cols'] = cols.map(wch => ({ wch }));
         XLSX.utils.book_append_sheet(wb, ws, name);
@@ -80,9 +82,9 @@ function downloadFullTemplate() {
         ['TEMPLATE DATA ASESMEN — ' + (appState.kegiatan.singkatan || '')],
         [''],
         ['Cara memakai:'],
-        ['1. Isi atau ubah data di setiap lembar (Peserta, Panitia, Korektor, Jadwal_Pengawas, Guru_Piket, Susulan).'],
+        ['1. Isi atau ubah data di setiap lembar yang ada di berkas ini.'],
         ['2. Jangan ubah nama lembar dan baris judul kolom (baris pertama tiap lembar).'],
-        ['3. Simpan berkas, lalu di aplikasi buka menu Data & Backup → Impor Template Lengkap.'],
+        ['3. Simpan berkas, lalu di aplikasi klik Impor Template (menu Data & Backup, Panitia, atau Jadwal & Pengawas).'],
         ['4. Pilih bagian yang ingin dimuat. Bagian yang dipilih akan MENGGANTI data lama di aplikasi.'],
         [''],
         ['Keterangan per lembar:'],
@@ -90,6 +92,7 @@ function downloadFullTemplate() {
         ['Panitia', 'Satu baris per orang. Jabatan Panitia memakai kata kunci seperti "Penanggung Jawab", "Ketua", "Sekretaris" agar tanda tangan dokumen terisi tepat.'],
         ['Korektor', 'Satu baris per mata pelajaran; isi nama guru untuk Kelas VII, VIII, IX.'],
         ['Jadwal_Pengawas', 'Satu baris per SESI. Untuk sesi kedua di hari yang sama, kolom Hari & Tanggal boleh dikosongkan.'],
+        ['', 'Banyaknya hari & sesi bebas: tambah atau hapus baris sesuai kebutuhan.'],
         ['', 'Jumlah ruang mengikuti banyaknya kolom "Ruang N - Pengawas 1/2". Tambah kolom (mis. Ruang 4 - Pengawas 1) bila ruangnya lebih banyak.'],
         ['Guru_Piket', 'Satu baris per hari ujian (urutan sama dengan jadwal), maksimal 10 guru per hari.'],
         ['Susulan', 'Satu baris per hari susulan.']
@@ -136,8 +139,13 @@ function downloadFullTemplate() {
         ...appState.makeupSchedule.map(m => [m.hariTanggal, m.waktu || '', m.mapel, m.ruang || '', m.pengawas])
     ], [22, 28, 40, 16, 30]);
 
-    XLSX.writeFile(wb, `Template_Data_Lengkap_${appState.kegiatan.singkatan}.xlsx`);
-    showToast('Template data lengkap berhasil diunduh!');
+    const jenis = only ? 'Jadwal' : 'Data_Lengkap';
+    XLSX.writeFile(wb, `Template_${jenis}_${appState.kegiatan.singkatan}.xlsx`);
+    showToast(only ? 'Template jadwal berhasil diunduh!' : 'Template data lengkap berhasil diunduh!');
+}
+
+function downloadScheduleTemplate() {
+    downloadFullTemplate(['Jadwal_Pengawas', 'Guru_Piket', 'Susulan']);
 }
 
 // ---------------------------------------------------------------------------

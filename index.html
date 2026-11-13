@@ -578,6 +578,17 @@
                     <div class="bg-amber-50 border border-amber-200 rounded-lg p-2.5 text-xs text-amber-900">
                         Sesuaikan Hari, Tanggal, Jam, dan Mata Pelajaran untuk setiap semester. Jadwal ini otomatis tampil di <strong>POS Asesmen, Daftar Hadir Panitia, Daftar Hadir Pengawas, Berita Acara, dan Jadwal Susulan</strong>.
                     </div>
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 space-y-2">
+                        <p class="text-[11px] text-emerald-800">Lebih mudah lewat Excel: unduh template berisi jadwal, pengawas per ruang, guru piket, dan jadwal susulan saat ini, ubah di Excel, lalu impor kembali.</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="downloadScheduleTemplate()" class="bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh Template
+                            </button>
+                            <button onclick="document.getElementById('full-template-upload').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Impor Template
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2.5">
                         <div class="grid grid-cols-2 gap-2.5">

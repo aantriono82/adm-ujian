@@ -203,6 +203,10 @@ async function closeDialog(page, label) {
     ok(['Petunjuk', 'Peserta', 'Panitia', 'Korektor', 'Jadwal_Pengawas', 'Guru_Piket', 'Susulan'].every(n => sheetNames.includes(n)),
         'Template lengkap berisi 7 lembar', sheetNames.join(', '));
 
+    const jadwalTpl = await download(page, () => downloadScheduleTemplate());
+    const jadwalSheets = await page.evaluate(a => XLSX.read(new Uint8Array(a), { type: 'array' }).SheetNames, Array.from(fs.readFileSync(jadwalTpl)));
+    ok(jadwalSheets.join() === 'Petunjuk,Jadwal_Pengawas,Guru_Piket,Susulan', 'Template jadwal hanya berisi lembar jadwal', jadwalSheets.join(', '));
+
     // Template lengkap lewat tombol impor peserta → lembar "Peserta" yang dibaca, bukan "Petunjuk"
     await upload(EXCEL, 'lengkap.xlsx', fullBuf, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     txt = await dialogText(page);
