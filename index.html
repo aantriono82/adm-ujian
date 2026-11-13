@@ -34,11 +34,22 @@
                 document.documentElement.classList.add('dark');
             }
         })();
+        // Tinggi layar yang benar-benar terlihat. Di tab Chrome yang dibuka dari aplikasi lain
+        // (mis. WhatsApp) 100dvh bisa lebih tinggi dari layar, sehingga navigasi bawah
+        // (Pengaturan / Pratinjau) terpotong di luar layar.
+        (function () {
+            var root = document.documentElement;
+            function setAppHeight() { if (window.innerHeight) root.style.setProperty('--app-h', window.innerHeight + 'px'); }
+            setAppHeight();
+            window.addEventListener('resize', setAppHeight);
+            window.addEventListener('orientationchange', function () { setTimeout(setAppHeight, 150); });
+            window.addEventListener('pageshow', setAppHeight);
+        })();
     </script>
     <script src="vendor/xlsx.full.min.js"></script>
     <script src="vendor/lucide.min.js"></script>
 </head>
-<body class="h-screen h-[100dvh] flex flex-col overflow-hidden text-slate-800" data-mode="ASAS" data-mview="settings">
+<body class="app-body h-screen h-[100dvh] flex flex-col overflow-hidden text-slate-800" data-mode="ASAS" data-mview="settings">
 
     <!-- Bilah atas khusus layar kecil -->
     <div class="lg:hidden no-print bg-white border-b border-slate-200 px-3 py-2 flex items-center gap-2.5 shrink-0">
@@ -1071,7 +1082,7 @@
     </footer>
 
     <!-- Navigasi bawah (layar kecil): beralih Pengaturan / Pratinjau -->
-    <nav class="lg:hidden no-print shrink-0 bg-white border-t border-slate-200 grid grid-cols-2 p-1.5 gap-1.5">
+    <nav class="mobile-nav lg:hidden no-print shrink-0 bg-white border-t border-slate-200 grid grid-cols-2 p-1.5 gap-1.5">
         <button onclick="setMobileView('settings')" id="mview-settings" class="mview-btn"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Pengaturan</button>
         <button onclick="setMobileView('preview')" id="mview-preview" class="mview-btn"><i data-lucide="eye" class="w-4 h-4"></i> Pratinjau</button>
     </nav>
