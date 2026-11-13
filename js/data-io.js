@@ -163,10 +163,11 @@ function normalizeLP(v) {
 }
 
 // Ubah isi workbook menjadi daftar peserta + daftar peringatan
-function parseStudentsFromWorkbook(workbook, existingStudents) {
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+function parseStudentsFromWorkbook(workbook, existingStudents, sheetName) {
+    const name = sheetName || workbook.SheetNames[0];
+    const sheet = workbook.Sheets[name];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false });
-    if (!rows.length) return { error: 'Lembar pertama berkas Excel kosong.' };
+    if (!rows.length) return { error: sheetName ? `Lembar "${name}" kosong.` : 'Lembar pertama berkas Excel kosong.' };
 
     // Cari baris judul kolom (yang memuat kolom Nama) di 20 baris pertama
     let headerIdx = -1, map = null;
@@ -247,6 +248,11 @@ function parseStudentsFromWorkbook(workbook, existingStudents) {
     return { students, warnings };
 }
 
+// Berkas template lengkap: pakai lembar "Peserta"; berkas biasa: lembar pertama
+function pesertaSheetName(workbook) {
+    return workbook.SheetNames.find(n => /peserta|siswa/.test(normalizeHeader(n))) || workbook.SheetNames[0];
+}
+
 function handleExcelUpload(event) {
     const input = event.target;
     const file = input.files[0];
@@ -265,7 +271,7 @@ function handleExcelUpload(event) {
         let result;
         try {
             const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-            result = parseStudentsFromWorkbook(workbook, []);
+            result = parseStudentsFromWorkbook(workbook, [], pesertaSheetName(workbook));
         } catch (err) {
             showChoiceDialog({
                 title: 'Gagal membaca berkas Excel',
@@ -309,7 +315,7 @@ function handleExcelUpload(event) {
         if (choice === 'append') {
             // Ulangi validasi agar nomor otomatis & pengecekan ganda memperhitungkan data lama
             const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-            const res2 = parseStudentsFromWorkbook(workbook, appState.students);
+            const res2 = parseStudentsFromWorkbook(workbook, appState.students, pesertaSheetName(workbook));
             imported = res2.students;
             if (res2.warnings.some(w => /ganda/.test(w))) {
                 showToast('Perhatian: ada Nomor Ujian/NISN yang sama dengan data lama.');
