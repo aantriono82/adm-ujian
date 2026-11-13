@@ -2,9 +2,9 @@
         font-family: 'Inter', sans-serif;
         background-color: #f1f5f9;
     }
-    /* Judul antarmuka memakai Poppins; isi, menu & form tetap Inter */
+    /* Judul antarmuka: Inter tebal dengan jarak huruf sedikit rapat */
     .font-display, #panel-title, .section-title {
-        font-family: 'Poppins', 'Inter', sans-serif; font-weight: 600; letter-spacing: 0;
+        font-weight: 700; letter-spacing: -.011em;
     }
     .font-serif-formal {
         font-family: 'Tinos', 'Times New Roman', Times, serif;
