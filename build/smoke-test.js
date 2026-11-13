@@ -493,6 +493,8 @@ async function closeDialog(page, label) {
     const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml',
         '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json' };
     const server = http.createServer((req, res) => {
+        // Tiru hosting (mis. Cloudflare) yang mengalihkan /index.html -> /
+        if (req.url.split('?')[0] === '/index.html') { res.writeHead(307, { Location: '/' }); return res.end(); }
         const rel = decodeURIComponent(req.url.split('?')[0]).replace(/^\/+/, '') || 'index.html';
         const file = path.join(ROOT, rel);
         if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end(); }

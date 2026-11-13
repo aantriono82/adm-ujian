@@ -9,7 +9,8 @@
     "build:icons": "node build/make-icons.js",
     "build": "npm run build:css && npm run build:sw",
     "test": "node build/build-sw.js --check && node build/smoke-test.js",
-    "build:deb": "sh build/make-deb.sh"
+    "build:deb": "sh build/make-deb.sh",
+    "deploy:cf": "sh build/deploy-cf.sh"
   },
   "devDependencies": {
     "playwright-core": "^1.48.0",
