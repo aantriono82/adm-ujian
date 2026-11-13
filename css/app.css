@@ -41,6 +41,12 @@
     .choice-box:has(input:checked) .choice-title { color: rgb(var(--p-900)); }
     .accent-text { color: var(--accent); }
     .accent-gradient { background: linear-gradient(135deg, var(--accent), var(--accent-2)); transition: background .3s; }
+    /* Logo aplikasi: papan ujian + centang; warna aksen mengikuti mode (ASAS/ASAT/ASAJ) */
+    .brand-mark { display: block; }
+    .brand-mark .bm-paper { fill: #fff; }
+    .brand-mark .bm-clip { fill: #fff; stroke: var(--accent); stroke-width: 1.3; }
+    .brand-mark .bm-line { fill: var(--accent); opacity: .4; }
+    .brand-mark .bm-check { fill: none; stroke: var(--accent); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
     .accent-btn { background: var(--accent); color: #fff; }
     .accent-btn:hover { background: var(--accent-hover); }
     .accent-pill { background: var(--accent-soft); color: var(--accent-ink); border: 1px solid var(--accent-border); }
