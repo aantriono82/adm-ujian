@@ -26,6 +26,7 @@ function renderAll() {
                 <p class="text-sm font-bold text-slate-700">Tidak ada peserta untuk sasaran ${preset.targetGradesText}.</p>
                 <p class="text-xs text-slate-500 mt-1">Tambahkan peserta ${preset.targetGradesText} pada tab <strong>5. Peserta</strong> atau matikan centang filter kelas otomatis di tab <strong>1. Mode</strong>.</p>
             </div>`;
+        refreshZoom();
         saveStateSoon();
         return;
     }
@@ -128,6 +129,7 @@ function renderAll() {
     }
 
     refreshIcons();
+    refreshZoom();
     const navSchool = document.getElementById('nav-school-name');
     if (navSchool) navSchool.textContent = appState.kop.sekolah;
     saveStateSoon();

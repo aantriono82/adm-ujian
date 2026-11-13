@@ -3,11 +3,11 @@
 // ============================================================================
 function printPDF() {
     const container = document.getElementById('sheets-container');
-    const prevTransform = container.style.transform;
-    container.style.transform = 'none';
+    const prevZoom = container.style.zoom;
+    container.style.zoom = '1';
     setTimeout(() => {
         window.print();
-        container.style.transform = prevTransform;
+        container.style.zoom = prevZoom;
     }, 150);
 }
 

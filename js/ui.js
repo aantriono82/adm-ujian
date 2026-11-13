@@ -128,35 +128,20 @@ function updateModeHighlightUI() {
     const mode = appState.assessmentMode;
     const preset = ASSESSMENT_PRESETS[mode];
 
+    document.body.dataset.mode = mode;
+
     // Update pill di navbar
     const pill = document.getElementById('nav-mode-pill');
-    if (pill) {
-        pill.textContent = `${preset.shortName} (${preset.targetGrades.join(', ')})`;
-        pill.className = mode === 'ASAS'
-            ? "bg-blue-100 text-blue-800 border border-blue-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase"
-            : mode === 'ASAT'
-            ? "bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase"
-            : "bg-purple-100 text-purple-800 border border-purple-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase";
-    }
+    if (pill) pill.textContent = /kelas/i.test(preset.shortName)
+        ? preset.shortName
+        : `${preset.shortName} • Kelas ${preset.targetGrades.join(', ')}`;
 
-    // Update tombol switcher di navbar
+    // Tombol segmen di navbar (desktop & HP) dan kartu mode di tab 1
     ['ASAS', 'ASAT', 'ASAJ'].forEach(m => {
-        const topBtn = document.getElementById('top-mode-' + m);
-        const cardEl = document.getElementById('card-mode-' + m);
-        if (topBtn) {
-            if (m === mode) {
-                topBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer bg-blue-600 text-white shadow-sm";
-            } else {
-                topBtn.className = "px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer text-slate-700 hover:bg-white";
-            }
-        }
-        if (cardEl) {
-            if (m === mode) {
-                cardEl.className = "border-2 border-blue-600 bg-blue-50/70 rounded-xl p-3 cursor-pointer transition flex items-start gap-3";
-            } else {
-                cardEl.className = "border border-slate-200 hover:bg-slate-50 rounded-xl p-3 cursor-pointer transition flex items-start gap-3";
-            }
-        }
+        ['top-mode-', 'top-mode-m-', 'card-mode-'].forEach(prefix => {
+            const el = document.getElementById(prefix + m);
+            if (el) el.classList.toggle('is-active', m === mode);
+        });
     });
 
     const sasaranLabel = document.getElementById('label-sasaran-kelas');
@@ -195,14 +180,10 @@ function switchTab(tabName) {
     if (target) target.classList.remove('hidden');
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-        btn.classList.add('hover:bg-white/60');
+        const active = btn.id === 'tab-btn-' + tabName;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
     });
-    const activeBtn = document.getElementById('tab-btn-' + tabName);
-    if (activeBtn) {
-        activeBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-        activeBtn.classList.remove('hover:bg-white/60');
-    }
 }
 
 function setDocMode(mode) {
@@ -210,6 +191,16 @@ function setDocMode(mode) {
     const sel = document.getElementById('doc-mode-select');
     if (sel) sel.value = mode;
     renderAll();
+    const wrapper = document.getElementById('preview-wrapper');
+    if (wrapper) wrapper.scrollTo(0, 0);
+}
+
+// Pindah ke dokumen sebelum/berikutnya (tombol ‹ ›)
+function stepDocMode(delta) {
+    const values = [...document.querySelectorAll('#doc-mode-select option')].map(o => o.value);
+    const idx = values.indexOf(appState.docMode);
+    const next = values[(idx + delta + values.length) % values.length];
+    if (next) setDocMode(next);
 }
 
 function updateDocPillUI() {
