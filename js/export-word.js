@@ -432,7 +432,7 @@ async function buildDocxBlob(container) {
     }));
 
     const doc = new Document({
-        creator: 'Sistem Administrasi Asesmen Sumatif Terpadu',
+        creator: 'Asesmen Sumatif',
         title: `${appState.kegiatan.singkatan} - ${appState.docMode}`,
         styles: {
             default: {
