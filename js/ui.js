@@ -6,6 +6,7 @@ function initApp() {
     updateDeveloperPhotoUI();
     populateRoomFilterDropdown();
     renderThemeSelector();
+    syncPengawasPerRuangUI();
     renderCommitteeTable();
     renderCorrectorsTable();
     renderScheduleEditor();
@@ -399,6 +400,8 @@ function renderScheduleEditor() {
     if (!container) return;
     ensureScheduleRooms();
     const n = appState.jumlahRuang;
+    const ppr = getPengawasPerRuang();
+    const gridCols = ppr === 1 ? 'grid-cols-[2.25rem_1fr]' : 'grid-cols-[2.25rem_1fr_1fr]';
     const sesiColors = ['blue', 'emerald', 'amber', 'purple'];
     container.innerHTML = appState.schedule.map((d, idx) => `
         <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-50 space-y-2 text-[11px]">
@@ -419,14 +422,14 @@ function renderScheduleEditor() {
                     <input type="text" value="${escapeHtml(ss.mapel)}" title="${escapeHtml(ss.mapel)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].mapel=this.value;this.title=this.value;renderAll()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-slate-50" placeholder="Mata Pelajaran">
                 </div>
                 <div class="space-y-1 text-[11px]">
-                    <div class="grid grid-cols-[2.25rem_1fr_1fr] gap-1.5 text-[10px] font-semibold text-slate-500">
-                        <span>Ruang</span><span>Pengawas 1</span><span>Pengawas 2</span>
+                    <div class="grid ${gridCols} gap-1.5 text-[10px] font-semibold text-slate-500">
+                        <span>Ruang</span>${ppr === 1 ? '<span>Pengawas</span>' : '<span>Pengawas 1</span><span>Pengawas 2</span>'}
                     </div>
                     ${ss.pengawas.slice(0, n).map((pair, rIdx) => `
-                    <div class="grid grid-cols-[2.25rem_1fr_1fr] gap-1.5 items-center">
+                    <div class="grid ${gridCols} gap-1.5 items-center">
                         <span class="font-bold text-slate-600">R.${rIdx + 1}</span>
-                        <input type="text" value="${escapeHtml(pair[0])}" title="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 1">
-                        <input type="text" value="${escapeHtml(pair[1])}" title="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 2">
+                        <input type="text" value="${escapeHtml(pair[0])}" title="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="${ppr === 1 ? 'Pengawas' : 'Pengawas 1'}">
+                        ${ppr === 2 ? `<input type="text" value="${escapeHtml(pair[1])}" title="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 2">` : ''}
                     </div>`).join('')}
                 </div>
             </div>`;
@@ -460,6 +463,23 @@ function setJumlahRuang(val) {
     renderAll();
 }
 
+function setPengawasPerRuang(val) {
+    appState.pengawasPerRuang = parseInt(val, 10) === 1 ? 1 : 2;
+    syncPengawasPerRuangUI();
+    renderScheduleEditor();
+    renderAll();
+}
+
+function syncPengawasPerRuangUI() {
+    const ppr = getPengawasPerRuang();
+    const sel = document.getElementById('input-pengawas-per-ruang');
+    if (sel) sel.value = String(ppr);
+    const p2 = document.getElementById('field-pengawas2');
+    if (p2) p2.classList.toggle('hidden', ppr === 1);
+    const l1 = document.getElementById('label-pengawas1');
+    if (l1) l1.textContent = ppr === 1 ? 'Label Meja Pengawas' : 'Label Meja Pengawas 1';
+}
+
 function syncJumlahRuangFromStudents() {
     const rooms = new Set(getActiveStudents().map(s => String(s.ruang || '1').trim() || '1'));
     setJumlahRuang(Math.max(1, rooms.size));
@@ -491,6 +511,8 @@ function fillEmptyProctors() {
         const v = String(nm || '').trim();
         if (v && v !== '-' && !usage.has(v)) usage.set(v, 0);
     };
+    const ppr = getPengawasPerRuang();
+    // Nama di kotak pengawas 2 yang tersembunyi (mode 1 pengawas) tetap dipakai sebagai daftar guru
     appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => { addName(p[0]); addName(p[1]); })));
     (appState.dailyRoster || []).forEach(r => (r.guru || []).forEach(addName));
     // Panitia hanya cadangan bila jadwal & guru piket belum berisi nama (agar Kepala Sekolah dkk. tidak otomatis jadi pengawas)
@@ -499,7 +521,7 @@ function fillEmptyProctors() {
         showToast("Belum ada nama guru. Isi minimal satu pengawas atau anggota panitia dulu.");
         return;
     }
-    appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => p.forEach(nm => {
+    appState.schedule.forEach(d => d.sesi.forEach(ss => ss.pengawas.slice(0, n).forEach(p => p.slice(0, ppr).forEach(nm => {
         const v = String(nm || '').trim();
         if (usage.has(v)) usage.set(v, usage.get(v) + 1);
     }))));
@@ -507,9 +529,9 @@ function fillEmptyProctors() {
     let filled = 0, unfilled = 0;
     const names = [...usage.keys()];
     appState.schedule.forEach(d => d.sesi.forEach(ss => {
-        const inSession = new Set(ss.pengawas.slice(0, n).flat().map(v => String(v || '').trim()).filter(Boolean));
+        const inSession = new Set(ss.pengawas.slice(0, n).map(p => p.slice(0, ppr)).flat().map(v => String(v || '').trim()).filter(Boolean));
         for (let r = 0; r < n; r++) {
-            for (let k = 0; k < 2; k++) {
+            for (let k = 0; k < ppr; k++) {
                 if (String(ss.pengawas[r][k] || '').trim()) continue;
                 const pick = names
                     .filter(nm => !inSession.has(nm))

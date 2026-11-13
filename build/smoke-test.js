@@ -234,7 +234,7 @@ async function closeDialog(page, label) {
     }, Array.from(fullBuf)).then(a => Buffer.from(a));
     await page.setInputFiles('#full-template-upload', { name: 'lengkap-diisi.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: editedTpl });
     txt = await dialogText(page);
-    ok(txt && /3 orang/.test(txt) && /2 hari, 3 sesi, 4 ruang/.test(txt) && /1 kotak pengawas kosong/.test(txt) && /Jabatan Panitia kosong/.test(txt),
+    ok(txt && /3 orang/.test(txt) && /2 hari, 3 sesi, 4 ruang, 2 pengawas/.test(txt) && /1 kotak pengawas kosong/.test(txt) && /Jabatan Panitia kosong/.test(txt),
         'Ringkasan impor per lembar + peringatan', txt && txt.replace(/\n+/g, ' | ').slice(0, 300));
     await page.uncheck('[role=dialog] input[data-tpl-sec="peserta"]');
     await closeDialog(page, 'Muat Bagian Terpilih');
@@ -251,6 +251,42 @@ async function closeDialog(page, label) {
     ok(after.ljk === 1 && after.piket.join() === 'Piket A,Piket B' && after.susulan === 'Pengawas S', 'Korektor, guru piket & susulan dimuat');
     await page.evaluate(() => setDocMode('jadwal_pengawas'));
     ok(await page.evaluate(() => /Piket A/.test(document.getElementById('sheets-container').innerText)), 'Guru piket tampil di dokumen jadwal');
+
+    console.log('6c. Pengawas per ruang: 1 atau 2');
+    const one = await page.evaluate(() => {
+        setPengawasPerRuang(1);
+        const editorInputs = document.querySelectorAll('#schedule-editor-container input[placeholder^="Pengawas"]').length;
+        const docs = {};
+        for (const dm of ['jadwal_pengawas', 'dh_pengawas', 'berita_acara', 'denah', 'pos']) {
+            setDocMode(dm);
+            docs[dm] = document.getElementById('sheets-container').innerText;
+        }
+        // data pengawas 2 tetap tersimpan meski disembunyikan
+        const kept = appState.schedule[0].sesi[0].pengawas[0][1];
+        appState.schedule[0].sesi[0].pengawas[0][0] = '';
+        fillEmptyProctors();
+        const filledSlot2 = appState.schedule[0].sesi[0].pengawas[0][1];
+        return { editorInputs, docs, kept, filledSlot2, label2Hidden: document.getElementById('field-pengawas2').classList.contains('hidden') };
+    });
+    ok(one.editorInputs === 4 * 2 + 4 * 1, 'Editor hanya menampilkan 1 kotak pengawas per ruang', String(one.editorInputs));
+    ok(!/Pengawas 2/.test(one.docs.jadwal_pengawas) && !/Pengawas II/.test(one.docs.berita_acara) && /Pengawas Ruang,/.test(one.docs.berita_acara),
+        'Dokumen jadwal & berita acara memakai 1 pengawas');
+    ok(!/PENGAWAS 2/.test(one.docs.denah) && /1 \(satu\) orang pengawas/.test(one.docs.pos) && one.label2Hidden, 'Denah, POS & label meja menyesuaikan');
+    ok(one.kept === 'P2' && one.filledSlot2 === 'P2', 'Nama pengawas 2 tetap tersimpan & tidak diisi ulang otomatis');
+    const tpl1 = await download(page, () => downloadScheduleTemplate());
+    const head1 = await page.evaluate(a => {
+        const wb = XLSX.read(new Uint8Array(a), { type: 'array' });
+        return XLSX.utils.sheet_to_json(wb.Sheets.Jadwal_Pengawas, { header: 1 })[0];
+    }, Array.from(fs.readFileSync(tpl1)));
+    ok(head1.includes('Ruang 1 - Pengawas') && !head1.some(h => /Pengawas 2/.test(h)), 'Template jadwal: 1 kolom pengawas per ruang', head1.slice(5, 8).join(', '));
+    await page.evaluate(() => setPengawasPerRuang(2));
+    await page.setInputFiles('#full-template-upload', { name: 'satu-pengawas.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: fs.readFileSync(tpl1) });
+    txt = await dialogText(page);
+    ok(txt && /1 pengawas\/ruang/.test(txt), 'Impor template 1 pengawas dikenali');
+    await closeDialog(page, 'Muat Bagian Terpilih');
+    ok(await page.evaluate(() => appState.pengawasPerRuang === 1 && document.getElementById('input-pengawas-per-ruang').value === '1'),
+        'Impor mengubah pengaturan menjadi 1 pengawas per ruang');
+    await page.evaluate(() => setPengawasPerRuang(2));
 
     console.log('7. Muat backup JSON');
     const JSONIN = 'input[onchange*="loadConfigJSON"]';

@@ -88,6 +88,7 @@ let appState = {
     makeupSchedule: JSON.parse(JSON.stringify(INITIAL_MAKEUP_SCHEDULE)),
     budget: JSON.parse(JSON.stringify(INITIAL_BUDGET)),
     jumlahRuang: DEFAULT_JUMLAH_RUANG,
+    pengawasPerRuang: 2,
     developerPhoto: safeStorageGet('devPhoto_Pramudito') || DEFAULT_DEV_PHOTO_SVG,
     students: JSON.parse(JSON.stringify(INITIAL_STUDENTS)),
     sidebarHidden: false,
@@ -121,6 +122,12 @@ function padRoom(r) {
 
 function toTitleCase(str) {
     return String(str || '').toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+}
+
+// Banyak pengawas tiap ruang (1 atau 2). Data tetap disimpan berpasangan [p1, p2]
+// agar nama pengawas 2 tidak hilang bila pengaturan diubah bolak-balik.
+function getPengawasPerRuang() {
+    return appState.pengawasPerRuang === 1 ? 1 : 2;
 }
 
 // Tingkat kelas dari teks bebas: "VII", "VII A", "7", "7B", "VIII-2" -> "VII" / "VIII" / "IX"
@@ -246,6 +253,7 @@ function sanitizeLoadedState(loaded) {
     }
     const jr = parseInt(clean.jumlahRuang, 10);
     if ('jumlahRuang' in clean && !(jr >= 1 && jr <= 99)) delete clean.jumlahRuang;
+    if ('pengawasPerRuang' in clean && ![1, 2].includes(clean.pengawasPerRuang)) delete clean.pengawasPerRuang;
     return { state: clean, warnings };
 }
 
