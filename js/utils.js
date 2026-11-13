@@ -267,7 +267,7 @@ function closeMenus() {
 }
 
 document.addEventListener('click', e => { if (!e.target.closest('[data-menu]')) closeMenus(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenus(); toggleNavDrawer(false); } });
 
 // ---------- Layar kecil: Pengaturan / Pratinjau ----------
 function setMobileView(view) {
@@ -313,6 +313,8 @@ function escapeHtml(str) {
 window.onload = function () {
     const restored = loadSavedState();
     initApp();
+    switchTab('mode');
+    initNavCollapsed();
     applyIntroTipState();
     initPreviewInteractions();
     setMobileView('settings');

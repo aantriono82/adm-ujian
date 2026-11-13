@@ -24,72 +24,82 @@
 </head>
 <body class="h-screen h-[100dvh] flex flex-col overflow-hidden text-slate-800" data-mode="ASAS" data-mview="settings">
 
-    <!-- Top Navbar -->
-    <header class="bg-white/95 backdrop-blur border-b border-slate-200 px-3 sm:px-4 py-2 flex items-center justify-between gap-3 z-30 no-print shadow-sm shrink-0">
-        <div class="flex items-center gap-2.5 min-w-0">
-            <button onclick="toggleSidebar()" id="btn-toggle-sidebar" class="hidden lg:flex bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 p-2 rounded-xl items-center transition active:scale-95 cursor-pointer" title="Sembunyikan / Tampilkan Panel Pengaturan">
-                <i data-lucide="panel-left-close" id="icon-toggle-sidebar" class="w-5 h-5"></i>
-                <span id="text-toggle-sidebar" class="sr-only">Sembunyikan Menu</span>
-            </button>
-            <div class="accent-gradient text-white p-2 rounded-xl shadow-sm hidden sm:flex items-center justify-center shrink-0">
-                <i data-lucide="layers" class="w-5 h-5"></i>
-            </div>
-            <div class="min-w-0">
-                <div class="flex items-center gap-2">
-                    <h1 class="font-bold text-sm sm:text-base text-slate-800 leading-tight truncate">
-                        <span class="hidden md:inline">Sistem Administrasi Asesmen Sumatif Terpadu</span>
-                        <span class="md:hidden">Asesmen Sumatif Terpadu</span>
-                    </h1>
-                    <span id="nav-mode-pill" class="hidden sm:inline-flex accent-pill text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase whitespace-nowrap">ASAS</span>
-                </div>
-                <p class="text-[11px] text-slate-500 truncate flex items-center gap-1.5">
-                    <span id="nav-school-name" class="truncate">Nama Sekolah</span>
-                    <span class="hidden sm:inline text-slate-300">•</span>
-                    <span id="autosave-status" class="autosave-ok hidden sm:inline-flex items-center gap-1 whitespace-nowrap">Simpan otomatis aktif</span>
-                </p>
-            </div>
+    <!-- Bilah atas khusus layar kecil -->
+    <div class="lg:hidden no-print bg-white border-b border-slate-200 px-3 py-2 flex items-center gap-2.5 shrink-0">
+        <button onclick="toggleNavDrawer(true)" class="icon-btn" title="Buka menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        <div class="accent-gradient text-white p-1.5 rounded-lg shrink-0"><i data-lucide="layers" class="w-4 h-4"></i></div>
+        <div class="min-w-0 flex-1">
+            <div class="text-sm font-bold text-slate-800 truncate">Asesmen Sumatif Terpadu</div>
         </div>
+        <span id="nav-mode-pill" class="accent-pill text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase whitespace-nowrap">ASAS</span>
+    </div>
 
-        <!-- Pilihan mode ASAS / ASAT / ASAJ -->
-        <div class="hidden md:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1 shrink-0">
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="top-mode-ASAS" class="mode-seg" title="Asesmen Sumatif Akhir Semester Ganjil — Kelas VII, VIII, IX">ASAS</button>
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="top-mode-ASAT" class="mode-seg" title="Asesmen Sumatif Akhir Tahun — Kelas VII, VIII (Genap)">ASAT</button>
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="top-mode-ASAJ" class="mode-seg" title="Asesmen Sumatif Akhir Jenjang — Kelas IX (Genap)">ASAJ</button>
-        </div>
+    <!-- Main Content Area -->
+    <div class="print-layout-wrapper flex-1 flex flex-row overflow-hidden relative min-h-0">
 
-        <!-- Aksi: Unduh / Cetak & menu Data -->
-        <div class="flex items-center gap-1.5 shrink-0">
-            <button onclick="toggleTheme()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 p-2 rounded-lg flex items-center transition active:scale-95 cursor-pointer" title="Ganti tema terang / gelap">
-                <i data-lucide="moon" class="theme-moon w-4 h-4"></i>
-                <i data-lucide="sun" class="theme-sun w-4 h-4"></i>
-            </button>
-            <div class="relative" data-menu>
-                <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    <span class="hidden sm:inline">Unduh / Cetak</span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-80"></i>
-                </button>
-                <div id="menu-output" class="menu-panel hidden">
-                    <button onclick="closeMenus(); printPDF()" class="menu-item">
-                        <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="printer" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Cetak / PDF</span><span class="block text-[11px] text-slate-500">Hasil paling presisi</span></span>
-                    </button>
-                    <button onclick="closeMenus(); exportWord()" class="menu-item">
-                        <span class="menu-icon bg-blue-50 text-blue-600"><i data-lucide="file-text" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Word (.docx)</span><span class="block text-[11px] text-slate-500">Dokumen yang sedang tampil</span></span>
-                    </button>
-                    <button onclick="closeMenus(); exportExcelOutput()" class="menu-item">
-                        <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="sheet" class="w-4 h-4"></i></span>
-                        <span><span class="block font-semibold text-slate-800">Excel (.xlsx)</span><span class="block text-[11px] text-slate-500">Seluruh data administrasi</span></span>
-                    </button>
+        <!-- Latar gelap saat menu laci terbuka (layar kecil) -->
+        <div id="nav-backdrop" onclick="toggleNavDrawer(false)" class="nav-backdrop no-print"></div>
+
+        <!-- Sidebar navigasi utama -->
+        <nav id="app-nav" class="app-nav no-print" aria-label="Menu utama">
+            <div class="nav-brand">
+                <div class="accent-gradient text-white p-2 rounded-xl shadow-sm shrink-0"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                <div class="nav-label min-w-0">
+                    <div class="text-[13px] font-bold text-slate-800 leading-tight">Asesmen Sumatif Terpadu</div>
+                    <div id="nav-school-name" class="text-[11px] text-slate-500 truncate">Nama Sekolah</div>
                 </div>
             </div>
 
-            <div class="relative" data-menu>
-                <button onclick="toggleMenu('menu-data', event)" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 p-2 rounded-lg flex items-center transition active:scale-95 cursor-pointer" title="Data: Backup, Muat, Reset" aria-haspopup="true">
-                    <i data-lucide="more-horizontal" class="w-4 h-4"></i>
-                </button>
-                <div id="menu-data" class="menu-panel hidden">
+            <div class="nav-section-label">Jenis Asesmen</div>
+            <div class="mode-seg-group">
+                <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="top-mode-ASAS" class="mode-seg" title="Asesmen Sumatif Akhir Semester Ganjil — Kelas VII, VIII, IX">ASAS</button>
+                <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="top-mode-ASAT" class="mode-seg" title="Asesmen Sumatif Akhir Tahun — Kelas VII, VIII (Genap)">ASAT</button>
+                <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="top-mode-ASAJ" class="mode-seg" title="Asesmen Sumatif Akhir Jenjang — Kelas IX (Genap)">ASAJ</button>
+            </div>
+
+            <div class="nav-section-label">Pengaturan</div>
+            <div class="nav-list">
+            <button onclick="openSection('mode')" id="tab-btn-mode" class="tab-btn nav-item">
+                <i data-lucide="calendar-cog" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Mode & Kegiatan</span>
+            </button>
+            <button onclick="openSection('kop')" id="tab-btn-kop" class="tab-btn nav-item">
+                <i data-lucide="building-2" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">KOP & Pengesahan</span>
+            </button>
+            <button onclick="openSection('panitia')" id="tab-btn-panitia" class="tab-btn nav-item">
+                <i data-lucide="user-cog" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Panitia & Korektor</span>
+            </button>
+            <button onclick="openSection('jadwal')" id="tab-btn-jadwal" class="tab-btn nav-item">
+                <i data-lucide="calendar-clock" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Jadwal & Pengawas</span>
+            </button>
+            <button onclick="openSection('peserta')" id="tab-btn-peserta" class="tab-btn nav-item">
+                <i data-lucide="users" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Peserta</span>
+            </button>
+            <button onclick="openSection('ruang')" id="tab-btn-ruang" class="tab-btn nav-item">
+                <i data-lucide="layout-grid" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Ruang & Denah</span>
+            </button>
+            <button onclick="openSection('laporan')" id="tab-btn-laporan" class="tab-btn nav-item">
+                <i data-lucide="wallet" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Nilai & LPJ</span>
+            </button>
+            </div>
+
+            <div class="flex-1"></div>
+
+            <div class="nav-list nav-bottom">
+                <div id="autosave-status" class="autosave-ok nav-autosave"><span class="nav-label">Simpan otomatis aktif</span></div>
+                <div class="relative" data-menu>
+                    <button onclick="toggleMenu('menu-data', event)" class="nav-item" title="Data: Backup, Muat, Reset" aria-haspopup="true">
+                        <i data-lucide="database" class="w-[18px] h-[18px] shrink-0"></i>
+                        <span class="nav-label">Data &amp; Backup</span>
+                        <i data-lucide="chevron-right" class="nav-label w-3.5 h-3.5 ml-auto opacity-50"></i>
+                    </button>
+                    <div id="menu-data" class="menu-panel menu-side hidden">
                     <div class="px-3 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Data</div>
                     <button onclick="closeMenus(); saveConfigJSON()" class="menu-item">
                         <span class="menu-icon bg-amber-50 text-amber-600"><i data-lucide="save" class="w-4 h-4"></i></span>
@@ -101,71 +111,41 @@
                         <input type="file" accept=".json" class="hidden" onchange="closeMenus(); loadConfigJSON(event)">
                     </label>
                     <div class="my-1 border-t border-slate-100"></div>
-                    <button onclick="closeMenus(); toggleDeveloperModal(true)" class="menu-item">
-                        <img id="nav-dev-photo" src="" alt="Foto" class="w-8 h-8 rounded-lg object-cover bg-red-600 shrink-0">
-                        <span><span class="block font-semibold text-slate-800">Tentang Pengembang</span><span class="block text-[11px] text-slate-500">Profil & kontak</span></span>
-                    </button>
-                    <div class="my-1 border-t border-slate-100"></div>
                     <button onclick="closeMenus(); resetAllData()" class="menu-item text-rose-700 hover:!bg-rose-50">
                         <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></span>
                         <span><span class="block font-semibold">Reset ke Data Contoh</span><span class="block text-[11px] text-rose-500/80">Hapus semua isian di browser ini</span></span>
                     </button>
+                    </div>
                 </div>
+                <button onclick="toggleTheme()" class="nav-item" title="Ganti tema terang / gelap">
+                    <i data-lucide="moon" class="theme-moon w-[18px] h-[18px] shrink-0"></i>
+                    <i data-lucide="sun" class="theme-sun w-[18px] h-[18px] shrink-0"></i>
+                    <span class="nav-label theme-moon">Mode Gelap</span>
+                    <span class="nav-label theme-sun">Mode Terang</span>
+                </button>
+                <button onclick="toggleDeveloperModal(true)" class="nav-item" title="Tentang Pengembang">
+                    <img id="nav-dev-photo" src="" alt="Foto" class="w-[22px] h-[22px] rounded-full object-cover bg-red-600 shrink-0 -ml-0.5">
+                    <span class="nav-label min-w-0 text-left">
+                        <span class="block truncate">Pramudito Hutomo</span>
+                        <span class="block text-[10px] font-medium text-slate-400 truncate">Pengembang sistem</span>
+                    </span>
+                </button>
+                <button onclick="toggleNavCollapsed()" class="nav-item nav-collapse-btn" title="Ciutkan / lebarkan menu">
+                    <i data-lucide="chevrons-left" class="nav-collapse-icon w-[18px] h-[18px] shrink-0"></i>
+                    <span class="nav-label">Ciutkan menu</span>
+                </button>
             </div>
-        </div>
-    </header>
+        </nav>
 
-    <!-- Pilihan mode untuk layar kecil -->
-    <div class="md:hidden no-print bg-white border-b border-slate-200 px-3 py-1.5 shrink-0">
-        <div class="grid grid-cols-3 bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="top-mode-m-ASAS" class="mode-seg">ASAS</button>
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="top-mode-m-ASAT" class="mode-seg">ASAT</button>
-            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="top-mode-m-ASAJ" class="mode-seg">ASAJ</button>
-        </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="print-layout-wrapper flex-1 flex flex-col lg:flex-row overflow-hidden relative">
-        
-        <!-- Tombol Melayang Pembuka Sidebar Saat Disembunyikan -->
-        <button onclick="toggleSidebar()" id="floating-open-sidebar" class="hidden fixed left-3 bottom-5 z-40 accent-btn text-white px-3.5 py-2.5 rounded-xl shadow-xl font-bold text-xs items-center gap-2 border-2 border-white transition active:scale-95 cursor-pointer no-print">
-            <i data-lucide="panel-left-open" class="w-4 h-4"></i>
-            <span>Tampilkan Pengaturan</span>
-        </button>
-
-        <!-- Left Sidebar: Control Panel -->
-        <aside id="left-sidebar" class="w-full lg:w-[450px] xl:w-[490px] bg-white border-r border-slate-200 flex flex-col flex-1 min-h-0 lg:flex-none lg:h-full no-print shrink-0 shadow-sm z-10 transition-all duration-200">
-            
-            <!-- Navigation Tabs (7 Tab Pengaturan Lengkap) -->
-            <div class="tab-bar grid grid-cols-7 border-b border-slate-200 bg-white px-1 text-[10px] font-semibold text-slate-500 shrink-0">
-                <button onclick="switchTab('mode')" id="tab-btn-mode" class="tab-btn">
-                    <i data-lucide="calendar-cog" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Mode</span>
-                </button>
-                <button onclick="switchTab('kop')" id="tab-btn-kop" class="tab-btn">
-                    <i data-lucide="building-2" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">KOP/TTD</span>
-                </button>
-                <button onclick="switchTab('panitia')" id="tab-btn-panitia" class="tab-btn">
-                    <i data-lucide="user-cog" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Panitia</span>
-                </button>
-                <button onclick="switchTab('jadwal')" id="tab-btn-jadwal" class="tab-btn">
-                    <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Jadwal</span>
-                </button>
-                <button onclick="switchTab('peserta')" id="tab-btn-peserta" class="tab-btn">
-                    <i data-lucide="users" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Peserta</span>
-                </button>
-                <button onclick="switchTab('ruang')" id="tab-btn-ruang" class="tab-btn">
-                    <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Ruang</span>
-                </button>
-                <button onclick="switchTab('laporan')" id="tab-btn-laporan" class="tab-btn">
-                    <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
-                    <span class="whitespace-nowrap">Nilai/LPJ</span>
-                </button>
+        <!-- Panel pengaturan bagian aktif -->
+        <aside id="left-sidebar" class="settings-panel w-full lg:w-[380px] xl:w-[420px] bg-white border-r border-slate-200 flex flex-col min-h-0 no-print shrink-0 z-10">
+            <div class="panel-head">
+                <span id="panel-icon" class="panel-icon"></span>
+                <div class="min-w-0 flex-1">
+                    <h2 id="panel-title" class="text-sm font-bold text-slate-900 leading-tight">Mode &amp; Kegiatan</h2>
+                    <p id="panel-desc" class="text-[11px] text-slate-500 truncate">Pengaturan</p>
+                </div>
+                <button onclick="toggleSidebar()" class="icon-btn hidden lg:block" title="Tutup panel (pratinjau lebih lebar)"><i data-lucide="panel-left-close" class="w-4 h-4"></i></button>
             </div>
 
             <!-- Tab Contents Container -->
@@ -873,24 +853,6 @@
 
             </div>
 
-            <!-- Footer Info Pengembang di Sidebar -->
-            <div class="hidden lg:flex border-t border-slate-200 bg-slate-50/90 p-2.5 shrink-0 items-center justify-between gap-2">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="relative shrink-0 cursor-pointer group" onclick="toggleDeveloperModal(true)">
-                        <img id="sidebar-dev-photo" src="" alt="Pramudito Hutomo" class="w-9 h-9 rounded-full object-cover border-2 border-primary-600 shadow-sm bg-red-600">
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-                    </div>
-                    <div class="truncate">
-                        <div class="text-[10px] font-bold uppercase tracking-wider text-primary-600 leading-none">Pengembang Sistem</div>
-                        <div class="text-xs font-bold text-slate-800 truncate mt-0.5">Pramudito Hutomo, M.Pd.</div>
-                        <div class="text-[10px] text-slate-500 truncate">Waka Kurikulum / Guru PJOK • SMPN 2 Selagai Lingga</div>
-                    </div>
-                </div>
-                <button onclick="toggleDeveloperModal(true)" class="bg-white hover:bg-primary-50 text-primary-600 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition shrink-0 cursor-pointer">
-                    <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
-                    <span>Profil</span>
-                </button>
-            </div>
         </aside>
 
         <!-- Right Area: Live Print Sheet Preview & 16-Module Document Selector -->
@@ -899,7 +861,8 @@
             <!-- Bilah pemilih dokumen & zoom -->
             <div class="bg-white border-b border-slate-200 px-3 py-2 text-xs text-slate-600 no-print shrink-0">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 min-w-0 w-full md:w-auto md:flex-1">
+                    <div class="flex items-center gap-1.5 min-w-0 w-full md:w-auto md:flex-1 md:min-w-[300px]">
+                        <button onclick="toggleSidebar()" id="btn-open-panel" class="icon-btn hidden" title="Tampilkan panel pengaturan"><i data-lucide="panel-left-open" class="w-4 h-4"></i></button>
                         <span class="hidden 2xl:flex text-[11px] font-bold text-slate-400 uppercase tracking-wide mr-1 items-center gap-1 whitespace-nowrap">
                             <i data-lucide="files" class="w-3.5 h-3.5 accent-text"></i> Dokumen
                         </span>
@@ -949,7 +912,7 @@
                         <span id="preview-summary-text" class="hidden 2xl:inline-block max-w-[360px] truncate text-slate-500 text-[11px]">Memuat...</span>
                         <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5" title="Halaman">
                             <button onclick="gotoSheet(-1)" class="zoom-btn" title="Halaman sebelumnya"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
-                            <span class="text-[11px] text-slate-700 font-semibold tabular-nums whitespace-nowrap px-0.5"><span class="hidden sm:inline text-slate-400 font-medium">Hal </span><span id="page-indicator">–</span></span>
+                            <span class="text-[11px] text-slate-700 font-semibold tabular-nums whitespace-nowrap px-0.5"><span class="hidden xl:inline text-slate-400 font-medium">Hal </span><span id="page-indicator">–</span></span>
                             <button onclick="gotoSheet(1)" class="zoom-btn" title="Halaman berikutnya"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
                         </div>
                         <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
@@ -961,6 +924,27 @@
                             <button onclick="fitPageZoom()" id="zoom-page-btn" class="zoom-btn" title="Pas Halaman — satu halaman utuh terlihat"><i data-lucide="scan" class="w-3.5 h-3.5"></i></button>
                             <button onclick="resetZoom()" class="zoom-btn text-[11px] font-semibold px-1.5" title="Ukuran asli 100%">1:1</button>
                         </div>
+                <div class="relative" data-menu>
+                    <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span class="hidden xl:inline">Unduh / Cetak</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-80"></i>
+                    </button>
+                    <div id="menu-output" class="menu-panel hidden">
+                        <button onclick="closeMenus(); printPDF()" class="menu-item">
+                            <span class="menu-icon bg-rose-50 text-rose-600"><i data-lucide="printer" class="w-4 h-4"></i></span>
+                            <span><span class="block font-semibold text-slate-800">Cetak / PDF</span><span class="block text-[11px] text-slate-500">Hasil paling presisi</span></span>
+                        </button>
+                        <button onclick="closeMenus(); exportWord()" class="menu-item">
+                            <span class="menu-icon bg-blue-50 text-blue-600"><i data-lucide="file-text" class="w-4 h-4"></i></span>
+                            <span><span class="block font-semibold text-slate-800">Word (.docx)</span><span class="block text-[11px] text-slate-500">Dokumen yang sedang tampil</span></span>
+                        </button>
+                        <button onclick="closeMenus(); exportExcelOutput()" class="menu-item">
+                            <span class="menu-icon bg-emerald-50 text-emerald-600"><i data-lucide="sheet" class="w-4 h-4"></i></span>
+                            <span><span class="block font-semibold text-slate-800">Excel (.xlsx)</span><span class="block text-[11px] text-slate-500">Seluruh data administrasi</span></span>
+                        </button>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>

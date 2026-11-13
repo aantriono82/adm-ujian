@@ -273,7 +273,7 @@ function saveStateNow() {
         const el = document.getElementById('autosave-status');
         if (el) {
             const t = new Date();
-            el.textContent = `Tersimpan ${String(t.getHours()).padStart(2, '0')}.${String(t.getMinutes()).padStart(2, '0')}`;
+            (el.querySelector('.nav-label') || el).textContent = `Tersimpan ${String(t.getHours()).padStart(2, '0')}.${String(t.getMinutes()).padStart(2, '0')}`;
             el.classList.remove('autosave-err', 'autosave-flash');
             el.classList.add('autosave-ok');
             void el.offsetWidth; // mulai ulang animasi titik hijau
@@ -282,7 +282,7 @@ function saveStateNow() {
     } catch (err) {
         const el = document.getElementById('autosave-status');
         if (el) {
-            el.textContent = 'Gagal simpan otomatis — gunakan Backup';
+            (el.querySelector('.nav-label') || el).textContent = 'Gagal simpan otomatis — gunakan Backup';
             el.classList.remove('autosave-ok', 'autosave-flash');
             el.classList.add('autosave-err');
         }
@@ -325,27 +325,13 @@ function resetAllData() {
     showToast("Data dikembalikan ke contoh bawaan.");
 }
 
-// Fungsi Hide / Show Sidebar Pengaturan Kiri
+// Tutup / tampilkan panel pengaturan (pratinjau jadi lebih lebar)
 function toggleSidebar() {
     appState.sidebarHidden = !appState.sidebarHidden;
-    const sidebar = document.getElementById('left-sidebar');
-    const floatBtn = document.getElementById('floating-open-sidebar');
-    const iconEl = document.getElementById('icon-toggle-sidebar');
-    const textEl = document.getElementById('text-toggle-sidebar');
-
-    if (appState.sidebarHidden) {
-        sidebar.classList.add('hidden');
-        floatBtn.classList.remove('hidden');
-        floatBtn.classList.add('flex');
-        if (iconEl) iconEl.setAttribute('data-lucide', 'panel-left-open');
-        if (textEl) textEl.textContent = 'Tampilkan Menu';
-    } else {
-        sidebar.classList.remove('hidden');
-        floatBtn.classList.add('hidden');
-        floatBtn.classList.remove('flex');
-        if (iconEl) iconEl.setAttribute('data-lucide', 'panel-left-close');
-        if (textEl) textEl.textContent = 'Sembunyikan Menu';
-    }
+    const panel = document.getElementById('left-sidebar');
+    const openBtn = document.getElementById('btn-open-panel');
+    if (panel) panel.classList.toggle('panel-hidden', appState.sidebarHidden);
+    if (openBtn) openBtn.classList.toggle('hidden', !appState.sidebarHidden);
     refreshIcons();
     if (typeof refreshZoom === 'function') refreshZoom();
 }

@@ -175,6 +175,17 @@ function getActiveStudents() {
 // ============================================================================
 // 8. NAVIGASI TAB & PEMILIH 16 MODUL DOKUMEN
 // ============================================================================
+// Judul & keterangan panel pengaturan untuk setiap bagian menu
+const SECTION_META = {
+    mode:    { icon: 'calendar-cog',   title: 'Mode & Kegiatan',    desc: 'Jenis asesmen, nama kegiatan, tahun pelajaran, nomor SK' },
+    kop:     { icon: 'building-2',     title: 'KOP & Pengesahan',   desc: 'Kop surat, logo, kepala sekolah, TTD & cap, kertas' },
+    panitia: { icon: 'user-cog',       title: 'Panitia & Korektor', desc: 'Susunan panitia, penyusun soal, dan korektor' },
+    jadwal:  { icon: 'calendar-clock', title: 'Jadwal & Pengawas',  desc: 'Hari, tanggal, mapel, dan pengawas per ruang' },
+    peserta: { icon: 'users',          title: 'Peserta',            desc: 'Daftar peserta dan impor dari Excel' },
+    ruang:   { icon: 'layout-grid',    title: 'Ruang & Denah',      desc: 'Denah tempat duduk, label meja, berita acara' },
+    laporan: { icon: 'wallet',         title: 'Nilai & LPJ',        desc: 'Rekap nilai, realisasi anggaran, laporan akhir' }
+};
+
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     const target = document.getElementById('tab-' + tabName);
@@ -183,8 +194,50 @@ function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         const active = btn.id === 'tab-btn-' + tabName;
         btn.classList.toggle('is-active', active);
-        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        if (active) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
     });
+
+    const meta = SECTION_META[tabName];
+    if (meta) {
+        const t = document.getElementById('panel-title');
+        const d = document.getElementById('panel-desc');
+        const i = document.getElementById('panel-icon');
+        if (t) t.textContent = meta.title;
+        if (d) d.textContent = meta.desc;
+        if (i) { i.innerHTML = `<i data-lucide="${meta.icon}" class="w-4 h-4"></i>`; refreshIcons(); }
+    }
+    const body = document.querySelector('.sidebar-body');
+    if (body) body.scrollTop = 0;
+}
+
+// Klik menu di sidebar: tampilkan bagian tsb. (buka panel bila sedang ditutup)
+function openSection(tabName) {
+    switchTab(tabName);
+    if (appState.sidebarHidden) toggleSidebar();
+    toggleNavDrawer(false);
+    if (typeof setMobileView === 'function') setMobileView('settings');
+}
+
+// Sidebar diciutkan jadi deretan ikon (desktop)
+const NAV_COLLAPSED_KEY = 'asesmen-nav-collapsed';
+function setNavCollapsed(collapsed, save) {
+    document.body.classList.toggle('nav-collapsed', collapsed);
+    if (save) { try { localStorage.setItem(NAV_COLLAPSED_KEY, collapsed ? '1' : '0'); } catch (err) {} }
+    setTimeout(() => { if (typeof refreshZoom === 'function') refreshZoom(); }, 220);
+}
+function toggleNavCollapsed() {
+    setNavCollapsed(!document.body.classList.contains('nav-collapsed'), true);
+}
+function initNavCollapsed() {
+    let saved = null;
+    try { saved = localStorage.getItem(NAV_COLLAPSED_KEY); } catch (err) {}
+    // Bawaan: diciutkan pada layar laptop kecil agar pratinjau tetap lega
+    setNavCollapsed(saved === null ? window.innerWidth < 1280 : saved === '1', false);
+}
+
+// Menu laci di layar kecil
+function toggleNavDrawer(open) {
+    document.body.classList.toggle('nav-open', !!open);
 }
 
 function setDocMode(mode) {
