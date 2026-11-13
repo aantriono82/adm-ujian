@@ -72,14 +72,86 @@
     .menu-item:hover { background: #f1f5f9; }
     .menu-icon { width: 2rem; height: 2rem; border-radius: .5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-    /* Tab pengaturan: garis bawah aktif */
-    .tab-btn {
-        display: flex; flex-direction: column; align-items: center; gap: .2rem;
-        padding: .55rem .15rem .45rem; cursor: pointer; border-bottom: 2px solid transparent;
-        transition: color .15s, border-color .15s, background .15s; min-width: 0;
+    /* ===== Sidebar navigasi utama ===== */
+    .app-nav {
+        width: 232px; flex-shrink: 0; display: flex; flex-direction: column; gap: .15rem;
+        padding: .85rem .6rem .6rem; background: #f6f8fb; border-right: 1px solid #e5e9f0;
+        overflow-y: auto; overflow-x: hidden; transition: width .2s ease; z-index: 20;
     }
-    .tab-btn:hover { color: #0f172a; background: #f8fafc; }
-    .tab-btn.is-active { color: var(--accent); border-bottom-color: var(--accent); }
+    .nav-brand { display: flex; align-items: center; gap: .65rem; padding: 0 .3rem .6rem; }
+    .nav-section-label {
+        padding: .8rem .65rem .35rem; font-size: .625rem; font-weight: 700; letter-spacing: .07em;
+        text-transform: uppercase; color: #94a3b8; white-space: nowrap;
+    }
+    .mode-seg-group {
+        display: flex; gap: .2rem; padding: .2rem; margin: 0 .1rem; border-radius: .75rem;
+        background: #eaeef4; border: 1px solid #e2e8f0;
+    }
+    .mode-seg-group .mode-seg { flex: 1; text-align: center; padding: .35rem .25rem; }
+    .nav-list { display: flex; flex-direction: column; gap: .125rem; }
+    .nav-item {
+        position: relative; width: 100%; display: flex; align-items: center; gap: .7rem;
+        padding: .5rem .65rem; border-radius: .6rem; font-size: .8125rem; font-weight: 600;
+        color: #475569; cursor: pointer; text-align: left; white-space: nowrap;
+        transition: background .12s, color .12s;
+    }
+    .nav-item:hover { background: #e9eef5; color: #0f172a; }
+    .nav-item.is-active {
+        background: #fff; color: rgb(var(--p-700));
+        box-shadow: 0 1px 2px rgba(15,23,42,.07), inset 3px 0 0 var(--accent);
+    }
+    .nav-item.is-active svg { color: var(--accent); }
+    .nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .nav-bottom { border-top: 1px solid #e5e9f0; padding-top: .5rem; margin-top: .5rem; }
+    .nav-autosave { display: flex; align-items: center; gap: .45rem; padding: .2rem .7rem .45rem; font-size: .6875rem; white-space: nowrap; }
+    .nav-collapse-icon { transition: transform .2s; }
+
+    /* Lencana kelengkapan di menu */
+    .tab-badge {
+        margin-left: auto; min-width: 1rem; height: 1rem; padding: 0 .2rem; border-radius: 9999px;
+        font-size: .625rem; font-weight: 800; line-height: 1rem; text-align: center; color: #fff; flex-shrink: 0;
+    }
+    .tab-badge.is-ok { background: transparent; color: #10b981; }
+    .tab-badge.is-warn { background: #f59e0b; }
+
+    /* Menu Data yang muncul di samping sidebar */
+    .menu-panel.menu-side { left: calc(100% + .5rem); right: auto; top: auto; bottom: 0; }
+
+    /* Panel pengaturan */
+    .panel-head { display: flex; align-items: center; gap: .7rem; padding: .8rem 1rem; border-bottom: 1px solid #e2e8f0; flex-shrink: 0; }
+    .panel-icon {
+        width: 2.1rem; height: 2.1rem; border-radius: .6rem; display: flex; align-items: center; justify-content: center;
+        background: rgb(var(--p-50)); color: rgb(var(--p-600)); flex-shrink: 0;
+    }
+    .settings-panel.panel-hidden { display: none; }
+    .nav-backdrop { display: none; }
+
+    /* Sidebar diciutkan (desktop) */
+    @media screen and (min-width: 1024px) {
+        body.nav-collapsed .app-nav { width: 68px; }
+        body.nav-collapsed .app-nav .nav-label { display: none; }
+        body.nav-collapsed .nav-brand { justify-content: center; padding-left: 0; padding-right: 0; }
+        body.nav-collapsed .nav-section-label { font-size: 0; padding: .45rem 0; margin: .3rem .5rem 0; border-top: 1px solid #e5e9f0; }
+        body.nav-collapsed .mode-seg-group { flex-direction: column; }
+        body.nav-collapsed .mode-seg-group .mode-seg { font-size: .625rem; padding: .35rem 0; }
+        body.nav-collapsed .nav-item { justify-content: center; padding: .55rem 0; }
+        body.nav-collapsed .tab-badge { position: absolute; top: .15rem; right: .35rem; min-width: .8rem; height: .8rem; line-height: .8rem; font-size: .5rem; }
+        body.nav-collapsed .nav-autosave { justify-content: center; padding: .2rem 0 .45rem; }
+        body.nav-collapsed .nav-autosave::before { width: 8px; height: 8px; }
+        body.nav-collapsed .nav-collapse-icon { transform: rotate(180deg); }
+    }
+
+    /* Layar kecil: sidebar menjadi menu laci */
+    @media screen and (max-width: 1023.98px) {
+        .app-nav {
+            position: fixed; top: 0; bottom: 0; left: 0; width: 272px; z-index: 55;
+            transform: translateX(-100%); transition: transform .22s ease; box-shadow: 0 0 40px rgba(15,23,42,.25);
+        }
+        body.nav-open .app-nav { transform: none; }
+        body.nav-open .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 50; background: rgba(15,23,42,.45); }
+        .menu-panel.menu-side { left: .25rem; bottom: calc(100% + .4rem); }
+        .nav-collapse-btn { display: none; }
+    }
 
     /* Form pengaturan: setiap kelompok isian tampil sebagai kartu */
     .sidebar-body { background: #f8fafc; }
@@ -143,17 +215,6 @@
     .doc-item:hover .doc-icon, .doc-item.is-active .doc-icon { background: rgb(var(--p-100)); color: rgb(var(--p-700)); }
     .doc-item-title { display: block; font-size: .75rem; font-weight: 600; color: #0f172a; line-height: 1.25; }
     .doc-item-sub { display: block; font-size: .65rem; color: #64748b; margin-top: .1rem; line-height: 1.25; }
-
-    /* Lencana kelengkapan di tab pengaturan */
-    .tab-btn { position: relative; }
-    .tab-badge {
-        position: absolute; top: .3rem; left: calc(50% + .45rem);
-        min-width: .85rem; height: .85rem; padding: 0 .15rem; border-radius: 9999px;
-        font-size: .55rem; font-weight: 800; line-height: .85rem; text-align: center; color: #fff;
-        box-shadow: 0 0 0 2px #fff;
-    }
-    .tab-badge.is-ok { background: transparent; color: #10b981; box-shadow: none; font-size: .6rem; }
-    .tab-badge.is-warn { background: #f59e0b; }
 
     /* Keadaan kosong */
     .empty-state {
@@ -222,7 +283,6 @@
         body[data-mview="settings"] .print-main-area { display: none !important; }
         body[data-mview="settings"] #left-sidebar { display: flex !important; }
         body[data-mview="preview"] #left-sidebar { display: none !important; }
-        #floating-open-sidebar { display: none !important; }
     }
 
     /* ===================== MODE GELAP (hanya antarmuka; kertas dokumen tetap putih) ===================== */
@@ -284,9 +344,14 @@
     html.dark .mode-seg { color: #a3b1c6; }
     html.dark .mode-seg:hover { background: #243049; color: #f1f5f9; }
     html.dark .mode-seg.is-active { background: var(--accent); color: #fff; }
-    html.dark .tab-btn:hover { background: #162033; color: #f1f5f9; }
-    html.dark .tab-btn.is-active { color: rgb(var(--p-400)); border-bottom-color: rgb(var(--p-400)); }
-    html.dark .tab-badge.is-warn { box-shadow: 0 0 0 2px #111a2c; }
+    html.dark .app-nav { background: #0d1526; border-color: #1e293b; }
+    html.dark .nav-item { color: #a3b1c6; }
+    html.dark .nav-item:hover { background: #162033; color: #f1f5f9; }
+    html.dark .nav-item.is-active { background: #172238; color: rgb(var(--p-300)); box-shadow: inset 3px 0 0 rgb(var(--p-400)); }
+    html.dark .nav-section-label { color: #5b6b82; }
+    html.dark .mode-seg-group { background: #111a2c; border-color: #243049; }
+    html.dark .panel-head { border-color: #243049; }
+    html.dark .panel-icon { background: rgb(var(--p-500) / .18); color: rgb(var(--p-300)); }
     html.dark .tab-badge.is-ok { color: #34d399; }
     html.dark #intro-tip { background: rgb(var(--p-500) / .12); border-color: rgb(var(--p-500) / .3); }
     html.dark .accent-pill { background: rgb(var(--p-500) / .18); color: rgb(var(--p-200)); border-color: rgb(var(--p-500) / .35); }

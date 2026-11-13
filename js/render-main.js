@@ -34,7 +34,7 @@ function renderAll() {
                 <div class="flex flex-wrap justify-center gap-2 mt-2">
                     <button onclick="document.getElementById('excel-upload').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Impor dari Excel</button>
                     <button onclick="downloadTemplateExcel()" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh Template</button>
-                    <button onclick="switchTab('peserta'); setMobileView('settings')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Buka Tab Peserta</button>
+                    <button onclick="openSection('peserta')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Buka Tab Peserta</button>
                 </div>
             </div>`;
         summaryEl.textContent = `${preset.shortName} • 0 peserta`;

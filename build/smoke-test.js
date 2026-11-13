@@ -116,6 +116,11 @@ async function closeDialog(page, label) {
         run('sidebar', () => { toggleSidebar(); toggleSidebar(); });
         run('modal pengembang', () => { toggleDeveloperModal(true); toggleDeveloperModal(false); });
         run('tema gelap', () => { toggleTheme(); toggleTheme(); });
+        run('menu sidebar', () => {
+            ['mode', 'kop', 'panitia', 'jadwal', 'peserta', 'ruang', 'laporan'].forEach(openSection);
+            if (document.getElementById('panel-title').textContent !== 'Nilai & LPJ') throw new Error('judul panel tidak berubah');
+            toggleNavCollapsed(); toggleNavCollapsed(); toggleNavDrawer(true); toggleNavDrawer(false); openSection('mode');
+        });
         run('galeri dokumen', () => { renderDocGallery(); stepDocMode(1); stepDocMode(-1); });
         run('zoom pas halaman', () => { fitPageZoom(); fitZoom(); gotoSheet(1); });
         run('tanda kelengkapan tab', () => { updateTabBadges(); if (!document.querySelector('.tab-badge')) throw new Error('lencana tidak muncul'); });
