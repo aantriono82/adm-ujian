@@ -856,8 +856,8 @@ function renderLaporanAkhirHTML(paper) {
 
     // Statistik Peserta per Kelas VII, VIII, IX
     const countByGradeGender = (gradeStr, lpStr) => activeStudents.filter(s => {
-        const k = String(s.kelas).toUpperCase().trim();
-        const matchK = k === gradeStr || k.startsWith(gradeStr + ' ');
+        // gradeOf() mengenali kelas paralel (VII.A, VII-B, 7C, ...) sama seperti filter kelas
+        const matchK = gradeOf(s.kelas) === gradeStr;
         const matchG = String(s.lp || 'L').toUpperCase().trim() === lpStr;
         return matchK && matchG;
     }).length;

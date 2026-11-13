@@ -721,11 +721,7 @@
                         <input type="text" id="new-nama" placeholder="Nama Lengkap Peserta" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                         <div class="grid grid-cols-3 gap-2">
                             <input type="text" id="new-nisn" placeholder="NISN" class="border border-slate-300 rounded px-2 py-1 text-xs">
-                            <select id="new-kelas" class="border border-slate-300 rounded px-2 py-1 text-xs bg-white">
-                                <option value="VII">Kelas VII</option>
-                                <option value="VIII">Kelas VIII</option>
-                                <option value="IX">Kelas IX</option>
-                            </select>
+                            <input type="text" id="new-kelas" placeholder="Kelas (VII.A)" title="Tingkat + rombel, mis. VII, VII.A, VIII.C, IX.G" class="border border-slate-300 rounded px-2 py-1 text-xs">
                             <input type="text" id="new-ruang" placeholder="Ruang (1)" class="border border-slate-300 rounded px-2 py-1 text-xs">
                         </div>
                         <button onclick="addStudentManual()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-1.5 rounded text-xs font-semibold cursor-pointer">Simpan Peserta</button>
@@ -740,7 +736,7 @@
                                         <th class="p-1.5 w-7 text-center">#</th>
                                         <th class="p-1.5">No. Ujian & Nama</th>
                                         <th class="p-1.5 w-10 text-center">L/P</th>
-                                        <th class="p-1.5 w-16 text-center">Kls/Rng</th>
+                                        <th class="p-1.5 w-24 text-center">Kls/Rng</th>
                                         <th class="p-1.5 w-12 text-center">Nilai</th>
                                         <th class="p-1.5 w-7 text-center"></th>
                                     </tr>
