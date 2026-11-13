@@ -10,20 +10,22 @@ semua pustaka, CSS, dan font sudah ada di folder ini.
 Tampilan menyesuaikan ukuran layar: di desktop, menu, panel pengaturan, dan pratinjau dokumen tampil berdampingan.
 Di tablet dan HP, menu pindah ke tombol ☰ dan tombol **Pengaturan / Pratinjau** di bagian bawah dipakai untuk berpindah tampilan.
 
-**Desktop**
+**Desktop — Kartu Peserta Ujian**
 
-![Tampilan desktop: menu, panel pengaturan, dan pratinjau Kartu Peserta Ujian berdampingan](docs/screenshots/desktop.png)
+![Tampilan desktop: menu, panel Mode & Kegiatan, dan pratinjau Kartu Peserta Ujian](docs/screenshots/desktop-kartu.png)
+
+**Desktop — Nilai & LPJ (Laporan Akhir Pelaksanaan)**
+
+![Tampilan desktop: panel Nilai & LPJ dan pratinjau Laporan Akhir Pelaksanaan](docs/screenshots/desktop-lpj.png)
 
 <table>
   <tr>
-    <th>Tablet — Pratinjau</th>
-    <th>HP — Pengaturan</th>
-    <th>HP — Pratinjau</th>
+    <th>Tablet — Prosedur Operasional Standar (POS)</th>
+    <th>HP — Jadwal Asesmen &amp; Pengawas Ruang</th>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/tablet.png" alt="Tampilan tablet: pratinjau Kartu Peserta Ujian" width="300"></td>
-    <td><img src="docs/screenshots/mobile-pengaturan.png" alt="Tampilan HP: panel pengaturan Mode &amp; Kegiatan" width="220"></td>
-    <td><img src="docs/screenshots/mobile-pratinjau.png" alt="Tampilan HP: pratinjau Kartu Peserta Ujian" width="220"></td>
+    <td><img src="docs/screenshots/tablet-pos.png" alt="Tampilan tablet: pratinjau Prosedur Operasional Standar" width="380"></td>
+    <td><img src="docs/screenshots/mobile-jadwal.png" alt="Tampilan HP: pratinjau Jadwal Asesmen &amp; Pengawas Ruang" width="260"></td>
   </tr>
 </table>
 
