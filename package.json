@@ -1,0 +1,13 @@
+{
+  "name": "asesmen-sumatif-terpadu",
+  "private": true,
+  "description": "Sistem Administrasi Asesmen Sumatif Terpadu (ASAS, ASAT, ASAJ) — aplikasi statis, buka index.html langsung di browser.",
+  "scripts": {
+    "build:css": "tailwindcss -c build/tailwind.config.js -i build/tailwind.input.css -o css/tailwind.css --minify",
+    "test": "node build/smoke-test.js"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.48.0",
+    "tailwindcss": "^3.4.0"
+  }
+}
