@@ -15,6 +15,7 @@ function initApp() {
     updateModeHighlightUI();
     updateDocPillUI();
     renderAll();
+    updateDocGalleryButton();
     refreshIcons();
 }
 
@@ -191,8 +192,80 @@ function setDocMode(mode) {
     const sel = document.getElementById('doc-mode-select');
     if (sel) sel.value = mode;
     renderAll();
+    updateDocGalleryButton();
     const wrapper = document.getElementById('preview-wrapper');
     if (wrapper) wrapper.scrollTo(0, 0);
+}
+
+// ---------- Galeri dokumen ----------
+// Daftar dokumen diambil dari <select id="doc-mode-select"> (satu sumber data).
+const DOC_ICONS = {
+    kartu: 'id-card', denah: 'layout-grid', meja: 'tag', nominasi: 'list-checks', pintu: 'door-open',
+    sk: 'scroll-text', pos: 'book-open', jadwal_pengawas: 'calendar-clock', tatib: 'shield-check',
+    dh_panitia: 'clipboard-check', dh_pengawas: 'user-check', berita_acara: 'file-signature',
+    dh_peserta: 'users', serah_terima: 'package-check',
+    susulan: 'calendar-plus', rekap_nilai: 'bar-chart-3', laporan: 'file-bar-chart'
+};
+
+// "6. SK Kepanitiaan (Lengkap Lampiran I-III)" → { no: '6', title: 'SK Kepanitiaan', sub: 'Lengkap Lampiran I-III' }
+function parseDocLabel(text) {
+    const m = text.match(/^(\d+)\.\s*(.*?)(?:\s*\(([^)]*)\))?$/);
+    return m ? { no: m[1], title: m[2], sub: m[3] || '' } : { no: '', title: text, sub: '' };
+}
+
+function getDocGroups() {
+    return [...document.querySelectorAll('#doc-mode-select optgroup')].map(g => ({
+        label: g.label.replace(/^[A-Z]\.\s*/, ''),
+        letter: (g.label.match(/^([A-Z])\./) || [])[1] || '',
+        docs: [...g.querySelectorAll('option')].map(o => Object.assign({ value: o.value }, parseDocLabel(o.textContent.trim())))
+    }));
+}
+
+function renderDocGallery() {
+    const panel = document.getElementById('doc-gallery');
+    if (!panel) return;
+    panel.innerHTML = getDocGroups().map(g => `
+        <div class="doc-group">
+            <div class="doc-group-title"><span>${escapeHtml(g.letter)}</span>${escapeHtml(g.label)}</div>
+            <div class="doc-grid">
+                ${g.docs.map(d => `
+                <button onclick="closeMenus(); setDocMode('${d.value}')" class="doc-item${d.value === appState.docMode ? ' is-active' : ''}" title="${escapeHtml(d.title)}${d.sub ? ' (' + escapeHtml(d.sub) + ')' : ''}">
+                    <span class="doc-icon"><i data-lucide="${DOC_ICONS[d.value] || 'file-text'}" class="w-4 h-4"></i></span>
+                    <span class="min-w-0">
+                        <span class="doc-item-title">${escapeHtml(d.no)}. ${escapeHtml(d.title)}</span>
+                        ${d.sub ? `<span class="doc-item-sub">${escapeHtml(d.sub)}</span>` : ''}
+                    </span>
+                </button>`).join('')}
+            </div>
+        </div>`).join('');
+    refreshIcons();
+}
+
+function toggleDocGallery(ev) {
+    const panel = document.getElementById('doc-gallery');
+    if (panel && panel.classList.contains('hidden')) {
+        renderDocGallery();
+        // Layar sempit: panel selebar layar, tepat di bawah tombol
+        const narrow = window.innerWidth < 640;
+        const btn = document.getElementById('doc-gallery-btn');
+        panel.style.position = narrow ? 'fixed' : '';
+        panel.style.left = narrow ? '.75rem' : '';
+        panel.style.right = narrow ? '.75rem' : '';
+        panel.style.width = narrow ? 'auto' : '';
+        panel.style.top = narrow && btn ? (btn.getBoundingClientRect().bottom + 6) + 'px' : '';
+    }
+    toggleMenu('doc-gallery', ev);
+}
+
+function updateDocGalleryButton() {
+    const opt = document.querySelector(`#doc-mode-select option[value="${appState.docMode}"]`);
+    const label = document.getElementById('doc-current-label');
+    const icon = document.getElementById('doc-current-icon');
+    if (!opt || !label || !icon) return;
+    const d = parseDocLabel(opt.textContent.trim());
+    label.innerHTML = `<span class="text-slate-400 font-medium">${escapeHtml(d.no)}.</span> ${escapeHtml(d.title)}`;
+    icon.innerHTML = `<i data-lucide="${DOC_ICONS[appState.docMode] || 'file-text'}" class="w-3.5 h-3.5"></i>`;
+    refreshIcons();
 }
 
 // Pindah ke dokumen sebelum/berikutnya (tombol ‹ ›)
@@ -217,12 +290,12 @@ function renderCommitteeTable() {
         <tr class="hover:bg-slate-50">
             <td class="p-1.5 text-center font-bold text-slate-400">${idx + 1}</td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(c.nama)}" oninput="appState.committee[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent border-b border-transparent focus:border-blue-400 outline-none">
-                <input type="text" value="${escapeHtml(c.nip)}" oninput="appState.committee[${idx}].nip=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-blue-400 outline-none" placeholder="NIP">
+                <input type="text" value="${escapeHtml(c.nama)}" oninput="appState.committee[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
+                <input type="text" value="${escapeHtml(c.nip)}" oninput="appState.committee[${idx}].nip=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none" placeholder="NIP">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(c.jabatanPanitia)}" oninput="appState.committee[${idx}].jabatanPanitia=this.value;renderAll()" class="w-full font-semibold text-blue-700 bg-transparent border-b border-transparent focus:border-blue-400 outline-none">
-                <input type="text" value="${escapeHtml(c.jabatanDinas)}" oninput="appState.committee[${idx}].jabatanDinas=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-blue-400 outline-none">
+                <input type="text" value="${escapeHtml(c.jabatanPanitia)}" oninput="appState.committee[${idx}].jabatanPanitia=this.value;renderAll()" class="w-full font-semibold text-primary-700 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
+                <input type="text" value="${escapeHtml(c.jabatanDinas)}" oninput="appState.committee[${idx}].jabatanDinas=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
             </td>
             <td class="p-1.5 text-center">
                 <button onclick="appState.committee.splice(${idx},1);renderCommitteeTable();renderAll()" class="text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
