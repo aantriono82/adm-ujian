@@ -1,5 +1,5 @@
 // ============================================================================
-// 12. RENDER MODUL 6: SK KEPANITIAAN, PENGAWAS RUANG & KOREKTOR (4 HALAMAN)
+// 12. RENDER MODUL 6: SK KEPANITIAAN, PENGAWAS RUANG & KOREKTOR (5 HALAMAN)
 // ============================================================================
 function renderSKCompleteHTML(paper) {
     const { kop, kegiatan, pengesahan, setting, committee, correctors } = appState;
@@ -27,6 +27,57 @@ function renderSKCompleteHTML(paper) {
             <td style="border: 1px solid #0f172a; padding: 4px 8px; text-align: center;">${preset.targetGrades.includes('IX') ? escapeHtml(cr.k9) : '-'}</td>
         </tr>
     `).join('');
+
+    // Rekap pengawas dari jadwal utama (ruang & pengawas aktif) dan jadwal susulan
+    const cell = 'border: 1px solid #0f172a; padding: 4px 8px;';
+    const rooms = Math.max(1, parseInt(appState.jumlahRuang, 10) || 1);
+    const perRuang = getPengawasPerRuang();
+    const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const proctors = new Map();
+    const proctorOf = name => {
+        const key = norm(name);
+        if (!proctors.has(key)) proctors.set(key, { nama: String(name).trim(), rooms: new Set(), utama: 0, susulan: 0 });
+        return proctors.get(key);
+    };
+    (appState.schedule || []).forEach(d => (d.sesi || []).forEach(se => {
+        for (let r = 0; r < rooms; r++) {
+            const pair = (se.pengawas || [])[r] || [];
+            for (let k = 0; k < perRuang; k++) {
+                if (!norm(pair[k])) continue;
+                const pr = proctorOf(pair[k]);
+                pr.utama++;
+                pr.rooms.add(r + 1);
+            }
+        }
+    }));
+    (appState.makeupSchedule || []).forEach(m => { if (norm(m.pengawas)) proctorOf(m.pengawas).susulan++; });
+    // Butir tugas: satu per baris, nomor lama ("1." / "1)" / "-" / "•") dibuang lalu dinomori ulang
+    const tugasItems = String(appState.tugasPengawas ?? '').split(/\r?\n/)
+        .map(t => t.replace(/^\s*(?:\d+\s*[.)]|[-•*])\s*/, '').trim()).filter(Boolean);
+    const tugasPengawasHTML = tugasItems.length ? `
+            <div style="margin-top: 0.4cm; line-height: 1.32;">
+                <div style="font-weight: 700;">Tugas Pengawas Ruang:</div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    ${tugasItems.map((t, i) => `<tr><td style="width: 0.6cm; vertical-align: top; padding: 0;">${i + 1}.</td><td style="vertical-align: top; text-align: justify; padding: 0;">${escapeHtml(t)}</td></tr>`).join('')}
+                </table>
+            </div>` : '';
+    const committeeByName = new Map(committee.map(c => [norm(c.nama), c]));
+    const proctorRows = [...proctors.values()].map((pr, i) => {
+        const c = committeeByName.get(norm(pr.nama));
+        const roomText = [...pr.rooms].sort((a, b) => a - b).map(r => padRoom(r)).join(', ') || '-';
+        return `
+        <tr>
+            <td style="${cell} text-align: center;">${i + 1}</td>
+            <td style="${cell}">
+                <div style="font-weight: 700;">${escapeHtml(pr.nama)}</div>
+                ${c && c.nip ? `<div style="font-size: 8.5pt;">NIP. ${escapeHtml(c.nip)}</div>` : ''}
+            </td>
+            <td style="${cell}">${escapeHtml(c && c.jabatanDinas ? c.jabatanDinas : 'Guru')}</td>
+            <td style="${cell} text-align: center;">${roomText}</td>
+            <td style="${cell} text-align: center;">${pr.utama || '-'}</td>
+            <td style="${cell} text-align: center;">${pr.susulan || '-'}</td>
+        </tr>`;
+    }).join('') || `<tr><td colspan="6" style="${cell} text-align: center; font-style: italic;">Belum ada pengawas pada Jadwal &amp; Pengawas.</td></tr>`;
 
     // Halaman 1: Batang Tubuh SK
     const page1 = `
@@ -210,13 +261,53 @@ function renderSKCompleteHTML(paper) {
         ${renderFullPageSignatureHTML(kegiatan.tglSk)}
     </div>`;
 
-    // Halaman 4: Lampiran III Daftar Korektor
-    const page4 = `
+    // Halaman 4: Lampiran III Daftar Pengawas Ruang
+    const pagePengawas = `
     <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
          style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.9cm 1.2cm; font-size: 9.5pt;">
         <div>
             <div style="margin-left: 50%; font-size: 9pt; line-height: 1.25; margin-bottom: 0.35cm;">
                 <div style="font-weight: 700;">LAMPIRAN III</div>
+                <div>Keputusan Kepala ${escapeHtml(kop.sekolah)}</div>
+                <div>Nomor : ${escapeHtml(kegiatan.noSk)}</div>
+                <div>Tanggal : ${escapeHtml(kegiatan.tglSk)}</div>
+            </div>
+
+            <div style="text-align: center; font-weight: 700; margin-bottom: 0.3cm; line-height: 1.25;">
+                <div style="text-transform: uppercase;">DAFTAR PENGAWAS RUANG ${escapeHtml(kegiatan.namaLengkap)}</div>
+                <div style="text-transform: uppercase;">${escapeHtml(kop.sekolah)} ${escapeHtml(kegiatan.tapel)}</div>
+                <div style="font-size: 9pt; font-weight: 400;">Jumlah Ruang: ${rooms} &bull; ${perRuang} Pengawas per Ruang &bull; ${proctors.size} Orang Pengawas</div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; font-size: 9pt;">
+                <thead>
+                    <tr style="background: #e2e8f0; font-weight: 700;">
+                        <th rowspan="2" style="border: 1px solid #0f172a; padding: 5px; width: 6%;">No</th>
+                        <th rowspan="2" style="border: 1px solid #0f172a; padding: 5px; width: 34%;">Nama / NIP</th>
+                        <th rowspan="2" style="border: 1px solid #0f172a; padding: 5px; width: 20%;">Jabatan Dinas</th>
+                        <th rowspan="2" style="border: 1px solid #0f172a; padding: 5px; width: 16%;">Ruang yang Diawasi</th>
+                        <th colspan="2" style="border: 1px solid #0f172a; padding: 5px; width: 24%;">Jumlah Tugas (Sesi)</th>
+                    </tr>
+                    <tr style="background: #e2e8f0; font-weight: 700;">
+                        <th style="border: 1px solid #0f172a; padding: 4px;">Utama</th>
+                        <th style="border: 1px solid #0f172a; padding: 4px;">Susulan</th>
+                    </tr>
+                </thead>
+                <tbody>${proctorRows}</tbody>
+            </table>
+
+            ${tugasPengawasHTML}
+        </div>
+        ${renderFullPageSignatureHTML(kegiatan.tglSk)}
+    </div>`;
+
+    // Halaman 5: Lampiran IV Daftar Penyusun Soal & Korektor
+    const page4 = `
+    <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
+         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.9cm 1.2cm; font-size: 9.5pt;">
+        <div>
+            <div style="margin-left: 50%; font-size: 9pt; line-height: 1.25; margin-bottom: 0.35cm;">
+                <div style="font-weight: 700;">LAMPIRAN IV</div>
                 <div>Keputusan Kepala ${escapeHtml(kop.sekolah)}</div>
                 <div>Nomor : ${escapeHtml(kegiatan.noSk)}</div>
                 <div>Tanggal : ${escapeHtml(kegiatan.tglSk)}</div>
@@ -244,7 +335,7 @@ function renderSKCompleteHTML(paper) {
         ${renderFullPageSignatureHTML(kegiatan.tglSk)}
     </div>`;
 
-    return page1 + page2 + page3 + page4;
+    return page1 + page2 + page3 + pagePengawas + page4;
 }
 
 // ============================================================================

@@ -126,6 +126,16 @@
     .settings-panel.panel-hidden { display: none; }
     .nav-backdrop { display: none; }
 
+    /* Teks di panel pengaturan diperbesar agar isian mudah dibaca */
+    #left-sidebar .text-xs { font-size: .8125rem; line-height: 1.15rem; }
+    #left-sidebar .text-\[11px\] { font-size: .75rem; line-height: 1.05rem; }
+    #left-sidebar .text-\[10px\] { font-size: .6875rem; }
+    #left-sidebar .text-\[9px\] { font-size: .625rem; }
+    #left-sidebar input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),
+    #left-sidebar select, #left-sidebar textarea { font-size: .875rem; }
+    #left-sidebar .field-label { font-size: .75rem; }
+    #left-sidebar .section-title { font-size: .875rem; }
+
     /* Sidebar diciutkan (desktop) */
     @media screen and (min-width: 1024px) {
         body.nav-collapsed .app-nav { width: 68px; }

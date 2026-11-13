@@ -209,6 +209,15 @@ function buildDefaultMakeup(startIso) {
     });
 }
 
+// Butir "Tugas Pengawas Ruang" pada Lampiran III SK (satu butir per baris, bisa diubah di tab Jadwal & Pengawas)
+const DEFAULT_TUGAS_PENGAWAS = [
+    "Hadir di lokasi paling lambat 30 menit sebelum asesmen dimulai dan menandatangani daftar hadir pengawas.",
+    "Menerima amplop naskah soal dan lembar jawaban dari panitia, lalu membukanya di dalam ruang di hadapan peserta.",
+    "Memeriksa kartu peserta, mengedarkan daftar hadir peserta, dan menjaga ketertiban serta kejujuran selama asesmen berlangsung sesuai Tata Tertib.",
+    "Mengisi berita acara pelaksanaan dan menyerahkan lembar jawaban beserta kelengkapan administrasi kepada panitia setelah asesmen selesai.",
+    "Jadwal tugas tiap pengawas per hari, sesi, dan ruang tercantum pada Jadwal Asesmen & Pengawas Ruang."
+].join("\n");
+
 const DEFAULT_JUMLAH_RUANG = 3;
 const INITIAL_SCHEDULE = buildDefaultSchedule(DEFAULT_JUMLAH_RUANG, ASSESSMENT_PRESETS.ASAS.startDate);
 const INITIAL_DAILY_ROSTER = buildDefaultRoster(INITIAL_SCHEDULE);
