@@ -168,7 +168,7 @@ function renderSKCompleteHTML(paper) {
             </table>
         </div>
 
-        <div>
+        <div style="margin-bottom: auto;">
             ${renderFullPageSignatureHTML(kegiatan.tglSk)}
             <div style="font-size: 8pt; margin-top: -0.4cm;">
                 <div style="font-weight: 700; text-decoration: underline;">Tembusan Yth.:</div>
@@ -345,7 +345,7 @@ function renderSKCompleteHTML(paper) {
 }
 
 // ============================================================================
-// 13. RENDER MODUL 7: PROSEDUR OPERASIONAL STANDAR / POS (4 HALAMAN LENGKAP)
+// 13. RENDER MODUL 7: PROSEDUR OPERASIONAL STANDAR / POS (SAMPUL + 1 HALAMAN PER BAB)
 // ============================================================================
 function renderPOSCompleteHTML(paper) {
     const { kop, kegiatan, pengesahan, setting, committee, correctors, schedule } = appState;
@@ -395,7 +395,6 @@ function renderPOSCompleteHTML(paper) {
         </div>
     </div>`;
 
-    // Halaman 2: BAB I, II, III
     const committeeRowsCompact = committee.map((c, i) => `
         <tr>
             <td style="border: 1px solid #0f172a; padding: 3px 5px; text-align: center;">${i + 1}</td>
@@ -405,44 +404,6 @@ function renderPOSCompleteHTML(paper) {
         </tr>
     `).join('');
 
-    const posPage2 = `
-    <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
-         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9.2pt; line-height: 1.28;">
-        <div>
-            ${renderFullPageKopHTML(theme)}
-            <div style="text-align: center; font-weight: 700; margin-bottom: 0.2cm; line-height: 1.2;">
-                <div>KEPUTUSAN KEPALA ${escapeHtml(kop.sekolah)}</div>
-                <div>NOMOR: ${escapeHtml(kegiatan.noPos)}</div>
-                <div>TENTANG PROSEDUR OPERASIONAL STANDAR (POS) PENYELENGGARAAN</div>
-                <div style="text-transform: uppercase;">${escapeHtml(kegiatan.namaLengkap)} ${escapeHtml(kegiatan.tapel)}</div>
-            </div>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.15cm 0 0.1cm 0;">BAB I — PENDAHULUAN</div>
-            <p style="text-align: justify;"><strong>A. Latar Belakang:</strong> ${escapeHtml(kegiatan.namaLengkap)} merupakan kegiatan pengukuran dan penilaian pencapaian kompetensi peserta didik ${preset.targetGradesText} setelah menyelesaikan kegiatan pembelajaran pada Kurikulum Merdeka. Agar penyelenggaraan ${escapeHtml(kegiatan.singkatan)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} di ${escapeHtml(kop.sekolah)} berjalan tertib, lancar, efektif, dan akuntabel, perlu ditetapkan Prosedur Operasional Standar (POS) sebagai pedoman teknis.</p>
-            <p style="margin-top: 4px;"><strong>B. Dasar Hukum:</strong> 1) UU Nomor 20 Tahun 2003 tentang Sisdiknas; 2) PP Nomor 57 Tahun 2021 jo. PP Nomor 4 Tahun 2022 tentang Standar Nasional Pendidikan; 3) Permendikbudristek Nomor 21 Tahun 2022 tentang Standar Penilaian Pendidikan; 4) Permendikbudristek Nomor 12 Tahun 2024 tentang Kurikulum Merdeka; 5) Kalender Pendidikan ${escapeHtml(toTitleCase(kop.dinas))} ${escapeHtml(kop.kabupaten)} T.P. ${escapeHtml(kegiatan.tapelAngka)}; 6) SK Kepala ${escapeHtml(kop.sekolah)} Nomor: ${escapeHtml(kegiatan.noSk)} tanggal ${escapeHtml(kegiatan.tglSk)}.</p>
-            <p style="margin-top: 4px;"><strong>C. Tujuan dan Fungsi:</strong> Mengukur pencapaian hasil belajar peserta didik ${preset.targetGradesText} sesuai Tujuan Pembelajaran (TP) dan Capaian Pembelajaran (CP) serta menjadi bahan pertimbangan pengisian Laporan Hasil Belajar (E-Rapor) Semester ${escapeHtml(kegiatan.semester)}.</p>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.1cm 0;">BAB II — PESERTA DAN SATUAN PENDIDIKAN PELAKSANA</div>
-            <p style="text-align: justify;"><strong>A. Persyaratan Peserta:</strong> 1) Terdaftar aktif sebagai peserta didik ${preset.targetGradesText} pada ${escapeHtml(kop.sekolah)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} dan tercatat dalam Dapodik; 2) Mengikuti pembelajaran dengan kehadiran minimal 80% dari hari efektif; 3) Memiliki Kartu Peserta ${escapeHtml(kegiatan.singkatan)} yang disahkan Kepala Sekolah.</p>
-            <p style="margin-top: 4px;"><strong>B. Hak & Kewajiban Peserta:</strong> Berhak mengikuti asesmen utama maupun susulan (dengan bukti sah) serta wajib mematuhi seluruh Tata Tertib Peserta ${escapeHtml(kegiatan.singkatan)}.</p>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.1cm 0;">BAB III — KEPANITIAAN DAN PENYELENGGARA</div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-top: 4px;">
-                <thead>
-                    <tr style="background: #e2e8f0; font-weight: 700;">
-                        <th style="border: 1px solid #0f172a; padding: 3px; width: 6%;">No</th>
-                        <th style="border: 1px solid #0f172a; padding: 3px; width: 32%;">Jabatan Kepanitiaan</th>
-                        <th style="border: 1px solid #0f172a; padding: 3px; width: 38%;">Nama / NIP</th>
-                        <th style="border: 1px solid #0f172a; padding: 3px; width: 24%;">Jabatan Dinas</th>
-                    </tr>
-                </thead>
-                <tbody>${committeeRowsCompact}</tbody>
-            </table>
-        </div>
-        <div style="font-size: 8pt; color: #64748b; text-align: right;">POS ${escapeHtml(kegiatan.singkatan)} ${escapeHtml(kop.sekolah)} — Halaman 2</div>
-    </div>`;
-
-    // Halaman 3: BAB IV & BAB V
     const mapelSpecRows = correctors.map((cr, i) => `
         <tr>
             <td style="border: 1px solid #0f172a; padding: 2.5px 5px; text-align: center;">${i + 1}</td>
@@ -461,11 +422,53 @@ function renderPOSCompleteHTML(paper) {
         </tr>
     `).join('');
 
-    const posPage3 = `
+    // Setiap BAB dicetak pada halaman tersendiri (tidak ada dua BAB dalam satu halaman).
+    // BAB I didahului kop & judul keputusan; BAB IX (penutup) diakhiri pengesahan.
+    const babSheet = (inner, footer) => `
     <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
-         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9pt; line-height: 1.25;">
+         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9.2pt; line-height: 1.32;">
         <div>
-            <div style="font-weight: 700; text-align: center; margin-bottom: 0.1cm;">BAB IV — PENYIAPAN BAHAN DAN INSTRUMEN ASESMEN</div>
+${inner}        </div>
+        ${footer}
+    </div>`;
+    const pageFooter = (n) => `<div style="font-size: 8pt; color: #64748b; text-align: right;">POS ${escapeHtml(kegiatan.singkatan)} ${escapeHtml(kop.sekolah)} — Halaman ${n}</div>`;
+
+    const babBlocks = [
+        `
+            ${renderFullPageKopHTML(theme)}
+            <div style="text-align: center; font-weight: 700; margin-bottom: 0.2cm; line-height: 1.2;">
+                <div>KEPUTUSAN KEPALA ${escapeHtml(kop.sekolah)}</div>
+                <div>NOMOR: ${escapeHtml(kegiatan.noPos)}</div>
+                <div>TENTANG PROSEDUR OPERASIONAL STANDAR (POS) PENYELENGGARAAN</div>
+                <div style="text-transform: uppercase;">${escapeHtml(kegiatan.namaLengkap)} ${escapeHtml(kegiatan.tapel)}</div>
+            </div>
+
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB I — PENDAHULUAN</div>
+            <p style="text-align: justify;"><strong>A. Latar Belakang:</strong> ${escapeHtml(kegiatan.namaLengkap)} merupakan kegiatan pengukuran dan penilaian pencapaian kompetensi peserta didik ${preset.targetGradesText} setelah menyelesaikan kegiatan pembelajaran pada Kurikulum Merdeka. Agar penyelenggaraan ${escapeHtml(kegiatan.singkatan)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} di ${escapeHtml(kop.sekolah)} berjalan tertib, lancar, efektif, dan akuntabel, perlu ditetapkan Prosedur Operasional Standar (POS) sebagai pedoman teknis.</p>
+            <p style="margin-top: 4px;"><strong>B. Dasar Hukum:</strong> 1) UU Nomor 20 Tahun 2003 tentang Sisdiknas; 2) PP Nomor 57 Tahun 2021 jo. PP Nomor 4 Tahun 2022 tentang Standar Nasional Pendidikan; 3) Permendikbudristek Nomor 21 Tahun 2022 tentang Standar Penilaian Pendidikan; 4) Permendikbudristek Nomor 12 Tahun 2024 tentang Kurikulum Merdeka; 5) Kalender Pendidikan ${escapeHtml(toTitleCase(kop.dinas))} ${escapeHtml(kop.kabupaten)} T.P. ${escapeHtml(kegiatan.tapelAngka)}; 6) SK Kepala ${escapeHtml(kop.sekolah)} Nomor: ${escapeHtml(kegiatan.noSk)} tanggal ${escapeHtml(kegiatan.tglSk)}.</p>
+            <p style="margin-top: 4px;"><strong>C. Tujuan dan Fungsi:</strong> Mengukur pencapaian hasil belajar peserta didik ${preset.targetGradesText} sesuai Tujuan Pembelajaran (TP) dan Capaian Pembelajaran (CP) serta menjadi bahan pertimbangan pengisian Laporan Hasil Belajar (E-Rapor) Semester ${escapeHtml(kegiatan.semester)}.</p>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB II — PESERTA DAN SATUAN PENDIDIKAN PELAKSANA</div>
+            <p style="text-align: justify;"><strong>A. Persyaratan Peserta:</strong> 1) Terdaftar aktif sebagai peserta didik ${preset.targetGradesText} pada ${escapeHtml(kop.sekolah)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} dan tercatat dalam Dapodik; 2) Mengikuti pembelajaran dengan kehadiran minimal 80% dari hari efektif; 3) Memiliki Kartu Peserta ${escapeHtml(kegiatan.singkatan)} yang disahkan Kepala Sekolah.</p>
+            <p style="margin-top: 4px;"><strong>B. Hak & Kewajiban Peserta:</strong> Berhak mengikuti asesmen utama maupun susulan (dengan bukti sah) serta wajib mematuhi seluruh Tata Tertib Peserta ${escapeHtml(kegiatan.singkatan)}.</p>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB III — KEPANITIAAN DAN PENYELENGGARA</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt; margin-top: 4px;">
+                <thead>
+                    <tr style="background: #e2e8f0; font-weight: 700;">
+                        <th style="border: 1px solid #0f172a; padding: 3px; width: 6%;">No</th>
+                        <th style="border: 1px solid #0f172a; padding: 3px; width: 32%;">Jabatan Kepanitiaan</th>
+                        <th style="border: 1px solid #0f172a; padding: 3px; width: 38%;">Nama / NIP</th>
+                        <th style="border: 1px solid #0f172a; padding: 3px; width: 24%;">Jabatan Dinas</th>
+                    </tr>
+                </thead>
+                <tbody>${committeeRowsCompact}</tbody>
+            </table>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB IV — PENYIAPAN BAHAN DAN INSTRUMEN ASESMEN</div>
             <p style="text-align: justify;"><strong>A. Ketentuan Penyusunan:</strong> Naskah soal disusun oleh guru mata pelajaran disertai Kisi-kisi, Kartu Soal, Naskah Soal, serta Kunci Jawaban & Rubrik Penskoran. Proporsi level kognitif: Level 1 (Pemahaman) ±25%, Level 2 (Penerapan) ±50%, dan Level 3 (Penalaran) ±25%.</p>
             <p style="margin-top: 3px;"><strong>B. Mata Pelajaran, Bentuk Soal (PT, B/S, MJ, IS, U), dan Alokasi Waktu:</strong></p>
             <table style="width: 100%; border-collapse: collapse; font-size: 8.2pt; margin-top: 3px;">
@@ -479,8 +482,9 @@ function renderPOSCompleteHTML(paper) {
                 </thead>
                 <tbody>${mapelSpecRows}</tbody>
             </table>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.2cm 0 0.1cm 0;">BAB V — PELAKSANAAN ASESMEN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB V — PELAKSANAAN ASESMEN</div>
             <p><strong>A. Moda Pelaksanaan:</strong> Diselenggarakan secara tatap muka menggunakan moda <strong>${escapeHtml(kegiatan.moda)}</strong> pada tanggal <strong>${escapeHtml(kegiatan.rentangUtama)}</strong>.</p>
             <p style="margin-top: 3px;"><strong>B. Jadwal Pelaksanaan ${escapeHtml(kegiatan.singkatan)} Utama:</strong></p>
             <table style="width: 100%; border-collapse: collapse; font-size: 8.2pt; margin-top: 3px;">
@@ -495,19 +499,13 @@ function renderPOSCompleteHTML(paper) {
                 <tbody>${scheduleRowsPOS}</tbody>
             </table>
             <p style="margin-top: 5px;"><strong>C. Jadwal Susulan & Pengaturan Ruang:</strong> Asesmen Susulan dilaksanakan pada tanggal <strong>${escapeHtml(kegiatan.rentangSusulan)}</strong>. Setiap ruang ditempati maksimal ${appState.roomConfig.maxPerRoom || 20} peserta didik dan diawasi oleh 2 (dua) orang Pengawas Ruang.</p>
-        </div>
-        <div style="font-size: 8pt; color: #64748b; text-align: right;">POS ${escapeHtml(kegiatan.singkatan)} ${escapeHtml(kop.sekolah)} — Halaman 3</div>
-    </div>`;
-
-    // Halaman 4: BAB VI, VII, VIII, IX + Pengesahan
-    const posPage4 = `
-    <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
-         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9pt; line-height: 1.28;">
-        <div>
-            <div style="font-weight: 700; text-align: center; margin-bottom: 0.08cm;">BAB VI — PENGAWASAN, TATA TERTIB, DAN SANKSI</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB VI — PENGAWASAN, TATA TERTIB, DAN SANKSI</div>
             <p style="text-align: justify;">Setiap ruang diawasi oleh ${getPengawasPerRuang() === 1 ? '1 (satu) orang' : '2 (dua) orang'} pengawas ruang. Pengawas dan peserta wajib mematuhi Tata Tertib yang ditetapkan. Pelanggaran dikenakan sanksi bertahap mulai dari Teguran Lisan, Pencatatan pada Berita Acara, hingga Dikeluarkan dari Ruang Asesmen.</p>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB VII — PEMERIKSAAN DAN PENGOLAHAN HASIL ASESMEN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB VII — PEMERIKSAAN DAN PENGOLAHAN HASIL ASESMEN</div>
             <p style="text-align: justify;">Nilai ${escapeHtml(kegiatan.singkatan)} setiap mata pelajaran dihitung pada skala 0–100 dengan pembobotan per bentuk soal sebagai berikut:</p>
             <table style="width: 100%; border-collapse: collapse; font-size: 8.5pt; margin: 4px 0;">
                 <thead>
@@ -531,15 +529,18 @@ function renderPOSCompleteHTML(paper) {
             <div style="border: 1px solid #0f172a; background: #f8fafc; padding: 5px 8px; font-weight: 700; text-align: center; font-size: 8.5pt; margin-top: 4px;">
                 Rumus Nilai ${escapeHtml(kegiatan.singkatan)} = [(SPT / SPT maks) × 40] + [(SBS / SBS maks) × 10] + [(SMJ / SMJ maks) × 10] + [(SIS / SIS maks) × 15] + [(SU / SU maks) × 25]
             </div>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB VIII — PEMBIAYAAN, MONITORING, DAN PELAPORAN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB VIII — PEMBIAYAAN, MONITORING, DAN PELAPORAN</div>
             <p style="text-align: justify;">Seluruh biaya penyelenggaraan kegiatan ${escapeHtml(kegiatan.singkatan)} bersumber dari Dana BOSP ${escapeHtml(kop.sekolah)} Tahun Anggaran ${escapeHtml(kegiatan.tahunAnggaran)}. Monitoring dilakukan oleh Kepala Sekolah dan Pengawas Bina SMP ${escapeHtml(toTitleCase(kop.dinas))} ${escapeHtml(kop.kabupaten)}.</p>
-
-            <div style="font-weight: 700; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB IX — PENUTUP</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB IX — PENUTUP</div>
             <p style="text-align: justify;">POS ini disusun sebagai acuan resmi penyelenggaraan ${escapeHtml(kegiatan.namaLengkap)} di ${escapeHtml(kop.sekolah)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} dan berlaku sejak tanggal ditetapkan.</p>
-        </div>
-        ${renderFullPageSignatureHTML()}
-    </div>`;
+`
+    ];
+    const babPages = babBlocks.map((inner, i) => babSheet(inner,
+        i === babBlocks.length - 1 ? renderFullPageSignatureHTML() : pageFooter(i + 2))).join('');
 
-    return coverPOS + posPage2 + posPage3 + posPage4;
+    return coverPOS + babPages;
 }

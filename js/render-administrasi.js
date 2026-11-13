@@ -842,7 +842,7 @@ function renderRekapNilaiHTML(paper) {
 }
 
 // ============================================================================
-// 18. RENDER MODUL 16: LAPORAN AKHIR PELAKSANAAN / LPJ (4 HALAMAN LENGKAP)
+// 18. RENDER MODUL 16: LAPORAN AKHIR PELAKSANAAN / LPJ (SAMPUL, PENGESAHAN, KATA PENGANTAR, DAFTAR ISI + 1 HALAMAN PER BAB)
 // ============================================================================
 function renderLaporanAkhirHTML(paper) {
     const { kop, kegiatan, pengesahan, setting, committee, budget, rekapConfig } = appState;
@@ -896,7 +896,7 @@ function renderLaporanAkhirHTML(paper) {
         </div>
     </div>`;
 
-    // Halaman 2: Lembar Pengesahan, Kata Pengantar & Daftar Isi
+    // Halaman 2: Lembar Pengesahan
     const page2 = `
     <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
          style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9.2pt; line-height: 1.28;">
@@ -937,46 +937,86 @@ function renderLaporanAkhirHTML(paper) {
                     </td>
                 </tr>
             </table>
-
-            <div style="border-top: 1.5px solid #cbd5e1; margin: 0.2cm 0; padding-top: 0.15cm;">
-                <div style="text-align: center; font-weight: 700; font-size: 10.5pt; margin-bottom: 4px;">KATA PENGANTAR</div>
-                <p style="text-align: justify;">Puji dan syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan hidayah-Nya, sehingga kegiatan ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} di ${escapeHtml(kop.sekolah)} dapat terlaksana secara tertib, aman, dan lancar. Laporan ini disusun sebagai bentuk pertanggungjawaban panitia pelaksana mengenai seluruh rangkaian kegiatan mulai dari tahap persiapan, penyusunan kisi-kisi dan naskah soal, pelaksanaan asesmen utama maupun susulan, pengolahan nilai, hingga administrasi pelaporan dan pertanggungjawaban keuangan.</p>
-            </div>
-
-            <div style="border-top: 1.5px solid #cbd5e1; margin-top: 0.2cm; padding-top: 0.15cm;">
-                <div style="text-align: center; font-weight: 700; font-size: 10.5pt; margin-bottom: 4px;">DAFTAR ISI RINGKAS</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; font-size: 8.5pt;">
-                    <div>• Halaman Judul & Lembar Pengesahan ................. i</div>
-                    <div>• BAB III: Pelaksanaan Asesmen ......................... 3</div>
-                    <div>• Kata Pengantar & Daftar Isi .............................. ii</div>
-                    <div>• BAB IV: Analisis Hasil & Hambatan ................. 4</div>
-                    <div>• BAB I: Pendahuluan (Latar Belakang & Tujuan) ... 1</div>
-                    <div>• BAB V: Laporan Keuangan & Anggaran ............ 5</div>
-                    <div>• BAB II: Pengorganisasian Kepanitiaan ............. 2</div>
-                    <div>• BAB VI: Penutup, Rekomendasi & Lampiran ..... 6</div>
-                </div>
-            </div>
         </div>
-        <div style="font-size: 8pt; color: #64748b; text-align: right;">Laporan Akhir ${escapeHtml(kegiatan.singkatan)} — Halaman ii</div>
+        <div style="font-size: 8pt; color: #64748b; text-align: right;">Laporan Akhir ${escapeHtml(kegiatan.singkatan)} — Halaman i</div>
     </div>`;
 
-    // Halaman 3: BAB I, BAB II, BAB III
+    // Halaman Kata Pengantar & Daftar Isi — masing-masing satu halaman tersendiri
+    const frontSheet = (inner, n) => `
+    <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
+         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9.2pt; line-height: 1.32;">
+        <div>
+${inner}        </div>
+        <div style="font-size: 8pt; color: #64748b; text-align: right;">Laporan Akhir ${escapeHtml(kegiatan.singkatan)} — Halaman ${n}</div>
+    </div>`;
+
+    const pageKataPengantar = frontSheet(`
+            <div style="text-align: center; font-weight: 700; font-size: 10.5pt; margin-bottom: 0.15cm;">KATA PENGANTAR</div>
+            <p style="text-align: justify;">Puji dan syukur kami panjatkan ke hadirat Tuhan Yang Maha Esa atas rahmat dan hidayah-Nya, sehingga kegiatan ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} di ${escapeHtml(kop.sekolah)} dapat terlaksana secara tertib, aman, dan lancar. Laporan ini disusun sebagai bentuk pertanggungjawaban panitia pelaksana mengenai seluruh rangkaian kegiatan mulai dari tahap persiapan, penyusunan kisi-kisi dan naskah soal, pelaksanaan asesmen utama maupun susulan, pengolahan nilai, hingga administrasi pelaporan dan pertanggungjawaban keuangan.</p>
+`, 'ii');
+
+    const tocEntries = [
+        ['Lembar Pengesahan', 'i'],
+        ['Kata Pengantar', 'ii'],
+        ['Daftar Isi', 'iii'],
+        ['BAB I — Pendahuluan (Latar Belakang & Tujuan)', '1'],
+        ['BAB II — Pengorganisasian Kepanitiaan', '2'],
+        ['BAB III — Pelaksanaan Asesmen', '3'],
+        ['BAB IV — Analisis Hasil & Hambatan', '4'],
+        ['BAB V — Laporan Keuangan & Anggaran', '5'],
+        ['BAB VI — Penutup, Rekomendasi & Lampiran', '6'],
+    ];
+    const tocRows = tocEntries.map(([label, hal]) => `
+                <tr>
+                    <td style="padding: 3px 0; border-bottom: 1px dotted #64748b;">${label}</td>
+                    <td style="padding: 3px 0; width: 1.2cm; text-align: right; border-bottom: 1px dotted #64748b;">${hal}</td>
+                </tr>`).join('');
+    const pageDaftarIsi = frontSheet(`
+            <div style="text-align: center; font-weight: 700; font-size: 10.5pt; margin-bottom: 0.25cm;">DAFTAR ISI</div>
+            <table style="width: 100%; border-collapse: collapse;">${tocRows}
+            </table>
+`, 'iii');
+
     const committeeListLPJ = committee.map(c => `<li><strong>${escapeHtml(c.jabatanPanitia)}</strong> : ${escapeHtml(c.nama)} (NIP. ${escapeHtml(c.nip)})</li>`).join('');
 
-    const page3 = `
+    let totalBudget = 0;
+    const budgetRows = budget.map((b, i) => {
+        const sub = (Number(b.qty) || 1) * (Number(b.harga) || 0);
+        totalBudget += sub;
+        return `
+        <tr>
+            <td style="border: 1px solid #0f172a; padding: 4px; text-align: center;">${i + 1}</td>
+            <td style="border: 1px solid #0f172a; padding: 4px 8px;">${escapeHtml(b.uraian)}</td>
+            <td style="border: 1px solid #0f172a; padding: 4px 6px; text-align: center;">${escapeHtml(b.volume)}</td>
+            <td style="border: 1px solid #0f172a; padding: 4px 8px; text-align: right;">Rp ${sub.toLocaleString('id-ID')}</td>
+        </tr>`;
+    }).join('');
+
+    // Setiap BAB dicetak pada halaman tersendiri (tidak ada dua BAB dalam satu halaman).
+    // Nomor halaman mengikuti Daftar Isi (BAB I = 1 … BAB VI = 6); BAB VI diakhiri pengesahan.
+    const babSheet = (inner, footer) => `
     <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
-         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9pt; line-height: 1.28;">
+         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9.2pt; line-height: 1.32;">
         <div>
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.1cm;">BAB I — PENDAHULUAN</div>
+${inner}        </div>
+        ${footer}
+    </div>`;
+    const pageFooter = (n) => `<div style="font-size: 8pt; color: #64748b; text-align: right;">Laporan Akhir ${escapeHtml(kegiatan.singkatan)} — Halaman ${n}</div>`;
+
+    const babBlocks = [
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB I — PENDAHULUAN</div>
             <p style="text-align: justify;"><strong>A. Latar Belakang:</strong> ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} merupakan bagian integral dari proses pembelajaran dalam rangka ${preset.purposeText}.</p>
             <p style="margin-top: 3px;"><strong>B. Dasar Hukum:</strong> 1) UU Nomor 20 Tahun 2003 tentang Sisdiknas; 2) PP Nomor 57 Tahun 2021 jo. PP Nomor 4 Tahun 2022; 3) Permendikbudristek Nomor 21 Tahun 2022 tentang Standar Penilaian Pendidikan; 4) SK Kepala ${escapeHtml(kop.sekolah)} Nomor: ${escapeHtml(kegiatan.noSk)} tentang Penetapan Panitia Pelaksana ${escapeHtml(kegiatan.namaLengkap)}.</p>
             <p style="margin-top: 3px;"><strong>C. Tujuan dan Sasaran:</strong> Mengukur capaian kompetensi akademik peserta didik ${preset.targetGradesText}, menyediakan data pengisian nilai Rapor Semester ${escapeHtml(kegiatan.semester)}, serta menjadi bahan evaluasi strategi pembelajaran.</p>
-
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin: 0.2cm 0 0.1cm 0;">BAB II — PENGORGANISASIAN DAN STRUKTUR KEPANITIAAN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB II — PENGORGANISASIAN DAN STRUKTUR KEPANITIAAN</div>
             <p>Susunan Panitia Pelaksana ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} ${escapeHtml(kop.sekolah)} terdiri atas:</p>
             <ul style="list-style-type: disc; padding-left: 0.6cm; margin-top: 3px; font-size: 8.6pt;">${committeeListLPJ}</ul>
-
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin: 0.2cm 0 0.1cm 0;">BAB III — PELAKSANAAN ASESMEN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB III — PELAKSANAAN ASESMEN</div>
             <p><strong>A. Data Peserta Asesmen (${preset.targetGradesText}):</strong></p>
             <table style="width: 100%; border-collapse: collapse; font-size: 8.6pt; margin: 4px 0;">
                 <thead>
@@ -1024,33 +1064,14 @@ function renderLaporanAkhirHTML(paper) {
                 </tbody>
             </table>
             <p style="margin-top: 4px;"><strong>B. Jadwal & Pembagian Ruang:</strong> Asesmen utama berlangsung pada tanggal <strong>${escapeHtml(kegiatan.rentangUtama)}</strong> menggunakan <strong>${groups.length} ruang ujian</strong> (kapasitas maksimal ${appState.roomConfig.maxPerRoom || 20} peserta/ruang), dilanjutkan Asesmen Susulan pada tanggal <strong>${escapeHtml(kegiatan.rentangSusulan)}</strong>.</p>
-        </div>
-        <div style="font-size: 8pt; color: #64748b; text-align: right;">Laporan Akhir ${escapeHtml(kegiatan.singkatan)} — Halaman 3</div>
-    </div>`;
-
-    // Halaman 4: BAB IV, BAB V (Realisasi Anggaran), BAB VI & Lampiran Wajib
-    let totalBudget = 0;
-    const budgetRows = budget.map((b, i) => {
-        const sub = (Number(b.qty) || 1) * (Number(b.harga) || 0);
-        totalBudget += sub;
-        return `
-        <tr>
-            <td style="border: 1px solid #0f172a; padding: 4px; text-align: center;">${i + 1}</td>
-            <td style="border: 1px solid #0f172a; padding: 4px 8px;">${escapeHtml(b.uraian)}</td>
-            <td style="border: 1px solid #0f172a; padding: 4px 6px; text-align: center;">${escapeHtml(b.volume)}</td>
-            <td style="border: 1px solid #0f172a; padding: 4px 8px; text-align: right;">Rp ${sub.toLocaleString('id-ID')}</td>
-        </tr>`;
-    }).join('');
-
-    const page4 = `
-    <div class="print-sheet font-serif-formal bg-white shadow-xl border border-slate-300 relative box-border flex flex-col justify-between"
-         style="width: ${paper.widthCm}cm; min-height: ${paper.heightCm}cm; padding: 0.8cm 1.2cm; font-size: 9pt; line-height: 1.28;">
-        <div>
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.08cm;">BAB IV — ANALISIS HASIL, FAKTOR PENDUKUNG, DAN HAMBATAN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB IV — ANALISIS HASIL, FAKTOR PENDUKUNG, DAN HAMBATAN</div>
             <p><strong>A. Faktor Pendukung:</strong> 1) Tingginya dedikasi panitia pelaksana, pendidik, dan tenaga kependidikan; 2) Kesiapan administrasi ruang dan naskah soal yang terorganisasi baik; 3) Tingkat kehadiran peserta didik yang tinggi mencapai <strong>${escapeHtml(rekapConfig.lpjKehadiran)}%</strong>.</p>
             <p style="margin-top: 3px;"><strong>B. Hambatan & Solusi:</strong> Peserta yang terkendala hadir karena sakit atau cuaca difasilitasi melalui penyesuaian waktu dan pelaksanaan ${escapeHtml(kegiatan.singkatan)} Susulan secara tertib.</p>
-
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB V — LAPORAN KEUANGAN DAN REALISASI ANGGARAN</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB V — LAPORAN KEUANGAN DAN REALISASI ANGGARAN</div>
             <p>Rekapitulasi penggunaan dana operasional ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} (Sumber Dana BOSP Tahun ${escapeHtml(kegiatan.tahunAnggaran)}):</p>
             <table style="width: 100%; border-collapse: collapse; font-size: 8.6pt; margin: 4px 0;">
                 <thead>
@@ -1069,8 +1090,9 @@ function renderLaporanAkhirHTML(paper) {
                     </tr>
                 </tbody>
             </table>
-
-            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin: 0.18cm 0 0.08cm 0;">BAB VI — PENUTUP DAN REKOMENDASI</div>
+`,
+        `
+            <div style="font-weight: 700; font-size: 10.5pt; text-align: center; margin-bottom: 0.15cm;">BAB VI — PENUTUP DAN REKOMENDASI</div>
             <p style="text-align: justify;">Secara keseluruhan, kegiatan ${escapeHtml(kegiatan.namaLengkap)} Tahun Pelajaran ${escapeHtml(kegiatan.tapelAngka)} di ${escapeHtml(kop.sekolah)} telah terlaksana dengan baik, jujur, dan akuntabel.</p>
 
             <div style="border: 1px solid #0f172a; background: #f8fafc; padding: 6px 10px; border-radius: 4px; margin-top: 0.18cm; font-size: 8.2pt;">
@@ -1088,9 +1110,10 @@ function renderLaporanAkhirHTML(paper) {
                     <div>10. Dokumentasi Foto Kegiatan Pelaksanaan</div>
                 </div>
             </div>
-        </div>
-        ${renderFullPageSignatureHTML(rekapConfig.lpjTanggal)}
-    </div>`;
+`
+    ];
+    const babPages = babBlocks.map((inner, i) => babSheet(inner,
+        i === babBlocks.length - 1 ? renderFullPageSignatureHTML(rekapConfig.lpjTanggal) : pageFooter(i + 1))).join('');
 
-    return page1 + page2 + page3 + page4;
+    return page1 + page2 + pageKataPengantar + pageDaftarIsi + babPages;
 }

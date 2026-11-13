@@ -128,8 +128,11 @@ function renderFullPageSignatureHTML(customDateStr = null) {
     const capSizeCm = (1.85 * (pengesahan.capScale / 100)).toFixed(2);
     const dateToUse = customDateStr || pengesahan.tanggal;
 
+    // margin-bottom: auto → di lembar flex-col justify-between, ruang kosong diserap di
+    // BAWAH blok ini, sehingga tanda tangan menempel tepat di bawah teks terakhir
+    // (tidak terdorong ke dasar halaman) dan elemen sesudahnya (kaki halaman) tetap di bawah.
     return `
-    <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 0.3cm; font-size: 9.5pt; line-height: 1.22; color: #0f172a;">
+    <div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 0.5cm; margin-bottom: auto; font-size: 9.5pt; line-height: 1.22; color: #0f172a;">
         <div style="width: 6.8cm; position: relative;">
             <div>Ditetapkan di : ${escapeHtml(pengesahan.tempat)}</div>
             <div>Pada tanggal &nbsp;: ${escapeHtml(dateToUse)}</div>
