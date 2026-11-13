@@ -4,7 +4,10 @@
   "description": "Asesmen Sumatif (ASAS, ASAT, ASAJ) — aplikasi statis, buka index.html langsung di browser.",
   "scripts": {
     "build:css": "tailwindcss -c build/tailwind.config.js -i build/tailwind.input.css -o css/tailwind.css --minify",
-    "test": "node build/smoke-test.js"
+    "build:sw": "node build/build-sw.js",
+    "build:icons": "node build/make-icons.js",
+    "build": "npm run build:css && npm run build:sw",
+    "test": "node build/build-sw.js --check && node build/smoke-test.js"
   },
   "devDependencies": {
     "playwright-core": "^1.48.0",

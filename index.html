@@ -8,6 +8,18 @@
     <link rel="icon" href="img/favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Asesmen Sumatif">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <script>
+        // Manifest PWA hanya dipasang saat dibuka lewat http(s); di file:// browser menolaknya.
+        if (/^https?:$/.test(location.protocol)) {
+            var m = document.createElement('link');
+            m.rel = 'manifest'; m.href = 'manifest.webmanifest';
+            document.head.appendChild(m);
+        }
+    </script>
     <!-- Semua pustaka disimpan lokal (folder vendor/) agar aplikasi tetap jalan tanpa internet -->
     <link rel="stylesheet" href="vendor/fonts/fonts.css">
     <link rel="stylesheet" href="css/tailwind.css">
@@ -92,6 +104,10 @@
                 <span class="nav-label">Nilai & LPJ</span>
             </button>
             <div class="nav-section-label nav-section-sub">Alat</div>
+            <button onclick="installApp()" id="pwa-install-btn" class="nav-item hidden" title="Pasang aplikasi di perangkat ini agar bisa dibuka tanpa browser & tanpa internet">
+                <i data-lucide="monitor-down" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Pasang Aplikasi</span>
+            </button>
             <div class="relative" data-menu>
                 <button onclick="toggleMenu('menu-data', event)" class="nav-item" title="Data: Backup, Muat, Reset" aria-haspopup="true">
                     <i data-lucide="database" class="w-[18px] h-[18px] shrink-0"></i>
@@ -1118,6 +1134,12 @@
     </div>
 
     <!-- Notification Toast -->
+    <div id="pwa-update" class="pwa-update hidden no-print" role="status">
+        <i data-lucide="refresh-cw" class="w-4 h-4 shrink-0"></i>
+        <span class="flex-1">Versi baru aplikasi tersedia.</span>
+        <button id="pwa-update-reload" class="pwa-update-btn">Muat ulang</button>
+        <button id="pwa-update-close" class="pwa-update-close" title="Nanti saja" aria-label="Tutup"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
     <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-300 z-50 no-print">
         <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
         <span id="toast-msg">Berhasil</span>
@@ -1142,5 +1164,6 @@
     <script src="js/export.js"></script>
     <script src="js/export-word.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/pwa.js"></script>
 </body>
 </html>
