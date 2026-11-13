@@ -149,7 +149,7 @@
         </nav>
 
         <!-- Panel pengaturan bagian aktif -->
-        <aside id="left-sidebar" class="settings-panel w-full lg:w-[380px] xl:w-[420px] bg-white border-r border-slate-200 flex flex-col min-h-0 no-print shrink-0 z-10">
+        <aside id="left-sidebar" class="settings-panel w-full lg:w-[440px] xl:w-[520px] 2xl:w-[600px] bg-white border-r border-slate-200 flex flex-col min-h-0 no-print shrink-0 z-10">
             <div class="panel-head">
                 <span id="panel-icon" class="panel-icon"></span>
                 <div class="min-w-0 flex-1">
@@ -632,6 +632,15 @@
                         <h3 class="section-title">Jadwal Asesmen Susulan</h3>
                         <div id="makeup-editor-container" class="space-y-2"></div>
                     </div>
+
+                    <div class="space-y-2 pt-3 border-t border-slate-200">
+                        <div class="flex items-center justify-between gap-2">
+                            <h3 class="section-title">Tugas Pengawas Ruang</h3>
+                            <button onclick="resetTugasPengawas()" class="text-[11px] font-semibold text-slate-600 hover:text-primary-700 border border-slate-300 rounded-lg px-2 py-1 cursor-pointer" title="Kembalikan ke teks bawaan">Kembalikan Bawaan</button>
+                        </div>
+                        <p class="text-[10px] text-slate-500">Tampil di <strong>Lampiran III SK (Daftar Pengawas Ruang)</strong>. Tulis satu butir per baris; penomoran dibuat otomatis. Kosongkan bila tidak ingin ditampilkan.</p>
+                        <textarea id="input-tugas-pengawas" rows="8" oninput="updateTugasPengawas(this.value)" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs leading-relaxed focus:ring-2 focus:ring-primary-500 outline-none resize-y"></textarea>
+                    </div>
                 </div>
 
                 <!-- TAB 5: DATA PESERTA (EXCEL & FILTER KELAS 7, 8, 9) -->
@@ -923,7 +932,7 @@
                                 <option value="pintu">5. Label Pintu Ruang & Pakta Ketertiban</option>
                             </optgroup>
                             <optgroup label="B. SK Kepanitiaan, POS, Jadwal & Tata Tertib">
-                                <option value="sk">6. SK Kepanitiaan, Pengawas & Korektor (Lengkap Lampiran I-III)</option>
+                                <option value="sk">6. SK Kepanitiaan, Pengawas & Korektor (Lengkap Lampiran I-IV)</option>
                                 <option value="pos">7. Prosedur Operasional Standar / POS (Lengkap Sampul & BAB I-IX)</option>
                                 <option value="jadwal_pengawas">8. Jadwal Asesmen & Pengawas Ruang (+ Matriks Guru Piket)</option>
                                 <option value="tatib">9. Tata Tertib Pengawas Ruang & Peserta Ujian (17 Poin Resmi)</option>
@@ -962,9 +971,9 @@
                             <button onclick="resetZoom()" class="zoom-btn text-[11px] font-semibold px-1.5" title="Ukuran asli 100%">1:1</button>
                         </div>
                 <div class="relative" data-menu>
-                    <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true">
+                    <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true" title="Unduh / Cetak">
                         <i data-lucide="download" class="w-4 h-4"></i>
-                        <span class="hidden xl:inline">Unduh / Cetak</span>
+                        <span class="hidden min-[1700px]:inline">Unduh / Cetak</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-80"></i>
                     </button>
                     <div id="menu-output" class="menu-panel hidden">

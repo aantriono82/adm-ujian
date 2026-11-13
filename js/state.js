@@ -89,6 +89,7 @@ let appState = {
     budget: JSON.parse(JSON.stringify(INITIAL_BUDGET)),
     jumlahRuang: DEFAULT_JUMLAH_RUANG,
     pengawasPerRuang: 2,
+    tugasPengawas: DEFAULT_TUGAS_PENGAWAS,
     developerPhoto: safeStorageGet('devPhoto_Pramudito') || DEFAULT_DEV_PHOTO_SVG,
     students: JSON.parse(JSON.stringify(INITIAL_STUDENTS)),
     sidebarHidden: false,

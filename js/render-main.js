@@ -103,7 +103,7 @@ function renderAll() {
         summaryEl.textContent = `Label Pintu Ruang & Harap Tenang • ${groups.length} Ruang`;
         sheetsContainer.innerHTML = groups.map(g => renderRoomDoorSignHTML(g, paper)).join('');
     } else if (mode === 'sk') {
-        summaryEl.textContent = `SK Kepanitiaan, Pengawas & Korektor ${appState.kegiatan.singkatan} • 4 Halaman Lengkap`;
+        summaryEl.textContent = `SK Kepanitiaan, Pengawas & Korektor ${appState.kegiatan.singkatan} • 5 Halaman Lengkap`;
         sheetsContainer.innerHTML = renderSKCompleteHTML(paper);
     } else if (mode === 'pos') {
         summaryEl.textContent = `Prosedur Operasional Standar (POS) ${appState.kegiatan.singkatan} • 4 Halaman Lengkap`;

@@ -183,45 +183,95 @@ function withPreviewLoading(fn) {
 function getTabStatus() {
     const filled = v => String(v ?? '').trim() !== '';
     const missing = (pairs) => pairs.filter(([v]) => !filled(v)).map(([, label]) => label);
+    // Hitung baris tabel yang punya kolom kosong -> "3 baris panitia belum lengkap"
+    const countRows = (rows, keys) => (rows || []).filter(r => keys.some(k => !filled(r && r[k]))).length;
     const status = {};
     const put = (tab, problems) => { status[tab] = problems; };
+    const { kegiatan: kg, kop, pengesahan: ps, roomConfig: rc, rekapConfig: rk } = appState;
 
-    put('mode', missing([[appState.kegiatan.singkatan, 'singkatan'], [appState.kegiatan.namaLengkap, 'nama asesmen'],
-        [appState.kegiatan.tapelAngka, 'tahun pelajaran'], [appState.kegiatan.rentangUtama, 'rentang tanggal']]));
-    put('kop', missing([[appState.kop.sekolah, 'nama sekolah'], [appState.kop.pemda, 'pemda'],
-        [appState.pengesahan.kepsek, 'nama kepala sekolah'], [appState.pengesahan.tanggal, 'tanggal pengesahan']]));
+    put('mode', missing([[kg.singkatan, 'singkatan'], [kg.semester, 'semester'], [kg.namaLengkap, 'nama asesmen'],
+        [kg.nama, 'judul kartu'], [kg.tapelAngka, 'tahun pelajaran'], [kg.tahunAnggaran, 'tahun anggaran'],
+        [kg.rentangUtama, 'rentang tanggal utama'], [kg.rentangSusulan, 'rentang susulan'],
+        [kg.noSk, 'nomor SK'], [kg.tglSk, 'tanggal SK'], [kg.noPos, 'nomor POS'], [kg.moda, 'moda pelaksanaan']]));
+
+    const kopProblems = missing([[kop.logoKiri, 'logo kiri'], [kop.logoKanan, 'logo kanan'],
+        [kop.pemda, 'pemda'], [kop.dinas, 'dinas'], [kop.uptd, 'UPTD'], [kop.sekolah, 'nama sekolah'],
+        [kop.nssNpsn, 'NSS/NPSN'], [kop.alamatDok, 'alamat dokumen'], [kop.kontakDok, 'kontak sekolah'],
+        [kop.alamat, 'alamat kartu'], [kop.kabupaten, 'kabupaten/kota'], [kop.motto, 'motto'], [kop.wilayah, 'wilayah'],
+        [ps.tempat, 'tempat pengesahan'], [ps.tanggal, 'tanggal pengesahan'], [ps.jabatan1, 'jabatan baris 1'],
+        [ps.jabatan2, 'jabatan baris 2'], [ps.kepsek, 'nama kepala sekolah'], [ps.nip, 'NIP kepala sekolah']]);
+    if (ps.metode === 'upload') {
+        if (!filled(ps.ttdImg)) kopProblems.push('gambar tanda tangan');
+        if (!filled(ps.capImg)) kopProblems.push('gambar stempel');
+    }
+    put('kop', kopProblems);
 
     const panitia = [];
     if (!appState.committee.length) panitia.push('belum ada anggota panitia');
-    else if (appState.committee.some(c => !filled(c.nama))) panitia.push('ada nama panitia kosong');
+    else {
+        const n = countRows(appState.committee, ['nama', 'jabatanDinas', 'jabatanPanitia']);
+        if (n) panitia.push(`${n} baris panitia belum lengkap`);
+    }
+    if (!(appState.correctors || []).length) panitia.push('belum ada data korektor');
+    else {
+        const grades = ((ASSESSMENT_PRESETS[appState.assessmentMode] || ASSESSMENT_PRESETS.ASAS).targetGrades || ['VII', 'VIII', 'IX'])
+            .map(g => ({ VII: 'k7', VIII: 'k8', IX: 'k9' })[g]).filter(Boolean);
+        const n = countRows(appState.correctors, ['mapel', 'bentuk', 'waktu', ...grades]);
+        if (n) panitia.push(`${n} baris korektor belum lengkap`);
+    }
     put('panitia', panitia);
 
     const jadwal = [];
     const rooms = Math.max(1, parseInt(appState.jumlahRuang, 10) || 1);
-    let emptyMapel = 0, emptyProctor = 0;
-    (appState.schedule || []).forEach(d => (d.sesi || []).forEach(se => {
-        if (!filled(se.mapel)) emptyMapel++;
-        for (let r = 0; r < rooms; r++) {
-            const pair = (se.pengawas || [])[r] || [];
-            if (!filled(pair[0])) emptyProctor++;
-        }
-    }));
+    const perRuang = getPengawasPerRuang();
+    let emptyDay = 0, emptyWaktu = 0, emptyMapel = 0, emptyProctor = 0;
+    (appState.schedule || []).forEach(d => {
+        if (!filled(d.hari) || !filled(d.tanggal)) emptyDay++;
+        (d.sesi || []).forEach(se => {
+            if (!filled(se.waktu)) emptyWaktu++;
+            if (!filled(se.mapel)) emptyMapel++;
+            for (let r = 0; r < rooms; r++) {
+                const pair = (se.pengawas || [])[r] || [];
+                for (let p = 0; p < perRuang; p++) if (!filled(pair[p])) emptyProctor++;
+            }
+        });
+    });
     if (!(appState.schedule || []).length) jadwal.push('jadwal kosong');
+    if (!filled(kg.tanggalMulai)) jadwal.push('tanggal mulai ujian');
+    if (emptyDay) jadwal.push(`${emptyDay} hari tanpa hari/tanggal`);
+    if (emptyWaktu) jadwal.push(`${emptyWaktu} sesi tanpa waktu`);
     if (emptyMapel) jadwal.push(`${emptyMapel} sesi tanpa mapel`);
-    if (emptyProctor) jadwal.push(`${emptyProctor} ruang tanpa pengawas`);
+    if (emptyProctor) jadwal.push(`${emptyProctor} slot pengawas kosong`);
+    const noPiket = (appState.schedule || []).filter((d, i) =>
+        !(((appState.dailyRoster || [])[i] || {}).guru || []).some(filled)).length;
+    if (noPiket) jadwal.push(`${noPiket} hari tanpa guru piket`);
+    const makeup = countRows(appState.makeupSchedule, ['hariTanggal', 'waktu', 'mapel', 'ruang', 'pengawas']);
+    if (makeup) jadwal.push(`${makeup} baris jadwal susulan belum lengkap`);
     put('jadwal', jadwal);
 
     const active = getActiveStudents();
     const peserta = [];
     if (!appState.students.length) peserta.push('belum ada peserta');
     else if (!active.length) peserta.push('tidak ada peserta untuk mode ini');
-    if (appState.students.some(st => !filled(st.nama))) peserta.push('ada nama peserta kosong');
+    const keys = ['noUjian', 'nama', 'lp', 'kelas', 'ruang'].concat(kg.showNisn ? ['nisn'] : []);
+    const incomplete = countRows(appState.students, keys);
+    if (incomplete) peserta.push(`${incomplete} peserta datanya belum lengkap`);
     put('peserta', peserta);
 
-    put('ruang', (parseInt(appState.roomConfig.maxPerRoom, 10) || 0) > 0 ? [] : ['maks. peserta per ruang belum diisi']);
+    const ruang = [];
+    if (!((parseInt(rc.maxPerRoom, 10) || 0) > 0)) ruang.push('maks. peserta per ruang');
+    ruang.push(...missing([[rc.pengawas1, 'label meja pengawas 1'], [rc.baWaktu, 'waktu berita acara'],
+        [rc.baCatatan, 'catatan berita acara']]));
+    if (perRuang === 2 && !filled(rc.pengawas2)) ruang.push('label meja pengawas 2');
+    put('ruang', ruang);
 
-    const lap = missing([[appState.rekapConfig.lpjTanggal, 'tanggal pengesahan LPJ'], [appState.rekapConfig.mapel, 'mapel rekap']]);
+    const lap = missing([[rk.mapel, 'mapel rekap'], [rk.guru, 'guru pengampu'], [rk.nip, 'NIP guru'],
+        [rk.kktp, 'KKTP'], [rk.lpjTanggal, 'tanggal pengesahan LPJ'], [rk.lpjKehadiran, '% kehadiran']]);
     if (!appState.budget.length) lap.push('anggaran kosong');
+    else {
+        const n = countRows(appState.budget, ['uraian', 'volume', 'qty', 'harga']);
+        if (n) lap.push(`${n} baris anggaran belum lengkap`);
+    }
     put('laporan', lap);
     return status;
 }
@@ -243,7 +293,7 @@ function updateTabBadges() {
         badge.classList.toggle('is-warn', !ok);
         badge.textContent = ok ? '✓' : '!';
         const name = btn.textContent.replace(/[✓!]/g, '').trim();
-        btn.title = ok ? `${name}: lengkap` : `${name}: perlu dicek — ${problems.join(', ')}`;
+        btn.title = ok ? `${name}: lengkap` : `${name}: perlu dilengkapi — ${problems.join(', ')}`;
     });
 }
 

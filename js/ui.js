@@ -21,6 +21,7 @@ function initApp() {
 }
 
 function syncInputsFromState() {
+    document.getElementById('input-tugas-pengawas').value = appState.tugasPengawas ?? '';
     document.getElementById('input-singkatan').value = appState.kegiatan.singkatan;
     document.getElementById('input-semester').value = appState.kegiatan.semester;
     document.getElementById('input-nama-asesmen').value = appState.kegiatan.namaLengkap;
@@ -261,7 +262,7 @@ const DOC_ICONS = {
     susulan: 'calendar-plus', rekap_nilai: 'bar-chart-3', laporan: 'file-bar-chart'
 };
 
-// "6. SK Kepanitiaan (Lengkap Lampiran I-III)" → { no: '6', title: 'SK Kepanitiaan', sub: 'Lengkap Lampiran I-III' }
+// "6. SK Kepanitiaan (Lengkap Lampiran I-IV)" → { no: '6', title: 'SK Kepanitiaan', sub: 'Lengkap Lampiran I-IV' }
 function parseDocLabel(text) {
     const m = text.match(/^(\d+)\.\s*(.*?)(?:\s*\(([^)]*)\))?$/);
     return m ? { no: m[1], title: m[2], sub: m[3] || '' } : { no: '', title: text, sub: '' };
@@ -468,6 +469,18 @@ function setPengawasPerRuang(val) {
     syncPengawasPerRuangUI();
     renderScheduleEditor();
     renderAll();
+}
+
+// Butir "Tugas Pengawas Ruang" (Lampiran III SK)
+function updateTugasPengawas(val) {
+    appState.tugasPengawas = val;
+    renderAll();
+}
+function resetTugasPengawas() {
+    appState.tugasPengawas = DEFAULT_TUGAS_PENGAWAS;
+    document.getElementById('input-tugas-pengawas').value = DEFAULT_TUGAS_PENGAWAS;
+    renderAll();
+    showToast('Tugas Pengawas Ruang dikembalikan ke teks bawaan.');
 }
 
 function syncPengawasPerRuangUI() {
