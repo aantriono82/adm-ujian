@@ -116,7 +116,7 @@
         margin-left: auto; min-width: 1rem; height: 1rem; padding: 0 .2rem; border-radius: 9999px;
         font-size: .625rem; font-weight: 800; line-height: 1rem; text-align: center; color: #fff; flex-shrink: 0;
     }
-    .tab-badge.is-ok { background: transparent; color: #10b981; }
+    .tab-badge.is-ok { display: none; } /* cukup tampilkan tanda bila ada yang belum lengkap */
     .tab-badge.is-warn { background: #f59e0b; }
 
     /* Menu Data yang muncul di samping sidebar */
@@ -194,9 +194,21 @@
         cursor: pointer; flex-shrink: 0; transition: color .15s, border-color .15s;
     }
     .icon-btn:hover { color: var(--accent); border-color: var(--accent-border); }
-    .zoom-btn { padding: .25rem .35rem; border-radius: .375rem; color: #475569; cursor: pointer; white-space: nowrap; }
-    .zoom-btn:hover { background: #fff; color: var(--accent); }
-    .zoom-btn.is-active { background: #fff; color: var(--accent); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+    /* Menu ukuran tampilan (zoom) */
+    .zoom-trigger {
+        display: flex; align-items: center; gap: .3rem; padding: .35rem .55rem; border-radius: .5rem;
+        border: 1px solid #e2e8f0; background: #fff; color: #334155; font-size: .75rem; font-weight: 600;
+        cursor: pointer; white-space: nowrap; transition: color .15s, border-color .15s;
+    }
+    .zoom-trigger:hover { color: var(--accent); border-color: var(--accent-border); }
+    .menu-panel.menu-compact { width: 12.5rem; }
+    .zoom-step {
+        display: flex; align-items: center; justify-content: center; height: 2rem; min-width: 2rem; padding: 0 .4rem;
+        border-radius: .5rem; background: #f1f5f9; color: #334155; cursor: pointer;
+    }
+    .zoom-step:hover { background: var(--accent-soft); color: var(--accent); }
+    .menu-item.menu-item-sm { padding: .45rem .6rem; font-weight: 500; }
+    .menu-item.is-active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
 
     /* Galeri dokumen */
     .doc-icon-sm {
@@ -368,15 +380,15 @@
     html.dark .mode-seg-group { background: #111a2c; border-color: #243049; }
     html.dark .panel-head { border-color: #243049; }
     html.dark .panel-icon { background: rgb(var(--p-500) / .18); color: rgb(var(--p-300)); }
-    html.dark .tab-badge.is-ok { color: #34d399; }
     html.dark #intro-tip { background: rgb(var(--p-500) / .12); border-color: rgb(var(--p-500) / .3); }
     html.dark .accent-pill { background: rgb(var(--p-500) / .18); color: rgb(var(--p-200)); border-color: rgb(var(--p-500) / .35); }
     html.dark .menu-panel { background: #111a2c; border-color: #243049; box-shadow: 0 16px 40px -8px rgba(0,0,0,.6); }
     html.dark .menu-item { color: #cbd5e1; }
     html.dark .menu-item:hover { background: #1b263a; }
     html.dark .doc-select, html.dark .icon-btn { background-color: #0f1729; border-color: #334155; color: #e2e8f0; }
-    html.dark .zoom-btn { color: #a3b1c6; }
-    html.dark .zoom-btn:hover, html.dark .zoom-btn.is-active { background: #243049; color: rgb(var(--p-300)); }
+    html.dark .zoom-trigger { background: #0f1729; border-color: #334155; color: #e2e8f0; }
+    html.dark .zoom-step { background: #1b263a; color: #cbd5e1; }
+    html.dark .zoom-step:hover, html.dark .menu-item.is-active { background: rgb(var(--p-500) / .18); color: rgb(var(--p-300)); }
     html.dark .doc-item:hover { background: #162033; border-color: #243049; }
     html.dark .doc-item.is-active { background: rgb(var(--p-500) / .14); border-color: rgb(var(--p-500) / .4); }
     html.dark .doc-item-title { color: #e2e8f0; }

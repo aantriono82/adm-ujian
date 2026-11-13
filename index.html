@@ -936,7 +936,7 @@
             <!-- Bilah pemilih dokumen & zoom -->
             <div class="bg-white border-b border-slate-200 px-3 py-2 text-xs text-slate-600 no-print shrink-0">
                 <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 min-w-0 w-full md:w-auto md:flex-1 md:min-w-[300px]">
+                    <div class="flex items-center gap-1.5 min-w-0 w-full md:w-auto md:flex-1 md:min-w-[260px]">
                         <button onclick="toggleSidebar()" id="btn-open-panel" class="icon-btn hidden" title="Tampilkan panel pengaturan"><i data-lucide="panel-left-open" class="w-4 h-4"></i></button>
                         <span class="hidden 2xl:flex text-[11px] font-bold text-slate-400 uppercase tracking-wide mr-1 items-center gap-1 whitespace-nowrap">
                             <i data-lucide="files" class="w-3.5 h-3.5 accent-text"></i> Dokumen
@@ -985,18 +985,22 @@
                     <!-- Info & Kontrol Zoom -->
                     <div class="flex items-center gap-2 ml-auto">
                         <span id="preview-summary-text" class="hidden 2xl:inline-block max-w-[360px] truncate text-slate-500 text-[11px]">Memuat...</span>
-                        <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5" title="Halaman">
-                            <button onclick="gotoSheet(-1)" class="zoom-btn" title="Halaman sebelumnya"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
-                            <span class="text-[11px] text-slate-700 font-semibold tabular-nums whitespace-nowrap px-0.5"><span class="hidden xl:inline text-slate-400 font-medium">Hal </span><span id="page-indicator">–</span></span>
-                            <button onclick="gotoSheet(1)" class="zoom-btn" title="Halaman berikutnya"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
-                        </div>
-                        <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
-                            <button onclick="adjustZoom(-0.1)" class="zoom-btn" title="Perkecil (Ctrl + gulir ke bawah)"><i data-lucide="zoom-out" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="resetZoom()" id="zoom-label" class="zoom-btn font-bold w-10 text-center text-[11px] text-slate-700 tabular-nums" title="Klik untuk kembali ke ukuran asli 100%">100%</button>
-                            <button onclick="adjustZoom(0.1)" class="zoom-btn" title="Perbesar (Ctrl + gulir ke atas)"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i></button>
-                            <span class="w-px h-4 bg-slate-300 mx-0.5"></span>
-                            <button onclick="fitZoom()" id="zoom-fit-btn" class="zoom-btn" title="Pas Lebar — sesuaikan dengan lebar layar"><i data-lucide="move-horizontal" class="w-3.5 h-3.5"></i></button>
-                            <button onclick="fitPageZoom()" id="zoom-page-btn" class="zoom-btn" title="Pas Halaman — satu halaman utuh terlihat"><i data-lucide="scan" class="w-3.5 h-3.5"></i></button>
+                        <span class="text-[11px] text-slate-500 font-medium tabular-nums whitespace-nowrap px-1" title="Halaman yang sedang tampil (gulir untuk berpindah)"><span class="hidden sm:inline">Hal </span><span id="page-indicator" class="font-semibold text-slate-700">–</span></span>
+                        <div class="relative" data-menu>
+                            <button onclick="toggleMenu('menu-zoom', event)" class="zoom-trigger" title="Ukuran tampilan (Ctrl + gulir untuk perbesar/perkecil)" aria-haspopup="true">
+                                <span id="zoom-label" class="tabular-nums">100%</span>
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60"></i>
+                            </button>
+                            <div id="menu-zoom" class="menu-panel menu-compact hidden">
+                                <div class="flex items-center gap-1 p-1">
+                                    <button onclick="adjustZoom(-0.1)" class="zoom-step" title="Perkecil (Ctrl + gulir ke bawah)"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                                    <button onclick="closeMenus(); resetZoom()" class="zoom-step flex-1 text-xs font-semibold" title="Kembali ke ukuran asli">100%</button>
+                                    <button onclick="adjustZoom(0.1)" class="zoom-step" title="Perbesar (Ctrl + gulir ke atas)"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                                </div>
+                                <div class="my-1 border-t border-slate-100"></div>
+                                <button onclick="closeMenus(); fitZoom()" id="zoom-fit-btn" class="menu-item menu-item-sm"><i data-lucide="move-horizontal" class="w-4 h-4 shrink-0"></i><span class="flex-1">Pas lebar</span></button>
+                                <button onclick="closeMenus(); fitPageZoom()" id="zoom-page-btn" class="menu-item menu-item-sm"><i data-lucide="scan" class="w-4 h-4 shrink-0"></i><span class="flex-1">Pas satu halaman</span></button>
+                            </div>
                         </div>
                         <button onclick="toggleTheme()" class="icon-btn" title="Ganti tema terang / gelap" aria-label="Ganti tema terang / gelap">
                             <i data-lucide="moon" class="theme-moon w-4 h-4"></i>
@@ -1005,7 +1009,7 @@
                 <div class="relative" data-menu>
                     <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true" title="Unduh / Cetak">
                         <i data-lucide="download" class="w-4 h-4"></i>
-                        <span class="hidden min-[1700px]:inline">Unduh / Cetak</span>
+                        <span class="hidden sm:inline">Unduh</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-80"></i>
                     </button>
                     <div id="menu-output" class="menu-panel hidden">
