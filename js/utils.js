@@ -242,6 +242,10 @@ function getTabStatus() {
     if (emptyWaktu) jadwal.push(`${emptyWaktu} sesi tanpa waktu`);
     if (emptyMapel) jadwal.push(`${emptyMapel} sesi tanpa mapel`);
     if (emptyProctor) jadwal.push(`${emptyProctor} slot pengawas kosong`);
+    if (typeof getProctorCapacity === 'function' && (appState.guruPengawas || []).length) {
+        const cap = getProctorCapacity();
+        if (cap.kurang) jadwal.push(`guru pengawas kurang ${cap.kurang} orang per sesi`);
+    }
     const noPiket = (appState.schedule || []).filter((d, i) =>
         !(((appState.dailyRoster || [])[i] || {}).guru || []).some(filled)).length;
     if (noPiket) jadwal.push(`${noPiket} hari tanpa guru piket`);

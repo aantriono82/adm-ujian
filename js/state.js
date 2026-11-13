@@ -86,6 +86,7 @@ let appState = {
     schedule: JSON.parse(JSON.stringify(INITIAL_SCHEDULE)),
     dailyRoster: JSON.parse(JSON.stringify(INITIAL_DAILY_ROSTER)),
     makeupSchedule: JSON.parse(JSON.stringify(INITIAL_MAKEUP_SCHEDULE)),
+    guruPengawas: JSON.parse(JSON.stringify(INITIAL_GURU_PENGAWAS)),
     budget: JSON.parse(JSON.stringify(INITIAL_BUDGET)),
     jumlahRuang: DEFAULT_JUMLAH_RUANG,
     pengawasPerRuang: 2,
@@ -181,7 +182,7 @@ function migrateState(st) {
 // data:image/... (mencegah sisipan HTML/skrip lewat atribut src).
 // ----------------------------------------------------------------------------
 const STATE_OBJECT_KEYS = ['kop', 'kegiatan', 'pengesahan', 'setting', 'roomConfig', 'rekapConfig'];
-const STATE_ARRAY_KEYS = ['committee', 'correctors', 'handoverLjk', 'schedule', 'dailyRoster', 'makeupSchedule', 'budget', 'students'];
+const STATE_ARRAY_KEYS = ['committee', 'correctors', 'handoverLjk', 'schedule', 'dailyRoster', 'makeupSchedule', 'budget', 'students', 'guruPengawas'];
 const STATE_IMAGE_FIELDS = [['kop', 'logoKiri'], ['kop', 'logoKanan'], ['pengesahan', 'ttdImg'], ['pengesahan', 'capImg']];
 
 function isPlainObject(v) {
@@ -201,6 +202,40 @@ function sanitizeFlatObject(obj, defaults) {
         if (['string', 'number', 'boolean'].includes(typeof v)) out[k] = v;
     });
     return out;
+}
+
+// Daftar guru pengawas: { nama, nip, jabatan, aktif }, nama unik & tidak kosong
+function sanitizeGuruList(list) {
+    const seen = new Set();
+    return (list || []).map(g => ({
+        nama: String(g.nama ?? '').replace(/\s+/g, ' ').trim().slice(0, 300),
+        nip: String(g.nip ?? '').trim().slice(0, 60),
+        jabatan: String(g.jabatan ?? '').trim().slice(0, 120),
+        aktif: g.aktif !== false
+    })).filter(g => {
+        const k = g.nama.toLowerCase();
+        if (!k || seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    });
+}
+
+// Nama unik dari kotak pengawas jadwal utama & guru piket (urutan kemunculan), NIP/jabatan dari panitia bila ada
+function guruListFromSchedule(st) {
+    const names = new Map();
+    const add = v => {
+        const nm = String(v || '').replace(/\s+/g, ' ').trim();
+        if (nm && nm !== '-' && !names.has(nm.toLowerCase())) names.set(nm.toLowerCase(), nm);
+    };
+    const rooms = Math.max(1, parseInt(st.jumlahRuang, 10) || 1);
+    (st.schedule || []).forEach(d => (d.sesi || []).forEach(ss => (ss.pengawas || []).slice(0, rooms)
+        .forEach(p => (Array.isArray(p) ? p : []).forEach(add))));
+    (st.dailyRoster || []).forEach(r => (r.guru || []).forEach(add));
+    const committee = new Map((st.committee || []).map(c => [String(c.nama || '').trim().toLowerCase(), c]));
+    return [...names.values()].map(nama => {
+        const c = committee.get(nama.toLowerCase());
+        return { nama, nip: c && c.nip !== '-' ? String(c.nip || '') : '', jabatan: c ? String(c.jabatanDinas || '') : 'Guru', aktif: true };
+    });
 }
 
 function sanitizeLoadedState(loaded) {
@@ -252,6 +287,7 @@ function sanitizeLoadedState(loaded) {
         delete clean.assessmentMode;
         warnings.push('Mode asesmen tidak dikenal, memakai ASAS.');
     }
+    if (clean.guruPengawas) clean.guruPengawas = sanitizeGuruList(clean.guruPengawas);
     const jr = parseInt(clean.jumlahRuang, 10);
     if ('jumlahRuang' in clean && !(jr >= 1 && jr <= 99)) delete clean.jumlahRuang;
     if ('pengawasPerRuang' in clean && ![1, 2].includes(clean.pengawasPerRuang)) delete clean.pengawasPerRuang;
@@ -270,6 +306,8 @@ function mergeIntoState(raw) {
     merged.developerPhoto = appState.developerPhoto;
     merged.sidebarHidden = false;
     merged.zoom = 1.0;
+    // Backup lama belum punya Daftar Guru Pengawas: bentuk dari nama yang sudah ada di jadwal & piket
+    if (!Array.isArray(loaded.guruPengawas)) merged.guruPengawas = guruListFromSchedule(merged);
     appState = migrateState(merged);
     return warnings;
 }

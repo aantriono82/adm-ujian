@@ -223,6 +223,12 @@ const INITIAL_SCHEDULE = buildDefaultSchedule(DEFAULT_JUMLAH_RUANG, ASSESSMENT_P
 const INITIAL_DAILY_ROSTER = buildDefaultRoster(INITIAL_SCHEDULE);
 const INITIAL_MAKEUP_SCHEDULE = buildDefaultMakeup(ASSESSMENT_PRESETS.ASAS.makeupStart);
 
+// Daftar Guru Pengawas: sumber nama untuk "Bagi Pengawas Otomatis" (aktif = ikut dibagi tugas mengawas)
+const INITIAL_GURU_PENGAWAS = PENGAWAS_POOL.map(nama => {
+    const c = INITIAL_COMMITTEE.find(x => x.nama === nama);
+    return { nama, nip: c ? c.nip : '', jabatan: c ? c.jabatanDinas : 'Guru', aktif: true };
+});
+
 const INITIAL_BUDGET = [
     { uraian: "Penggandaan Naskah Soal dan Lembar Jawaban (LJK)", volume: "12 Pak", qty: 12, harga: 85000 },
     { uraian: "Penyusunan Berkas Administrasi, Kartu Peserta, & Nomor Meja", volume: "1 Paket", qty: 1, harga: 350000 },
