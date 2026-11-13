@@ -144,6 +144,47 @@
     .doc-item-title { display: block; font-size: .75rem; font-weight: 600; color: #0f172a; line-height: 1.25; }
     .doc-item-sub { display: block; font-size: .65rem; color: #64748b; margin-top: .1rem; line-height: 1.25; }
 
+    /* Lencana kelengkapan di tab pengaturan */
+    .tab-btn { position: relative; }
+    .tab-badge {
+        position: absolute; top: .3rem; left: calc(50% + .45rem);
+        min-width: .85rem; height: .85rem; padding: 0 .15rem; border-radius: 9999px;
+        font-size: .55rem; font-weight: 800; line-height: .85rem; text-align: center; color: #fff;
+        box-shadow: 0 0 0 2px #fff;
+    }
+    .tab-badge.is-ok { background: transparent; color: #10b981; box-shadow: none; font-size: .6rem; }
+    .tab-badge.is-warn { background: #f59e0b; }
+
+    /* Keadaan kosong */
+    .empty-state {
+        background: #fff; border-radius: 1rem; padding: 2rem 1.75rem; max-width: 30rem; margin-top: 2rem;
+        display: flex; flex-direction: column; align-items: center; gap: .5rem; text-align: center;
+        box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 12px 32px -10px rgba(15,23,42,.2);
+    }
+    .empty-state-row { display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: 1.25rem .75rem; text-align: center; }
+    .empty-icon {
+        width: 2.5rem; height: 2.5rem; border-radius: .75rem; display: flex; align-items: center; justify-content: center;
+        background: rgb(var(--p-50)); color: rgb(var(--p-600)); margin-bottom: .15rem;
+    }
+    .empty-icon-lg { width: 3.5rem; height: 3.5rem; border-radius: 1rem; }
+
+    /* Lapisan "Menyiapkan dokumen…": muncul hanya bila render > ±150 ms */
+    .preview-loading {
+        position: absolute; inset: 0; z-index: 15; display: flex; align-items: center; justify-content: center;
+        pointer-events: none; opacity: 0; visibility: hidden; will-change: opacity;
+    }
+    .preview-loading.is-on { opacity: 1; visibility: visible; transition: opacity .15s ease .15s, visibility 0s linear .15s; }
+    .preview-loading-card {
+        display: flex; align-items: center; gap: .6rem; padding: .65rem 1rem; border-radius: .75rem;
+        background: rgba(15,23,42,.88); color: #fff; font-size: .75rem; font-weight: 600;
+        box-shadow: 0 10px 30px -8px rgba(15,23,42,.5);
+    }
+    .spinner {
+        width: 1rem; height: 1rem; border-radius: 9999px; border: 2px solid rgba(255,255,255,.3);
+        border-top-color: #fff; animation: spin .7s linear infinite; will-change: transform;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* Area pratinjau seperti meja kerja */
     .preview-canvas {
         background-color: #e2e8f0;
@@ -177,12 +218,110 @@
         border-radius: .6rem; font-size: .8rem; font-weight: 600; color: #64748b; cursor: pointer;
     }
     .mview-btn.is-active { background: var(--accent-soft); color: var(--accent-ink); }
-    @media (max-width: 1023.98px) {
+    @media screen and (max-width: 1023.98px) {
         body[data-mview="settings"] .print-main-area { display: none !important; }
         body[data-mview="settings"] #left-sidebar { display: flex !important; }
         body[data-mview="preview"] #left-sidebar { display: none !important; }
         #floating-open-sidebar { display: none !important; }
     }
+
+    /* ===================== MODE GELAP (hanya antarmuka; kertas dokumen tetap putih) ===================== */
+    html.dark { color-scheme: dark; }
+    html.dark .theme-moon, html:not(.dark) .theme-sun { display: none; }
+    html.dark body { background-color: #0b1120; color: #e2e8f0; }
+    html.dark :is(.bg-white, .bg-white\/95):not(#sheets-container *) { background-color: #111a2c; }
+    html.dark :is(.bg-slate-50, .bg-slate-50\/90, .bg-slate-100\/70):not(#sheets-container *) { background-color: #162033; }
+    html.dark :is(.bg-slate-100):not(#sheets-container *) { background-color: #1b263a; }
+    html.dark :is(.bg-slate-200, .bg-slate-300):not(#sheets-container *) { background-color: #243049; }
+    html.dark :is(.hover\:bg-slate-50:hover, .hover\:bg-slate-100:hover):not(#sheets-container *) { background-color: #1b263a; }
+    html.dark :is(.hover\:bg-slate-200:hover, .hover\:bg-slate-300:hover):not(#sheets-container *) { background-color: #2a3852; }
+    html.dark :is(.hover\:bg-white\/70:hover):not(#sheets-container *) { background-color: rgba(255,255,255,.08); }
+    html.dark :is(.border-slate-100, .border-slate-200):not(#sheets-container *) { border-color: #243049; }
+    html.dark :is(.border-slate-300):not(#sheets-container *) { border-color: #334155; }
+    html.dark :is(.divide-slate-200):not(#sheets-container *) { --tw-divide-opacity: 1; border-color: #243049; }
+    html.dark :is(.text-slate-900, .text-slate-800, .hover\:text-slate-900:hover):not(#sheets-container *) { color: #e2e8f0; }
+    html.dark :is(.text-slate-700):not(#sheets-container *) { color: #cbd5e1; }
+    html.dark :is(.text-slate-600, .hover\:text-slate-600:hover):not(#sheets-container *) { color: #a3b1c6; }
+    html.dark :is(.text-slate-500):not(#sheets-container *) { color: #8b9ab0; }
+    html.dark :is(.text-slate-400):not(#sheets-container *) { color: #64748b; }
+    html.dark :is(.text-slate-300):not(#sheets-container *) { color: #475569; }
+    html.dark :is(.bg-primary-50, .bg-primary-50\/70, .hover\:bg-primary-50:hover, .from-primary-50, .to-primary-50):not(#sheets-container *) { background-color: rgb(var(--p-500) / .14); }
+    html.dark :is(.bg-primary-100, .hover\:bg-primary-100:hover):not(#sheets-container *) { background-color: rgb(var(--p-500) / .22); }
+    html.dark :is(.border-primary-200):not(#sheets-container *) { border-color: rgb(var(--p-500) / .35); }
+    html.dark :is(.text-primary-600, .text-primary-700, .hover\:text-primary-700:hover):not(#sheets-container *) { color: rgb(var(--p-400)); }
+    html.dark :is(.text-primary-800, .text-primary-900):not(#sheets-container *) { color: rgb(var(--p-300)); }
+    html.dark :is(.bg-emerald-50, .hover\:bg-emerald-50:hover, .hover\:bg-emerald-50\/80:hover):not(#sheets-container *) { background-color: rgb(16 185 129 / .12); }
+    html.dark :is(.bg-emerald-100, .hover\:bg-emerald-100:hover):not(#sheets-container *) { background-color: rgb(16 185 129 / .2); }
+    html.dark :is(.border-emerald-200, .border-emerald-300):not(#sheets-container *) { border-color: rgb(16 185 129 / .35); }
+    html.dark :is(.text-emerald-600, .text-emerald-700):not(#sheets-container *) { color: #34d399; }
+    html.dark :is(.text-emerald-800, .text-emerald-900, .text-emerald-950):not(#sheets-container *) { color: #6ee7b7; }
+    html.dark :is(.bg-amber-50, .hover\:bg-amber-50:hover, .hover\:bg-amber-50\/80:hover):not(#sheets-container *) { background-color: rgb(245 158 11 / .12); }
+    html.dark :is(.bg-amber-100, .hover\:bg-amber-100:hover):not(#sheets-container *) { background-color: rgb(245 158 11 / .2); }
+    html.dark :is(.border-amber-200, .border-amber-300):not(#sheets-container *) { border-color: rgb(245 158 11 / .35); }
+    html.dark :is(.text-amber-600, .text-amber-700):not(#sheets-container *) { color: #fbbf24; }
+    html.dark :is(.text-amber-800, .text-amber-900, .text-amber-950):not(#sheets-container *) { color: #fcd34d; }
+    html.dark :is(.bg-rose-50, .hover\:bg-rose-50:hover):not(#sheets-container *) { background-color: rgb(244 63 94 / .12); }
+    html.dark :is(.bg-rose-100, .hover\:bg-rose-100:hover):not(#sheets-container *) { background-color: rgb(244 63 94 / .2); }
+    html.dark :is(.border-rose-200, .border-rose-300):not(#sheets-container *) { border-color: rgb(244 63 94 / .35); }
+    html.dark :is(.text-rose-600, .text-rose-700):not(#sheets-container *) { color: #fb7185; }
+    html.dark :is(.text-rose-800, .text-rose-900, .text-rose-950):not(#sheets-container *) { color: #fda4af; }
+    html.dark :is(.bg-blue-50, .hover\:bg-blue-50:hover, .hover\:bg-blue-50\/80:hover):not(#sheets-container *) { background-color: rgb(59 130 246 / .12); }
+    html.dark :is(.bg-blue-100, .hover\:bg-blue-100:hover):not(#sheets-container *) { background-color: rgb(59 130 246 / .2); }
+    html.dark :is(.border-blue-200, .border-blue-300):not(#sheets-container *) { border-color: rgb(59 130 246 / .35); }
+    html.dark :is(.text-blue-600, .text-blue-700):not(#sheets-container *) { color: #60a5fa; }
+    html.dark :is(.text-blue-800, .text-blue-900, .text-blue-950):not(#sheets-container *) { color: #93c5fd; }
+    html.dark :is(input, select, textarea):not([type=checkbox]):not([type=radio]):not([type=range]):not(#sheets-container *) {
+        background-color: #0f1729; color: #e2e8f0;
+    }
+    html.dark ::placeholder { color: #5b6b82; }
+    html.dark .sidebar-body { background: #0b1120; }
+    html.dark .tab-content > div:not([class*="bg-"]):not(.hidden) { background: #111a2c; border-color: #243049 !important; box-shadow: none; }
+    html.dark .section-title { color: #f1f5f9; }
+    html.dark .field-label { color: #8b9ab0; }
+    html.dark .mode-card { border-color: #243049; }
+    html.dark .mode-card:hover { background: #162033; border-color: #334155; }
+    html.dark .mode-card.is-active { background: rgb(var(--p-500) / .14); border-color: rgb(var(--p-500)); }
+    html.dark .mode-seg { color: #a3b1c6; }
+    html.dark .mode-seg:hover { background: #243049; color: #f1f5f9; }
+    html.dark .mode-seg.is-active { background: var(--accent); color: #fff; }
+    html.dark .tab-btn:hover { background: #162033; color: #f1f5f9; }
+    html.dark .tab-btn.is-active { color: rgb(var(--p-400)); border-bottom-color: rgb(var(--p-400)); }
+    html.dark .tab-badge.is-warn { box-shadow: 0 0 0 2px #111a2c; }
+    html.dark .tab-badge.is-ok { color: #34d399; }
+    html.dark #intro-tip { background: rgb(var(--p-500) / .12); border-color: rgb(var(--p-500) / .3); }
+    html.dark .accent-pill { background: rgb(var(--p-500) / .18); color: rgb(var(--p-200)); border-color: rgb(var(--p-500) / .35); }
+    html.dark .menu-panel { background: #111a2c; border-color: #243049; box-shadow: 0 16px 40px -8px rgba(0,0,0,.6); }
+    html.dark .menu-item { color: #cbd5e1; }
+    html.dark .menu-item:hover { background: #1b263a; }
+    html.dark .doc-select, html.dark .icon-btn { background-color: #0f1729; border-color: #334155; color: #e2e8f0; }
+    html.dark .zoom-btn { color: #a3b1c6; }
+    html.dark .zoom-btn:hover, html.dark .zoom-btn.is-active { background: #243049; color: rgb(var(--p-300)); }
+    html.dark .doc-item:hover { background: #162033; border-color: #243049; }
+    html.dark .doc-item.is-active { background: rgb(var(--p-500) / .14); border-color: rgb(var(--p-500) / .4); }
+    html.dark .doc-item-title { color: #e2e8f0; }
+    html.dark .doc-item-sub { color: #8b9ab0; }
+    html.dark .doc-icon, html.dark .doc-group-title span { background: #1b263a; color: #a3b1c6; }
+    html.dark .doc-item:hover .doc-icon, html.dark .doc-item.is-active .doc-icon,
+    html.dark .doc-icon-sm, html.dark .empty-icon { background: rgb(var(--p-500) / .18); color: rgb(var(--p-300)); }
+    html.dark .choice-box:has(input:checked) { background: rgb(var(--p-500) / .14); border-color: rgb(var(--p-500) / .6); }
+    html.dark .choice-box:has(input:checked) .choice-title { color: rgb(var(--p-200)); }
+    html.dark .mview-btn { color: #8b9ab0; }
+    html.dark .mview-btn.is-active { background: rgb(var(--p-500) / .16); color: rgb(var(--p-300)); }
+    html.dark .preview-canvas {
+        background-color: #0b1120;
+        background-image: radial-gradient(rgba(148,163,184,.14) 1px, transparent 1px);
+    }
+    /* Isi dokumen selalu bergaya kertas terang: warna teks sama persis dengan mode terang
+       (teks tanpa warna eksplisit mewarisi warna body, yang di mode gelap berwarna terang). */
+    html.dark #sheets-container .print-sheet { color: #1e293b; color-scheme: light; }
+    html.dark #sheets-container .print-sheet { box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 14px 40px -8px rgba(0,0,0,.7) !important; }
+    html.dark #sheets-container .print-sheet > .no-print { color: #8b9ab0; }
+    html.dark .empty-state { background: #111a2c; box-shadow: 0 14px 40px -10px rgba(0,0,0,.6); }
+    html.dark .empty-state .text-slate-800 { color: #e2e8f0; }
+    html.dark .empty-state .text-slate-500 { color: #8b9ab0; }
+    html.dark .empty-state .bg-white { background: #1b263a; border-color: #334155; color: #cbd5e1; }
+    html.dark ::-webkit-scrollbar-track { background: #0b1120; }
+    html.dark ::-webkit-scrollbar-thumb { background: #334155; }
 
     @media (prefers-reduced-motion: reduce) {
         *, *::before { animation: none !important; transition: none !important; }
@@ -191,6 +330,7 @@
     /* Print Media Styles */
     @media print {
         html, body {
+            color-scheme: light !important;
             background: white !important;
             margin: 0 !important;
             padding: 0 !important;
