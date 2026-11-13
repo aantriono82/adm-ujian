@@ -37,6 +37,10 @@ function renderStudentTable() {
             </td>
         </tr>`;
     }).join('');
+    if (!appState.students.length) tbody.innerHTML = emptyRowHTML(6, 'users', 'Daftar peserta masih kosong',
+        'Impor dari Excel (pakai template agar kolomnya cocok) atau tambah peserta satu per satu.',
+        `<button onclick="document.getElementById('excel-upload').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">Impor Excel</button>
+         <button onclick="downloadTemplateExcel()" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">Unduh Template</button>`);
     refreshIcons();
 }
 

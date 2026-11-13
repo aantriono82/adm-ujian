@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="css/tailwind.css">
     <link rel="stylesheet" href="css/app.css">
     <style id="dynamic-print-style"></style>
+    <script>
+        // Terapkan tema sebelum halaman tampil agar tidak berkedip putih
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('asesmen-theme'); } catch (e) {}
+            if (t === 'dark' || (!t && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <script src="vendor/xlsx.full.min.js"></script>
     <script src="vendor/lucide.min.js"></script>
 </head>
@@ -42,13 +52,17 @@
 
         <!-- Pilihan mode ASAS / ASAT / ASAJ -->
         <div class="hidden md:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1 shrink-0">
-            <button onclick="switchAssessmentMode('ASAS')" id="top-mode-ASAS" class="mode-seg" title="Asesmen Sumatif Akhir Semester Ganjil — Kelas VII, VIII, IX">ASAS</button>
-            <button onclick="switchAssessmentMode('ASAT')" id="top-mode-ASAT" class="mode-seg" title="Asesmen Sumatif Akhir Tahun — Kelas VII, VIII (Genap)">ASAT</button>
-            <button onclick="switchAssessmentMode('ASAJ')" id="top-mode-ASAJ" class="mode-seg" title="Asesmen Sumatif Akhir Jenjang — Kelas IX (Genap)">ASAJ</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="top-mode-ASAS" class="mode-seg" title="Asesmen Sumatif Akhir Semester Ganjil — Kelas VII, VIII, IX">ASAS</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="top-mode-ASAT" class="mode-seg" title="Asesmen Sumatif Akhir Tahun — Kelas VII, VIII (Genap)">ASAT</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="top-mode-ASAJ" class="mode-seg" title="Asesmen Sumatif Akhir Jenjang — Kelas IX (Genap)">ASAJ</button>
         </div>
 
         <!-- Aksi: Unduh / Cetak & menu Data -->
         <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="toggleTheme()" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 p-2 rounded-lg flex items-center transition active:scale-95 cursor-pointer" title="Ganti tema terang / gelap">
+                <i data-lucide="moon" class="theme-moon w-4 h-4"></i>
+                <i data-lucide="sun" class="theme-sun w-4 h-4"></i>
+            </button>
             <div class="relative" data-menu>
                 <button onclick="toggleMenu('menu-output', event)" class="accent-btn px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95 cursor-pointer" aria-haspopup="true">
                     <i data-lucide="download" class="w-4 h-4"></i>
@@ -104,9 +118,9 @@
     <!-- Pilihan mode untuk layar kecil -->
     <div class="md:hidden no-print bg-white border-b border-slate-200 px-3 py-1.5 shrink-0">
         <div class="grid grid-cols-3 bg-slate-100 p-1 rounded-xl border border-slate-200 gap-1">
-            <button onclick="switchAssessmentMode('ASAS')" id="top-mode-m-ASAS" class="mode-seg">ASAS</button>
-            <button onclick="switchAssessmentMode('ASAT')" id="top-mode-m-ASAT" class="mode-seg">ASAT</button>
-            <button onclick="switchAssessmentMode('ASAJ')" id="top-mode-m-ASAJ" class="mode-seg">ASAJ</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="top-mode-m-ASAS" class="mode-seg">ASAS</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="top-mode-m-ASAT" class="mode-seg">ASAT</button>
+            <button onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="top-mode-m-ASAJ" class="mode-seg">ASAJ</button>
         </div>
     </div>
 
@@ -174,7 +188,7 @@
                     <div class="space-y-2">
                         <h3 class="section-title">Pilih Jenis Asesmen Sumatif</h3>
                         
-                        <div onclick="switchAssessmentMode('ASAS')" id="card-mode-ASAS" class="mode-card">
+                        <div onclick="withPreviewLoading(() => switchAssessmentMode('ASAS'))" id="card-mode-ASAS" class="mode-card">
                             <div class="bg-blue-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAS</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Semester Ganjil</div>
@@ -182,7 +196,7 @@
                             </div>
                         </div>
 
-                        <div onclick="switchAssessmentMode('ASAT')" id="card-mode-ASAT" class="mode-card">
+                        <div onclick="withPreviewLoading(() => switchAssessmentMode('ASAT'))" id="card-mode-ASAT" class="mode-card">
                             <div class="bg-emerald-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAT</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Tahun (Kenaikan Kelas)</div>
@@ -190,7 +204,7 @@
                             </div>
                         </div>
 
-                        <div onclick="switchAssessmentMode('ASAJ')" id="card-mode-ASAJ" class="mode-card">
+                        <div onclick="withPreviewLoading(() => switchAssessmentMode('ASAJ'))" id="card-mode-ASAJ" class="mode-card">
                             <div class="bg-purple-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAJ</div>
                             <div class="flex-1">
                                 <div class="text-xs font-bold text-slate-900">Asesmen Sumatif Akhir Jenjang (Kelulusan SMP)</div>
@@ -880,7 +894,7 @@
         </aside>
 
         <!-- Right Area: Live Print Sheet Preview & 16-Module Document Selector -->
-        <main class="print-main-area flex-1 flex flex-col overflow-hidden min-h-0">
+        <main class="print-main-area relative flex-1 flex flex-col overflow-hidden min-h-0">
             
             <!-- Bilah pemilih dokumen & zoom -->
             <div class="bg-white border-b border-slate-200 px-3 py-2 text-xs text-slate-600 no-print shrink-0">
@@ -890,7 +904,7 @@
                             <i data-lucide="files" class="w-3.5 h-3.5 accent-text"></i> Dokumen
                         </span>
                         <!-- Dropdown Cepat Semua 17 Dokumen -->
-                        <button onclick="stepDocMode(-1)" class="icon-btn" title="Dokumen sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <button onclick="withPreviewLoading(() => stepDocMode(-1))" class="icon-btn" title="Dokumen sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
                         <!-- Galeri dokumen (dibangun dari daftar <select> di bawah) -->
                         <div class="relative flex-1 min-w-0 max-w-[460px]" data-menu>
                             <button onclick="toggleDocGallery(event)" id="doc-gallery-btn" class="doc-select w-full flex items-center gap-2 text-left" aria-haspopup="true">
@@ -927,7 +941,7 @@
                                 <option value="laporan">17. Laporan Akhir Pelaksanaan (Lengkap Sampul, Pengesahan, BAB I-VI)</option>
                             </optgroup>
                         </select>
-                        <button onclick="stepDocMode(1)" class="icon-btn" title="Dokumen berikutnya"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        <button onclick="withPreviewLoading(() => stepDocMode(1))" class="icon-btn" title="Dokumen berikutnya"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
 
                     <!-- Info & Kontrol Zoom -->
@@ -952,6 +966,9 @@
             </div>
 
             <!-- Scrollable Sheet Container -->
+            <div id="preview-loading" class="preview-loading no-print" aria-live="polite">
+                <div class="preview-loading-card"><span class="spinner"></span> Menyiapkan dokumen…</div>
+            </div>
             <div id="preview-wrapper" class="preview-canvas flex-1 overflow-auto p-4 pt-10 sm:p-8 sm:pt-12">
                 <div id="sheets-container" class="flex flex-col items-center gap-10 w-fit mx-auto">
                     <!-- Lembar-lembar dokumen di-render di sini -->

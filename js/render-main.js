@@ -21,11 +21,25 @@ function renderAll() {
     const summaryEl = document.getElementById('preview-summary-text');
 
     if (layout.activeStudents.length === 0 && ['kartu', 'denah', 'meja', 'nominasi', 'dh_peserta'].includes(mode)) {
+        const total = appState.students.length;
         sheetsContainer.innerHTML = `
-            <div class="bg-white rounded-xl p-8 shadow text-center max-w-md">
-                <p class="text-sm font-bold text-slate-700">Tidak ada peserta untuk sasaran ${preset.targetGradesText}.</p>
-                <p class="text-xs text-slate-500 mt-1">Tambahkan peserta ${preset.targetGradesText} pada tab <strong>5. Peserta</strong> atau matikan centang filter kelas otomatis di tab <strong>1. Mode</strong>.</p>
+            <div class="empty-state">
+                <span class="empty-icon empty-icon-lg"><i data-lucide="users" class="w-7 h-7"></i></span>
+                <p class="text-base font-bold text-slate-800">${total ? `Belum ada peserta ${escapeHtml(preset.targetGradesText)}` : 'Daftar peserta masih kosong'}</p>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    ${total
+                        ? `Ada ${total} peserta di database, tetapi tidak ada yang termasuk sasaran <strong>${escapeHtml(preset.shortName)}</strong>. Periksa kolom Kelas, atau matikan filter kelas otomatis di tab <strong>Mode</strong>.`
+                        : 'Isi daftar peserta lebih dulu agar kartu, denah, label meja, dan daftar hadir bisa dibuat.'}
+                </p>
+                <div class="flex flex-wrap justify-center gap-2 mt-2">
+                    <button onclick="document.getElementById('excel-upload').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Impor dari Excel</button>
+                    <button onclick="downloadTemplateExcel()" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh Template</button>
+                    <button onclick="switchTab('peserta'); setMobileView('settings')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 cursor-pointer"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Buka Tab Peserta</button>
+                </div>
             </div>`;
+        summaryEl.textContent = `${preset.shortName} • 0 peserta`;
+        refreshIcons();
+        updateTabBadges();
         refreshZoom();
         saveStateSoon();
         return;
@@ -130,6 +144,7 @@ function renderAll() {
 
     refreshIcons();
     refreshZoom();
+    updateTabBadges();
     const navSchool = document.getElementById('nav-school-name');
     if (navSchool) navSchool.textContent = appState.kop.sekolah;
     saveStateSoon();

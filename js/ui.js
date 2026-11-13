@@ -229,7 +229,7 @@ function renderDocGallery() {
             <div class="doc-group-title"><span>${escapeHtml(g.letter)}</span>${escapeHtml(g.label)}</div>
             <div class="doc-grid">
                 ${g.docs.map(d => `
-                <button onclick="closeMenus(); setDocMode('${d.value}')" class="doc-item${d.value === appState.docMode ? ' is-active' : ''}" title="${escapeHtml(d.title)}${d.sub ? ' (' + escapeHtml(d.sub) + ')' : ''}">
+                <button onclick="closeMenus(); withPreviewLoading(() => setDocMode('${d.value}'))" class="doc-item${d.value === appState.docMode ? ' is-active' : ''}" title="${escapeHtml(d.title)}${d.sub ? ' (' + escapeHtml(d.sub) + ')' : ''}">
                     <span class="doc-icon"><i data-lucide="${DOC_ICONS[d.value] || 'file-text'}" class="w-4 h-4"></i></span>
                     <span class="min-w-0">
                         <span class="doc-item-title">${escapeHtml(d.no)}. ${escapeHtml(d.title)}</span>
@@ -302,6 +302,9 @@ function renderCommitteeTable() {
             </td>
         </tr>
     `).join('');
+    if (!appState.committee.length) tbody.innerHTML = emptyRowHTML(4, 'user-cog', 'Belum ada anggota panitia',
+        'Panitia dipakai di SK, POS, daftar hadir, dan laporan akhir.',
+        `<button onclick="addCommitteeMember()" class="bg-primary-600 hover:bg-primary-700 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">+ Tambah Panitia</button>`);
     refreshIcons();
 }
 
@@ -533,6 +536,9 @@ function renderBudgetTable() {
             </td>
         </tr>
     `).join('');
+    if (!appState.budget.length) tbody.innerHTML = emptyRowHTML(4, 'wallet', 'Belum ada rincian anggaran',
+        'Rincian ini tampil di BAB V Laporan Akhir.',
+        `<button onclick="addBudgetItem()" class="bg-primary-600 hover:bg-primary-700 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">+ Tambah Baris</button>`);
     refreshIcons();
 }
 

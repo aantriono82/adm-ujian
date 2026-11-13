@@ -83,6 +83,24 @@ async function closeDialog(page, label) {
     }, env.docModes);
     ok(renderIssues.length === 0, `${env.docModes.length * 3} kombinasi dokumen tampil`, renderIssues.join('; '));
 
+    console.log('2b. Mode gelap tidak mengubah warna isi dokumen');
+    const darkDiff = await page.evaluate(docModes => {
+        const snap = () => [...document.querySelectorAll('#sheets-container .print-sheet, #sheets-container .print-sheet *')]
+            .filter(el => !el.closest('.no-print'))
+            .map(el => { const c = getComputedStyle(el); return [c.color, c.backgroundColor, c.borderTopColor].join('|'); });
+        const issues = [];
+        for (const dm of docModes) {
+            setDocMode(dm);
+            document.documentElement.classList.remove('dark'); const light = snap();
+            document.documentElement.classList.add('dark'); const dark = snap();
+            document.documentElement.classList.remove('dark');
+            const n = light.length === dark.length ? light.filter((x, i) => x !== dark[i]).length : -1;
+            if (n) issues.push(`${dm}: ${n < 0 ? 'struktur berbeda' : n + ' elemen beda warna'}`);
+        }
+        return issues;
+    }, env.docModes);
+    ok(darkDiff.length === 0, `Warna ${env.docModes.length} dokumen sama di mode terang & gelap`, darkDiff.join('; '));
+
     console.log('3. Tab & tombol aksi');
     const actionIssues = await page.evaluate(() => {
         const issues = [];
@@ -97,6 +115,10 @@ async function closeDialog(page, label) {
         run('zoom', () => { adjustZoom(0.1); adjustZoom(-0.1); resetZoom(); });
         run('sidebar', () => { toggleSidebar(); toggleSidebar(); });
         run('modal pengembang', () => { toggleDeveloperModal(true); toggleDeveloperModal(false); });
+        run('tema gelap', () => { toggleTheme(); toggleTheme(); });
+        run('galeri dokumen', () => { renderDocGallery(); stepDocMode(1); stepDocMode(-1); });
+        run('zoom pas halaman', () => { fitPageZoom(); fitZoom(); gotoSheet(1); });
+        run('tanda kelengkapan tab', () => { updateTabBadges(); if (!document.querySelector('.tab-badge')) throw new Error('lencana tidak muncul'); });
         return issues;
     });
     ok(actionIssues.length === 0, 'Semua aksi berjalan', actionIssues.join('; '));
@@ -214,7 +236,31 @@ async function closeDialog(page, label) {
     await page.waitForTimeout(800);
     ok(await page.evaluate(() => appState.kegiatan.singkatan) === 'UJI-SIMPAN', 'Data bertahan setelah halaman dimuat ulang');
 
-    console.log('10. Galat JavaScript');
+    console.log('10. Tampilan cetak (desktop & HP, terang & gelap)');
+    const printIssues = [];
+    for (const [w, h] of [[1500, 950], [390, 844]]) {
+        await page.setViewportSize({ width: w, height: h });
+        for (const dark of [false, true]) {
+            await page.evaluate(d => { document.documentElement.classList.toggle('dark', d); setDocMode('sk'); }, dark);
+            await page.emulateMedia({ media: 'print' });
+            const r = await page.evaluate(() => ({
+                sidebar: getComputedStyle(document.getElementById('left-sidebar')).display,
+                main: getComputedStyle(document.querySelector('.print-main-area')).display,
+                bg: getComputedStyle(document.body).backgroundColor,
+                sheets: document.querySelectorAll('#sheets-container .print-sheet').length
+            }));
+            await page.emulateMedia({ media: 'screen' });
+            const tag = `${w}px${dark ? ' gelap' : ''}`;
+            if (r.sidebar !== 'none') printIssues.push(`${tag}: panel pengaturan ikut tercetak`);
+            if (r.main === 'none' || !r.sheets) printIssues.push(`${tag}: dokumen tidak tercetak`);
+            if (r.bg !== 'rgb(255, 255, 255)') printIssues.push(`${tag}: latar cetak ${r.bg}`);
+        }
+    }
+    await page.evaluate(() => document.documentElement.classList.remove('dark'));
+    await page.setViewportSize({ width: 1500, height: 950 });
+    ok(printIssues.length === 0, 'Hanya dokumen yang tercetak, latar putih', printIssues.join('; '));
+
+    console.log('11. Galat JavaScript');
     ok(errors.length === 0, 'Tidak ada galat di konsol', errors.slice(0, 5).join(' | '));
 
     await browser.close();

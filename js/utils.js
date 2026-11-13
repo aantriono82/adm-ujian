@@ -155,6 +155,104 @@ function initPreviewInteractions() {
     }, { passive: false });
 }
 
+// ---------- Baris kosong yang ramah untuk tabel editor ----------
+function emptyRowHTML(colspan, icon, title, hint, actionsHTML) {
+    return `<tr><td colspan="${colspan}" class="p-0">
+        <div class="empty-state-row">
+            <span class="empty-icon"><i data-lucide="${icon}" class="w-5 h-5"></i></span>
+            <div class="text-xs font-semibold text-slate-700">${title}</div>
+            <div class="text-[11px] text-slate-500 max-w-[260px]">${hint}</div>
+            ${actionsHTML ? `<div class="flex flex-wrap justify-center gap-1.5 mt-1">${actionsHTML}</div>` : ''}
+        </div>
+    </td></tr>`;
+}
+
+// ---------- Indikator "Menyiapkan dokumen…" untuk render yang lambat ----------
+// Lapisan baru terlihat setelah ±150 ms (lihat .preview-loading di app.css),
+// jadi dokumen yang cepat dirender tidak berkedip.
+function withPreviewLoading(fn) {
+    const el = document.getElementById('preview-loading');
+    if (!el) { fn(); return; }
+    el.classList.add('is-on');
+    requestAnimationFrame(() => setTimeout(() => {
+        try { fn(); } finally { el.classList.remove('is-on'); }
+    }, 0));
+}
+
+// ---------- Tanda kelengkapan di setiap tab pengaturan ----------
+function getTabStatus() {
+    const filled = v => String(v ?? '').trim() !== '';
+    const missing = (pairs) => pairs.filter(([v]) => !filled(v)).map(([, label]) => label);
+    const status = {};
+    const put = (tab, problems) => { status[tab] = problems; };
+
+    put('mode', missing([[appState.kegiatan.singkatan, 'singkatan'], [appState.kegiatan.namaLengkap, 'nama asesmen'],
+        [appState.kegiatan.tapelAngka, 'tahun pelajaran'], [appState.kegiatan.rentangUtama, 'rentang tanggal']]));
+    put('kop', missing([[appState.kop.sekolah, 'nama sekolah'], [appState.kop.pemda, 'pemda'],
+        [appState.pengesahan.kepsek, 'nama kepala sekolah'], [appState.pengesahan.tanggal, 'tanggal pengesahan']]));
+
+    const panitia = [];
+    if (!appState.committee.length) panitia.push('belum ada anggota panitia');
+    else if (appState.committee.some(c => !filled(c.nama))) panitia.push('ada nama panitia kosong');
+    put('panitia', panitia);
+
+    const jadwal = [];
+    const rooms = Math.max(1, parseInt(appState.jumlahRuang, 10) || 1);
+    let emptyMapel = 0, emptyProctor = 0;
+    (appState.schedule || []).forEach(d => (d.sesi || []).forEach(se => {
+        if (!filled(se.mapel)) emptyMapel++;
+        for (let r = 0; r < rooms; r++) {
+            const pair = (se.pengawas || [])[r] || [];
+            if (!filled(pair[0])) emptyProctor++;
+        }
+    }));
+    if (!(appState.schedule || []).length) jadwal.push('jadwal kosong');
+    if (emptyMapel) jadwal.push(`${emptyMapel} sesi tanpa mapel`);
+    if (emptyProctor) jadwal.push(`${emptyProctor} ruang tanpa pengawas`);
+    put('jadwal', jadwal);
+
+    const active = getActiveStudents();
+    const peserta = [];
+    if (!appState.students.length) peserta.push('belum ada peserta');
+    else if (!active.length) peserta.push('tidak ada peserta untuk mode ini');
+    if (appState.students.some(st => !filled(st.nama))) peserta.push('ada nama peserta kosong');
+    put('peserta', peserta);
+
+    put('ruang', (parseInt(appState.roomConfig.maxPerRoom, 10) || 0) > 0 ? [] : ['maks. peserta per ruang belum diisi']);
+
+    const lap = missing([[appState.rekapConfig.lpjTanggal, 'tanggal pengesahan LPJ'], [appState.rekapConfig.mapel, 'mapel rekap']]);
+    if (!appState.budget.length) lap.push('anggaran kosong');
+    put('laporan', lap);
+    return status;
+}
+
+function updateTabBadges() {
+    let status;
+    try { status = getTabStatus(); } catch (err) { return; }
+    Object.entries(status).forEach(([tab, problems]) => {
+        const btn = document.getElementById('tab-btn-' + tab);
+        if (!btn) return;
+        let badge = btn.querySelector('.tab-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'tab-badge';
+            btn.appendChild(badge);
+        }
+        const ok = problems.length === 0;
+        badge.classList.toggle('is-ok', ok);
+        badge.classList.toggle('is-warn', !ok);
+        badge.textContent = ok ? '✓' : '!';
+        const name = btn.textContent.replace(/[✓!]/g, '').trim();
+        btn.title = ok ? `${name}: lengkap` : `${name}: perlu dicek — ${problems.join(', ')}`;
+    });
+}
+
+// ---------- Tema terang / gelap (hanya antarmuka; dokumen tetap putih) ----------
+function toggleTheme() {
+    const dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('asesmen-theme', dark ? 'dark' : 'light'); } catch (err) {}
+}
+
 // ---------- Menu tarik-turun di header ----------
 function toggleMenu(id, ev) {
     if (ev) ev.stopPropagation();
