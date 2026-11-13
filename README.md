@@ -55,5 +55,6 @@ Warna ini otomatis mengikuti mode ASAS (biru), ASAT (hijau), dan ASAJ (ungu); pa
   lembar Peserta, Panitia, Korektor, Jadwal_Pengawas, Guru_Piket, dan Susulan (terisi data saat ini). Setelah
   diisi, *Impor Template Lengkap* menampilkan ringkasan per lembar; bagian yang dicentang menggantikan data lama.
   Jumlah ruang mengikuti banyaknya kolom "Ruang N - Pengawas 1/2".
+  Tab *Jadwal & Pengawas* punya tombol *Unduh Template* yang hanya berisi lembar jadwal, guru piket, dan susulan.
 - **Gambar** (logo, TTD, cap) otomatis diperkecil sebelum disimpan agar penyimpanan browser (±5 MB) tidak penuh.
 - **Backup (.json)** divalidasi saat dimuat; data rusak/berbahaya ditolak dan data lama dipulihkan bila gagal.
