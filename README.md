@@ -77,7 +77,7 @@ versi baru, muncul pemberitahuan *Versi baru aplikasi tersedia* — klik **Muat 
 
 > Fitur pasang/offline tidak aktif bila `index.html` dibuka langsung (Cara A); browser hanya mengizinkannya
 > lewat `http://localhost` atau `https://`. Dari perangkat lain lewat alamat IP (`http://192.168…`) browser
-> juga menolaknya — gunakan hosting https (mis. GitHub Pages) untuk itu.
+> juga menolaknya — gunakan versi online di https://perangkat-asesmen.aantriono.com untuk itu.
 
 > **Penting soal data:** isian tersimpan otomatis di penyimpanan browser, terpisah untuk setiap browser dan
 > setiap cara membuka (Cara A dan Cara B tidak berbagi data). Untuk memindahkan data, gunakan
@@ -103,6 +103,18 @@ atau browser bawaan. Paket tidak membawa browser, jadi ukurannya kecil (sekitar 
   browser sehari-hari dan dari Cara A/B. Pindahkan data lama lewat *Backup (.json)* → *Muat Backup*.
 - Untuk browser versi Snap (bawaan Ubuntu), berkas aplikasi otomatis disalin ke `~/snap/<browser>/common/asesmen-sumatif/`
   karena Snap tidak bisa membaca `/usr/share`.
+
+### 5. Versi online (Cloudflare)
+
+Aplikasi tersedia di **https://perangkat-asesmen.aantriono.com** (bisa dipasang sebagai PWA & jalan offline).
+Data tetap tersimpan di browser masing-masing pengguna; tidak ada data yang dikirim ke server.
+
+Memperbarui versi online (butuh `npm install --global cf` dan `cf auth login` sekali saja):
+
+```bash
+npm run build && npm test
+npm run deploy:cf
+```
 
 ## Struktur
 

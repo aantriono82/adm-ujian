@@ -50,10 +50,24 @@ const PRECACHE = [
 
 const CACHE_NAME = 'asesmen-sumatif-' + CACHE_VERSION;
 
+// Hosting seperti Cloudflare mengalihkan /index.html -> / (307). Respons hasil pengalihan
+// (redirected = true) DITOLAK browser bila dipakai untuk membuka halaman, jadi simpan salinan bersih.
+async function cleanResponse(res) {
+    if (!res || !res.redirected) return res;
+    return new Response(await res.blob(), { status: res.status, statusText: res.statusText, headers: res.headers });
+}
+
+async function precache() {
+    const cache = await caches.open(CACHE_NAME);
+    await Promise.all(PRECACHE.map(async url => {
+        const res = await fetch(new Request(url, { cache: 'reload' }));
+        if (!res.ok) throw new Error(`Gagal menyimpan ${url} (${res.status})`);
+        await cache.put(url, await cleanResponse(res));
+    }));
+}
+
 self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE.map(u => new Request(u, { cache: 'reload' }))))
-    );
+    event.waitUntil(precache());
 });
 
 self.addEventListener('activate', event => {
@@ -78,7 +92,9 @@ self.addEventListener('fetch', event => {
     // Halaman: selalu layani index.html dari cache (cepat & tetap jalan tanpa internet).
     if (req.mode === 'navigate') {
         event.respondWith(
-            caches.match('./index.html', { cacheName: CACHE_NAME })
+            caches.match('./', { cacheName: CACHE_NAME })
+                .then(res => res || caches.match('./index.html', { cacheName: CACHE_NAME }))
+                .then(cleanResponse)
                 .then(res => res || fetch(req))
         );
         return;
