@@ -92,6 +92,7 @@
         background: #eaeef4; border: 1px solid #e2e8f0;
     }
     .mode-seg-group .mode-seg { flex: 1; text-align: center; padding: .35rem .25rem; }
+    .nav-section-sub { margin-top: .35rem; border-top: 1px solid #e5e9f0; padding-top: .7rem; }
     .nav-list { display: flex; flex-direction: column; gap: .125rem; }
     .nav-item {
         position: relative; width: 100%; display: flex; align-items: center; gap: .7rem;
@@ -363,6 +364,7 @@
     html.dark .nav-item:hover { background: #162033; color: #f1f5f9; }
     html.dark .nav-item.is-active { background: #172238; color: rgb(var(--p-300)); box-shadow: inset 3px 0 0 rgb(var(--p-400)); }
     html.dark .nav-section-label { color: #5b6b82; }
+    html.dark .nav-section-sub, html.dark .nav-bottom { border-color: #1e293b; }
     html.dark .mode-seg-group { background: #111a2c; border-color: #243049; }
     html.dark .panel-head { border-color: #243049; }
     html.dark .panel-icon { background: rgb(var(--p-500) / .18); color: rgb(var(--p-300)); }
