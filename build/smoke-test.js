@@ -196,6 +196,58 @@ async function closeDialog(page, label) {
     ok(txt && /Kolom "Nama" tidak ditemukan/.test(txt), 'Berkas tanpa kolom Nama → pesan jelas');
     await closeDialog(page, 'Tutup');
 
+    console.log('6b. Template data lengkap (unduh & impor)');
+    const fullTpl = await download(page, () => downloadFullTemplate());
+    const fullBuf = fs.readFileSync(fullTpl);
+    const sheetNames = await page.evaluate(a => XLSX.read(new Uint8Array(a), { type: 'array' }).SheetNames, Array.from(fullBuf));
+    ok(['Petunjuk', 'Peserta', 'Panitia', 'Korektor', 'Jadwal_Pengawas', 'Guru_Piket', 'Susulan'].every(n => sheetNames.includes(n)),
+        'Template lengkap berisi 7 lembar', sheetNames.join(', '));
+
+    // Template lengkap lewat tombol impor peserta → lembar "Peserta" yang dibaca, bukan "Petunjuk"
+    await upload(EXCEL, 'lengkap.xlsx', fullBuf, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    txt = await dialogText(page);
+    ok(txt && /Ditemukan 2 peserta/.test(txt), 'Impor peserta membaca lembar Peserta dari template lengkap', txt && txt.split('\n')[0]);
+    await closeDialog(page, 'Batal');
+
+    // Ubah isi template: panitia baru, jadwal 1 hari 2 sesi dengan 4 ruang, piket & susulan
+    const editedTpl = await page.evaluate(a => {
+        const wb = XLSX.read(new Uint8Array(a), { type: 'array' });
+        const put = (name, aoa) => { wb.Sheets[name] = XLSX.utils.aoa_to_sheet(aoa); };
+        put('Panitia', [['No', 'Nama Lengkap & Gelar', 'NIP', 'Jabatan Panitia', 'Jabatan Dinas'],
+            [1, 'Kepala Uji, M.Pd.', '1975', 'Penanggung Jawab', 'Kepala Sekolah'],
+            [2, 'Ketua Uji, S.Pd.', '1980', 'Ketua Pelaksana', 'Waka Kurikulum'],
+            [3, 'Anggota Uji', '', '', 'Guru']]);
+        put('Korektor', [['No', 'Mata Pelajaran', 'Kelas VII', 'Kelas VIII', 'Kelas IX', 'Bentuk Soal', 'Waktu'],
+            [1, 'Mapel Uji', 'Guru A', 'Guru B', 'Guru C', '', '60 Menit']]);
+        const heads = []; for (let r = 1; r <= 4; r++) heads.push(`Ruang ${r} - Pengawas 1`, `Ruang ${r} - Pengawas 2`);
+        put('Jadwal_Pengawas', [['Hari', 'Tanggal', 'Sesi', 'Waktu', 'Mata Pelajaran', ...heads],
+            ['Senin', '1 Desember 2026', 1, '07.30 - 09.00', 'Matematika', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8'],
+            ['', '', 2, '09.30 - 11.00', 'IPA', 'P2', 'P1', 'P4', 'P3', 'P6', 'P5', 'P8', ''],
+            ['Selasa', '2 Desember 2026', 1, '07.30 - 09.00', 'IPS', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8']]);
+        put('Guru_Piket', [['Hari', 'Guru 1', 'Guru 2'], ['Senin', 'Piket A', 'Piket B'], ['Selasa', 'Piket C', '']]);
+        put('Susulan', [['Hari / Tanggal', 'Waktu', 'Mata Pelajaran', 'Ruang', 'Pengawas'], ['Senin, 8 Des 2026', '07.30', 'Matematika', '', 'Pengawas S']]);
+        return Array.from(new Uint8Array(XLSX.write(wb, { type: 'array', bookType: 'xlsx' })));
+    }, Array.from(fullBuf)).then(a => Buffer.from(a));
+    await page.setInputFiles('#full-template-upload', { name: 'lengkap-diisi.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: editedTpl });
+    txt = await dialogText(page);
+    ok(txt && /3 orang/.test(txt) && /2 hari, 3 sesi, 4 ruang/.test(txt) && /1 kotak pengawas kosong/.test(txt) && /Jabatan Panitia kosong/.test(txt),
+        'Ringkasan impor per lembar + peringatan', txt && txt.replace(/\n+/g, ' | ').slice(0, 300));
+    await page.uncheck('[role=dialog] input[data-tpl-sec="peserta"]');
+    await closeDialog(page, 'Muat Bagian Terpilih');
+    const after = await page.evaluate(() => ({
+        students: appState.students.length, committee: appState.committee.map(c => c.nama), jab3: appState.committee[2].jabatanPanitia,
+        rooms: appState.jumlahRuang, days: appState.schedule.length, sesi: appState.schedule[0].sesi.length,
+        r4: appState.schedule[0].sesi[0].pengawas[3], ljk: appState.handoverLjk.length, piket: appState.dailyRoster[0].guru.slice(0, 2),
+        susulan: appState.makeupSchedule[0].pengawas, roomInput: document.getElementById('input-jumlah-ruang').value
+    }));
+    ok(after.students === 2, 'Bagian yang tidak dicentang (Peserta) tidak diubah');
+    ok(after.committee.length === 3 && after.jab3 === 'Anggota Panitia', 'Panitia diganti dari template', after.committee.join(', '));
+    ok(after.rooms === 4 && after.roomInput === '4' && after.days === 2 && after.sesi === 2 && after.r4.join() === 'P7,P8',
+        'Jadwal & pengawas 4 ruang dimuat', JSON.stringify(after.r4));
+    ok(after.ljk === 1 && after.piket.join() === 'Piket A,Piket B' && after.susulan === 'Pengawas S', 'Korektor, guru piket & susulan dimuat');
+    await page.evaluate(() => setDocMode('jadwal_pengawas'));
+    ok(await page.evaluate(() => /Piket A/.test(document.getElementById('sheets-container').innerText)), 'Guru piket tampil di dokumen jadwal');
+
     console.log('7. Muat backup JSON');
     const JSONIN = 'input[onchange*="loadConfigJSON"]';
     await upload(JSONIN, 'backup.json', fs.readFileSync(jsonFile), 'application/json');

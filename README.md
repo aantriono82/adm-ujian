@@ -21,6 +21,7 @@ js/                     Kode aplikasi, dimuat berurutan:
   render-*.js             17 dokumen output
   settings.js             handler form pengaturan & unggah gambar
   data-io.js              tabel peserta, impor Excel, backup/muat JSON
+  data-template.js        template Excel lengkap (peserta, panitia, korektor, pengawas, piket, susulan)
   export.js               cetak PDF, ekspor Excel
   export-word.js          ekspor Word (.docx)
   utils.js                zoom, toast, dialog, escapeHtml
@@ -50,5 +51,9 @@ Warna ini otomatis mengikuti mode ASAS (biru), ASAT (hijau), dan ASAJ (ungu); pa
   Kartu, denah, dan label tetap bisa diekspor, tetapi posisinya dapat sedikit bergeser.
 - **Impor Excel** — membaca .xlsx/.xls/.csv; baris judul di atas tabel dilewati otomatis, setiap baris
   divalidasi, lalu pengguna memilih *Ganti* atau *Tambahkan*.
+- **Template Data Lengkap** — menu *Data & Backup → Unduh Template Lengkap* menghasilkan satu .xlsx berisi
+  lembar Peserta, Panitia, Korektor, Jadwal_Pengawas, Guru_Piket, dan Susulan (terisi data saat ini). Setelah
+  diisi, *Impor Template Lengkap* menampilkan ringkasan per lembar; bagian yang dicentang menggantikan data lama.
+  Jumlah ruang mengikuti banyaknya kolom "Ruang N - Pengawas 1/2".
 - **Gambar** (logo, TTD, cap) otomatis diperkecil sebelum disimpan agar penyimpanan browser (±5 MB) tidak penuh.
 - **Backup (.json)** divalidasi saat dimuat; data rusak/berbahaya ditolak dan data lama dipulihkan bila gagal.
