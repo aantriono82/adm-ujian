@@ -83,7 +83,7 @@ function renderThemeSelector() {
     container.innerHTML = Object.values(THEMES).map(t => {
         const isSelected = appState.setting.theme === t.id;
         return `
-        <button onclick="appState.setting.theme='${t.id}';renderThemeSelector();renderAll()" class="p-2 rounded-lg border text-left transition flex items-center gap-2 cursor-pointer ${isSelected ? 'border-blue-600 bg-blue-50/70 ring-1 ring-blue-600' : 'border-slate-200 hover:bg-slate-50'}">
+        <button onclick="appState.setting.theme='${t.id}';renderThemeSelector();renderAll()" class="p-2 rounded-lg border text-left transition flex items-center gap-2 cursor-pointer ${isSelected ? 'border-primary-600 bg-primary-50/70 ring-1 ring-primary-600' : 'border-slate-200 hover:bg-slate-50'}">
             <div class="w-4 h-4 rounded-full shrink-0 border border-black/20" style="background: ${t.bannerBg === 'transparent' ? '#1e293b' : t.bannerBg}"></div>
             <span class="text-[11px] font-semibold text-slate-800 truncate">${t.name}</span>
         </button>`;

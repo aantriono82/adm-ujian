@@ -155,24 +155,24 @@
             </div>
 
             <!-- Tab Contents Container -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+            <div class="sidebar-body flex-1 overflow-y-auto p-3 sm:p-4 space-y-4">
 
                 <!-- TAB 1: MODE ASESMEN (ASAS / ASAT / ASAJ), SEMESTER & TAHUN PELAJARAN -->
                 <div id="tab-mode" class="tab-content space-y-4">
-                    <div id="intro-tip" class="relative bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3 pr-9 text-xs text-blue-900 space-y-1.5">
-                        <button onclick="dismissIntroTip()" class="absolute top-2 right-2 p-1 rounded-md text-blue-400 hover:text-blue-700 hover:bg-white/70 cursor-pointer" title="Tutup petunjuk"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
-                        <div class="font-bold flex items-center gap-1.5 text-blue-800">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                    <div id="intro-tip" class="relative bg-gradient-to-r from-primary-50 to-primary-50 border border-primary-200 rounded-xl p-3 pr-9 text-xs text-primary-900 space-y-1.5">
+                        <button onclick="dismissIntroTip()" class="absolute top-2 right-2 p-1 rounded-md text-primary-400 hover:text-primary-700 hover:bg-white/70 cursor-pointer" title="Tutup petunjuk"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                        <div class="font-bold flex items-center gap-1.5 text-primary-800">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-primary-600"></i>
                             <span>Pengaturan Otomatis Lintas Semester & Tahun</span>
                         </div>
-                        <p class="text-[11px] text-blue-700 leading-relaxed">
+                        <p class="text-[11px] text-primary-700 leading-relaxed">
                             Pilih jenis asesmen di bawah ini. Seluruh <strong>17 Dokumen Output</strong> (Kartu, Denah, SK, POS, Tata Tertib, Berita Acara, Daftar Hadir, hingga Laporan Akhir) otomatis menyesuaikan nomenklatur dan sasaran kelasnya!
                         </p>
                     </div>
 
                     <!-- 3 Kartu Pilihan Mode Asesmen -->
                     <div class="space-y-2">
-                        <label class="block text-xs font-bold text-slate-700">1. Pilih Jenis Asesmen Sumatif</label>
+                        <h3 class="section-title">Pilih Jenis Asesmen Sumatif</h3>
                         
                         <div onclick="switchAssessmentMode('ASAS')" id="card-mode-ASAS" class="mode-card">
                             <div class="bg-blue-600 text-white font-extrabold text-xs px-2.5 py-1.5 rounded-lg shrink-0 mt-0.5">ASAS</div>
@@ -203,12 +203,12 @@
                     <div class="space-y-3 pt-2 border-t border-slate-200">
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Singkatan Resmi</label>
-                                <input type="text" id="input-singkatan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Singkatan Resmi</label>
+                                <input type="text" id="input-singkatan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold focus:ring-2 focus:ring-primary-500 outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Semester</label>
-                                <select id="input-semester" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Semester</label>
+                                <select id="input-semester" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-white focus:ring-2 focus:ring-primary-500 outline-none">
                                     <option value="Ganjil">Ganjil</option>
                                     <option value="Genap">Genap</option>
                                 </select>
@@ -216,56 +216,56 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Kegiatan Asesmen</label>
-                            <input type="text" id="input-nama-asesmen" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="field-label mb-1">Nama Lengkap Kegiatan Asesmen</label>
+                            <input type="text" id="input-nama-asesmen" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-primary-500 outline-none">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Judul pada Kartu Peserta Ujian</label>
-                            <input type="text" id="input-kegiatan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="field-label mb-1">Judul pada Kartu Peserta Ujian</label>
+                            <input type="text" id="input-kegiatan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold focus:ring-2 focus:ring-primary-500 outline-none">
                         </div>
 
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tahun Pelajaran</label>
-                                <input type="text" id="input-tapel-angka" oninput="updateTapelAngka(this.value)" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none" placeholder="2026/2027">
+                                <label class="field-label mb-1">Tahun Pelajaran</label>
+                                <input type="text" id="input-tapel-angka" oninput="updateTapelAngka(this.value)" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold focus:ring-2 focus:ring-primary-500 outline-none" placeholder="2026/2027">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tahun Anggaran (BOSP)</label>
-                                <input type="text" id="input-tahun-anggaran" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="2026">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2.5">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Rentang Tanggal Utama</label>
-                                <input type="text" id="input-rentang-utama" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="30 Nov s.d. 5 Des 2026">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Rentang Ujian Susulan</label>
-                                <input type="text" id="input-rentang-susulan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="7 s.d. 9 Desember 2026">
+                                <label class="field-label mb-1">Tahun Anggaran (BOSP)</label>
+                                <input type="text" id="input-tahun-anggaran" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none" placeholder="2026">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor SK Kepanitiaan</label>
-                                <input type="text" id="input-no-sk" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Rentang Tanggal Utama</label>
+                                <input type="text" id="input-rentang-utama" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none" placeholder="30 Nov s.d. 5 Des 2026">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal SK Panitia</label>
-                                <input type="text" id="input-tgl-sk" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Rentang Ujian Susulan</label>
+                                <input type="text" id="input-rentang-susulan" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none" placeholder="7 s.d. 9 Desember 2026">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nomor POS Asesmen</label>
-                                <input type="text" id="input-no-pos" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Nomor SK Kepanitiaan</label>
+                                <input type="text" id="input-no-sk" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Moda Pelaksanaan</label>
-                                <select id="input-moda" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Tanggal SK Panitia</label>
+                                <input type="text" id="input-tgl-sk" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="field-label mb-1">Nomor POS Asesmen</label>
+                                <input type="text" id="input-no-pos" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="field-label mb-1">Moda Pelaksanaan</label>
+                                <select id="input-moda" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:ring-2 focus:ring-primary-500 outline-none">
                                     <option value="Berbasis Kertas dan Pensil (KP)">Kertas & Pensil (KP)</option>
                                     <option value="Berbasis Komputer & Smartphone (CBT)">Komputer / Smartphone</option>
                                     <option value="Kombinasi Kertas & Semi-Online">Kombinasi Semi-Online</option>
@@ -275,11 +275,11 @@
 
                         <div class="pt-2 border-t border-slate-200 space-y-2">
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" id="input-filter-target-grade" checked onchange="updateConfigFromInputs()" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
-                                <span class="text-xs font-semibold text-slate-700">Filter Otomatis Peserta Sesuai Mode (<span id="label-sasaran-kelas" class="text-blue-600">Kelas VII, VIII, IX</span>)</span>
+                                <input type="checkbox" id="input-filter-target-grade" checked onchange="updateConfigFromInputs()" class="rounded text-primary-600 focus:ring-primary-500 w-4 h-4">
+                                <span class="text-xs font-semibold text-slate-700">Filter Otomatis Peserta Sesuai Mode (<span id="label-sasaran-kelas" class="text-primary-600">Kelas VII, VIII, IX</span>)</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" id="input-show-nisn" onchange="updateConfigFromInputs()" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                                <input type="checkbox" id="input-show-nisn" onchange="updateConfigFromInputs()" class="rounded text-primary-600 focus:ring-primary-500 w-4 h-4">
                                 <span class="text-xs font-medium text-slate-700">Tampilkan baris <strong>NISN</strong> pada Kartu Ujian</span>
                             </label>
                         </div>
@@ -326,97 +326,97 @@
                     <!-- Form Teks KOP -->
                     <div class="space-y-2.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Pemerintah Daerah (Pemda)</label>
+                            <label class="field-label mb-0.5">Pemerintah Daerah (Pemda)</label>
                             <input type="text" id="input-pemda" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Dinas Pendidikan</label>
+                            <label class="field-label mb-0.5">Dinas Pendidikan</label>
                             <input type="text" id="input-dinas" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">Sub-Unit / UPTD</label>
+                                <label class="field-label mb-0.5">Sub-Unit / UPTD</label>
                                 <input type="text" id="input-uptd" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">Nama Sekolah</label>
+                                <label class="field-label mb-0.5">Nama Sekolah</label>
                                 <input type="text" id="input-sekolah" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Baris NSS / Akreditasi / NPSN</label>
+                            <label class="field-label mb-0.5">Baris NSS / Akreditasi / NPSN</label>
                             <input type="text" id="input-nss-npsn" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Alamat Lengkap Sekolah (Pada Dokumen)</label>
+                            <label class="field-label mb-0.5">Alamat Lengkap Sekolah (Pada Dokumen)</label>
                             <input type="text" id="input-alamat-dok" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Email & Kontak Telepon Sekolah</label>
+                            <label class="field-label mb-0.5">Email & Kontak Telepon Sekolah</label>
                             <input type="text" id="input-kontak-dok" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Alamat Ringkas (Khusus pada Kartu Ujian)</label>
+                            <label class="field-label mb-0.5">Alamat Ringkas (Khusus pada Kartu Ujian)</label>
                             <input type="text" id="input-alamat" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">Kabupaten/Kota (untuk SK & Tembusan)</label>
+                                <label class="field-label mb-0.5">Kabupaten/Kota (untuk SK & Tembusan)</label>
                                 <input type="text" id="input-kabupaten" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs" placeholder="Kabupaten ...">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-0.5">Motto Sekolah (Sampul POS)</label>
+                                <label class="field-label mb-0.5">Motto Sekolah (Sampul POS)</label>
                                 <input type="text" id="input-motto" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-0.5">Wilayah Lengkap (Kec., Kab., Provinsi — Sampul POS)</label>
+                            <label class="field-label mb-0.5">Wilayah Lengkap (Kec., Kab., Provinsi — Sampul POS)</label>
                             <input type="text" id="input-wilayah" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                         </div>
                     </div>
 
                     <!-- Pengesahan Kepala Sekolah & Scan TTD/Cap -->
                     <div class="pt-3 border-t border-slate-200 space-y-2.5">
-                        <h3 class="text-xs font-bold text-slate-800">Pengesahan & Tanda Tangan</h3>
+                        <h3 class="section-title">Pengesahan & Tanda Tangan</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tempat Pengesahan</label>
+                                <label class="field-label mb-0.5">Tempat Pengesahan</label>
                                 <input type="text" id="input-tempat" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tanggal Pengesahan</label>
+                                <label class="field-label mb-0.5">Tanggal Pengesahan</label>
                                 <input type="text" id="input-tanggal" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Jabatan Baris 1</label>
+                                <label class="field-label mb-0.5">Jabatan Baris 1</label>
                                 <input type="text" id="input-jabatan1" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Jabatan Baris 2</label>
+                                <label class="field-label mb-0.5">Jabatan Baris 2</label>
                                 <input type="text" id="input-jabatan2" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Kepala Sekolah</label>
+                                <label class="field-label mb-0.5">Nama Kepala Sekolah</label>
                                 <input type="text" id="input-kepsek" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">NIP Kepala Sekolah</label>
+                                <label class="field-label mb-0.5">NIP Kepala Sekolah</label>
                                 <input type="text" id="input-nip" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2 pt-1">
-                            <label id="radio-manual-box" class="border rounded-lg p-2 flex items-center gap-2 cursor-pointer transition bg-slate-50 border-slate-300">
-                                <input type="radio" name="metodeTtd" value="manual" onchange="changeMetodeTtd('manual')" class="text-blue-600">
-                                <div class="text-[11px] font-semibold text-slate-800">TTD Manual (Basah)</div>
+                            <label id="radio-manual-box" class="choice-box border border-slate-300 rounded-lg p-2 flex items-center gap-2 cursor-pointer transition hover:bg-slate-50">
+                                <input type="radio" name="metodeTtd" value="manual" onchange="changeMetodeTtd('manual')" class="text-primary-600">
+                                <div class="choice-title text-[11px] font-semibold text-slate-800">TTD Manual (Basah)</div>
                             </label>
-                            <label id="radio-upload-box" class="border rounded-lg p-2 flex items-center gap-2 cursor-pointer transition bg-blue-50 border-blue-400">
-                                <input type="radio" name="metodeTtd" value="upload" checked onchange="changeMetodeTtd('upload')" class="text-blue-600">
-                                <div class="text-[11px] font-semibold text-blue-900">Otomatis (Scan TTD & Cap)</div>
+                            <label id="radio-upload-box" class="choice-box border border-slate-300 rounded-lg p-2 flex items-center gap-2 cursor-pointer transition hover:bg-slate-50">
+                                <input type="radio" name="metodeTtd" value="upload" checked onchange="changeMetodeTtd('upload')" class="text-primary-600">
+                                <div class="choice-title text-[11px] font-semibold text-slate-800">Otomatis (Scan TTD & Cap)</div>
                             </label>
                         </div>
 
@@ -428,7 +428,7 @@
                                         <img id="preview-ttd" src="" alt="TTD" class="max-h-full max-w-full object-contain">
                                     </div>
                                     <div class="flex gap-1 w-full">
-                                        <label class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded py-0.5 text-[10px] font-medium text-center cursor-pointer">
+                                        <label class="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 rounded py-0.5 text-[10px] font-medium text-center cursor-pointer">
                                             Unggah TTD
                                             <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden" onchange="handleImageUpload(event, 'ttdImg')">
                                         </label>
@@ -444,7 +444,7 @@
                                         <img id="preview-cap" src="" alt="Cap" class="max-h-full max-w-full object-contain">
                                     </div>
                                     <div class="flex gap-1 w-full">
-                                        <label class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded py-0.5 text-[10px] font-medium text-center cursor-pointer">
+                                        <label class="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 rounded py-0.5 text-[10px] font-medium text-center cursor-pointer">
                                             Unggah Cap
                                             <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden" onchange="handleImageUpload(event, 'capImg')">
                                         </label>
@@ -459,17 +459,17 @@
 
                     <!-- Pengaturan Ukuran Kertas, Kartu & Tema -->
                     <div class="pt-3 border-t border-slate-200 space-y-3">
-                        <h3 class="text-xs font-bold text-slate-800">Ukuran Kertas, Kartu & Tema Warna</h3>
+                        <h3 class="section-title">Ukuran Kertas, Kartu & Tema Warna</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
-                                <input type="radio" name="paperSize" value="A4" checked onchange="updateConfigFromInputs()" class="text-blue-600">
+                            <label class="choice-box flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                <input type="radio" name="paperSize" value="A4" checked onchange="updateConfigFromInputs()" class="text-primary-600">
                                 <div>
                                     <div class="text-xs font-bold text-slate-800">Kertas A4</div>
                                     <div class="text-[10px] text-slate-500">21.0 × 29.7 cm</div>
                                 </div>
                             </label>
-                            <label class="flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
-                                <input type="radio" name="paperSize" value="F4" onchange="updateConfigFromInputs()" class="text-blue-600">
+                            <label class="choice-box flex items-center gap-2 p-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                <input type="radio" name="paperSize" value="F4" onchange="updateConfigFromInputs()" class="text-primary-600">
                                 <div>
                                     <div class="text-xs font-bold text-slate-800">Folio / F4</div>
                                     <div class="text-[10px] text-slate-500">21.5 × 33.0 cm</div>
@@ -478,7 +478,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-700 mb-1">Ukuran Kartu Peserta Ujian</label>
+                            <label class="field-label mb-1">Ukuran Kartu Peserta Ujian</label>
                             <div class="grid grid-cols-3 gap-1.5 text-[11px]">
                                 <label class="border border-slate-200 rounded-lg p-2 cursor-pointer hover:bg-slate-50 flex items-center gap-1.5">
                                     <input type="radio" name="cardSize" value="id1" onchange="updateConfigFromInputs()">
@@ -496,12 +496,12 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-700 mb-1.5">Tema Warna Kartu & Tabel</label>
+                            <label class="field-label mb-1.5">Tema Warna Kartu & Tabel</label>
                             <div class="grid grid-cols-2 gap-1.5" id="theme-selector-grid"></div>
                         </div>
 
                         <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" id="input-show-watermark" checked onchange="updateConfigFromInputs()" class="rounded text-blue-600 w-4 h-4">
+                            <input type="checkbox" id="input-show-watermark" checked onchange="updateConfigFromInputs()" class="rounded text-primary-600 w-4 h-4">
                             <span class="text-xs font-medium text-slate-700">Tampilkan Watermark Logo di Tengah Kartu</span>
                         </label>
                     </div>
@@ -509,15 +509,15 @@
 
                 <!-- TAB 3: KEPANITIAAN, PENGAWAS & KOREKTOR -->
                 <div id="tab-panitia" class="tab-content hidden space-y-4">
-                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-2.5 text-xs text-indigo-900">
+                    <div class="bg-primary-50 border border-primary-200 rounded-lg p-2.5 text-xs text-primary-900">
                         Data panitia, korektor, dan pengawas di bawah ini otomatis terhubung ke <strong>SK Kepanitiaan, POS, Daftar Hadir Panitia, Daftar Hadir Pengawas, Serah Terima LJK, dan Laporan Akhir</strong>.
                     </div>
 
                     <!-- Susunan Panitia Pelaksana -->
                     <div class="space-y-2">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold text-slate-800">1. Susunan Panitia Pelaksana</h3>
-                            <button onclick="addCommitteeMember()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 cursor-pointer">
+                            <h3 class="section-title">Susunan Panitia Pelaksana</h3>
+                            <button onclick="addCommitteeMember()" class="bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="plus" class="w-3 h-3"></i> Tambah Panitia
                             </button>
                         </div>
@@ -539,7 +539,7 @@
                     <!-- Daftar Korektor / Penyusun Soal per Mapel -->
                     <div class="space-y-2 pt-3 border-t border-slate-200">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold text-slate-800">2. Daftar Penyusun Soal & Korektor Mapel</h3>
+                            <h3 class="section-title">Daftar Penyusun Soal & Korektor Mapel</h3>
                             <button onclick="addCorrectorRow()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="plus" class="w-3 h-3"></i> Tambah Mapel
                             </button>
@@ -569,8 +569,8 @@
                     <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-2.5">
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Ruang Ujian</label>
-                                <input type="number" id="input-jumlah-ruang" min="1" max="30" onchange="setJumlahRuang(this.value)" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                                <label class="field-label mb-1">Jumlah Ruang Ujian</label>
+                                <input type="number" id="input-jumlah-ruang" min="1" max="30" onchange="setJumlahRuang(this.value)" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold focus:ring-2 focus:ring-primary-500 outline-none">
                             </div>
                             <div class="flex items-end">
                                 <button onclick="syncJumlahRuangFromStudents()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg px-2 py-1.5 text-[11px] font-semibold cursor-pointer" title="Hitung jumlah ruang dari kolom Ruang pada data peserta aktif">Samakan dgn Data Peserta</button>
@@ -578,27 +578,27 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Mulai Ujian</label>
+                                <label class="field-label mb-1">Tanggal Mulai Ujian</label>
                                 <input type="date" id="input-tanggal-mulai" onchange="updateTanggalMulai()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Mulai Susulan</label>
+                                <label class="field-label mb-1">Tanggal Mulai Susulan</label>
                                 <input type="date" id="input-tanggal-mulai-susulan" onchange="updateTanggalMulai()" class="w-full border border-slate-300 rounded-lg px-2 py-1.5 text-xs">
                             </div>
                         </div>
-                        <button onclick="applyAutoDates()" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer">Isi Hari & Tanggal Otomatis (Minggu dilewati)</button>
+                        <button onclick="applyAutoDates()" class="w-full bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer">Isi Hari & Tanggal Otomatis (Minggu dilewati)</button>
                         <p class="text-[10px] text-slate-500">Mengisi ulang hari/tanggal jadwal utama & susulan serta teks rentang tanggal di tab 1. Mapel dan pengawas tidak berubah.</p>
                     </div>
 
                     <div class="space-y-2">
-                        <h3 class="text-xs font-bold text-slate-800">1. Jadwal Asesmen Utama & Pengawas per Ruang</h3>
+                        <h3 class="section-title">Jadwal Asesmen Utama & Pengawas per Ruang</h3>
                         <button onclick="fillEmptyProctors()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-2.5 py-1.5 text-xs font-semibold cursor-pointer" title="Isi kotak pengawas yang masih kosong dari daftar guru yang sudah ada di jadwal & panitia">Isi Pengawas Kosong Otomatis</button>
                         <p class="text-[10px] text-slate-500">Hanya mengisi kotak yang kosong (mis. setelah jumlah ruang ditambah). Nama yang sudah ada tidak diubah; guru dibagi merata dan tidak dobel dalam satu sesi.</p>
                         <div id="schedule-editor-container" class="space-y-2.5"></div>
                     </div>
 
                     <div class="space-y-2 pt-3 border-t border-slate-200">
-                        <h3 class="text-xs font-bold text-slate-800">2. Jadwal Asesmen Susulan</h3>
+                        <h3 class="section-title">Jadwal Asesmen Susulan</h3>
                         <div id="makeup-editor-container" class="space-y-2"></div>
                     </div>
                 </div>
@@ -634,10 +634,10 @@
                         <div>
                             <span class="font-bold text-slate-700">Total Database:</span> <span id="student-total-db" class="font-bold text-slate-900">0</span> Siswa
                             <span class="mx-1 text-slate-400">|</span>
-                            <span class="font-bold text-blue-700">Aktif di Mode <span id="label-active-mode">ASAS</span>:</span> <span id="student-count" class="font-extrabold text-blue-700">0</span> Siswa
+                            <span class="font-bold text-primary-700">Aktif di Mode <span id="label-active-mode">ASAS</span>:</span> <span id="student-count" class="font-extrabold text-primary-700">0</span> Siswa
                         </div>
                         <div class="flex gap-1">
-                            <button onclick="openAddStudentModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 cursor-pointer">
+                            <button onclick="openAddStudentModal()" class="bg-primary-600 hover:bg-primary-700 text-white px-2 py-1 rounded text-[11px] font-semibold flex items-center gap-1 cursor-pointer">
                                 <i data-lucide="user-plus" class="w-3 h-3"></i> Tambah
                             </button>
                             <button onclick="resetDefaultStudents()" class="bg-white hover:bg-slate-200 text-slate-700 border border-slate-300 px-2 py-1 rounded text-[11px] font-medium cursor-pointer" title="Kembalikan Contoh Peserta Kelas VII, VIII, IX">
@@ -669,7 +669,7 @@
                             </select>
                             <input type="text" id="new-ruang" placeholder="Ruang (1)" class="border border-slate-300 rounded px-2 py-1 text-xs">
                         </div>
-                        <button onclick="addStudentManual()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-1.5 rounded text-xs font-semibold cursor-pointer">Simpan Peserta</button>
+                        <button onclick="addStudentManual()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-1.5 rounded text-xs font-semibold cursor-pointer">Simpan Peserta</button>
                     </div>
 
                     <!-- Tabel Data Peserta Editable -->
@@ -696,21 +696,21 @@
                 <div id="tab-ruang" class="tab-content hidden space-y-4">
                     <div class="grid grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Filter Tampilan Ruang</label>
-                            <select id="input-room-filter" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="field-label mb-1">Filter Tampilan Ruang</label>
+                            <select id="input-room-filter" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white focus:ring-2 focus:ring-primary-500 outline-none">
                                 <option value="ALL">Semua Ruang</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Maks. Peserta / Ruang</label>
-                            <input type="number" id="input-room-max" min="0" max="100" value="20" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="20">
+                            <label class="field-label mb-1">Maks. Peserta / Ruang</label>
+                            <input type="number" id="input-room-max" min="0" max="100" value="20" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-primary-500 outline-none" placeholder="20">
                         </div>
                     </div>
 
                     <div class="border-t border-slate-200 pt-3 space-y-2.5">
-                        <h3 class="text-xs font-bold text-slate-800">Pengaturan Denah Ruang & Nomor Meja</h3>
+                        <h3 class="section-title">Pengaturan Denah Ruang & Nomor Meja</h3>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Pola Pengurutan Nomor Tempat Duduk</label>
+                            <label class="field-label mb-1">Pola Pengurutan Nomor Tempat Duduk</label>
                             <select id="input-seat-pattern" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
                                 <option value="snake-h" selected>Zig-Zag / Ular Horizontal (Kiri→Kanan lalu Kanan→Kiri)</option>
                                 <option value="snake-v">Zig-Zag / Ular Vertikal (Depan→Belakang lalu Belakang→Depan)</option>
@@ -721,7 +721,7 @@
 
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Jumlah Kolom Meja</label>
+                                <label class="field-label mb-1">Jumlah Kolom Meja</label>
                                 <select id="input-seat-cols" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
                                     <option value="2">2 Kolom Meja</option>
                                     <option value="3">3 Kolom Meja</option>
@@ -730,7 +730,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Posisi Pintu Ruangan</label>
+                                <label class="field-label mb-1">Posisi Pintu Ruangan</label>
                                 <select id="input-door-pos" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
                                     <option value="depan-kiri">Depan Kiri</option>
                                     <option value="depan-kanan" selected>Depan Kanan</option>
@@ -742,17 +742,17 @@
 
                         <div class="grid grid-cols-2 gap-2.5">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Label Meja Pengawas 1</label>
+                                <label class="field-label mb-1">Label Meja Pengawas 1</label>
                                 <input type="text" id="input-pengawas1" value="PENGAWAS 1" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Label Meja Pengawas 2</label>
+                                <label class="field-label mb-1">Label Meja Pengawas 2</label>
                                 <input type="text" id="input-pengawas2" value="PENGAWAS 2" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Ukuran Label Nomor Meja</label>
+                            <label class="field-label mb-1">Ukuran Label Nomor Meja</label>
                             <select id="input-desk-size" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white">
                                 <option value="standar" selected>Standar Tempel Meja (9.0 cm × 4.8 cm — 10/12 per Lembar)</option>
                                 <option value="besar">Ukuran Besar Jelas (9.5 cm × 6.0 cm — 8/10 per Lembar)</option>
@@ -762,25 +762,25 @@
 
                     <!-- Filter Isian Cepat Berita Acara & Daftar Hadir Peserta -->
                     <div class="border-t border-slate-200 pt-3 space-y-2.5">
-                        <h3 class="text-xs font-bold text-slate-800">Isian Otomatis Berita Acara & Daftar Hadir Ruang</h3>
+                        <h3 class="section-title">Isian Otomatis Berita Acara & Daftar Hadir Ruang</h3>
                         <p class="text-[10px] text-slate-500">Kosongkan (pilih titik-titik) jika ingin dicetak sebagai blangko isian manual, atau isi untuk mencetak spesifik per mapel/hari.</p>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Mata Pelajaran</label>
+                                <label class="field-label mb-0.5">Mata Pelajaran</label>
                                 <input type="text" id="input-ba-mapel" oninput="updateConfigFromInputs()" placeholder="(Kosong = titik-titik)" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Hari / Tanggal</label>
+                                <label class="field-label mb-0.5">Hari / Tanggal</label>
                                 <input type="text" id="input-ba-tanggal" oninput="updateConfigFromInputs()" placeholder="(Kosong = titik-titik)" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Waktu / Sesi</label>
+                                <label class="field-label mb-0.5">Waktu / Sesi</label>
                                 <input type="text" id="input-ba-waktu" oninput="updateConfigFromInputs()" placeholder="07.30 - 09.30 WIB (Sesi I)" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Catatan Berita Acara</label>
+                                <label class="field-label mb-0.5">Catatan Berita Acara</label>
                                 <input type="text" id="input-ba-catatan" value="Pelaksanaan asesmen berjalan dengan tertib, aman, dan lancar." oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                         </div>
@@ -790,28 +790,28 @@
                 <!-- TAB 7: REKAP NILAI, ANGGARAN (RAB) & LAPORAN AKHIR -->
                 <div id="tab-laporan" class="tab-content hidden space-y-4">
                     <div class="space-y-2.5">
-                        <h3 class="text-xs font-bold text-slate-800">1. Pengaturan Form Rekapitulasi Nilai</h3>
+                        <h3 class="section-title">Pengaturan Form Rekapitulasi Nilai</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Mata Pelajaran Rekap</label>
+                                <label class="field-label mb-0.5">Mata Pelajaran Rekap</label>
                                 <input type="text" id="input-rekap-mapel" value="Matematika" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Guru Pengampu</label>
+                                <label class="field-label mb-0.5">Guru Pengampu</label>
                                 <input type="text" id="input-rekap-guru" value="Hendra Gunawan, S.Pd." oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">NIP Guru Mapel</label>
+                                <label class="field-label mb-0.5">NIP Guru Mapel</label>
                                 <input type="text" id="input-rekap-nip" value="198405172010011007" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">KKTP / KKM</label>
+                                <label class="field-label mb-0.5">KKTP / KKM</label>
                                 <input type="number" id="input-rekap-kktp" value="75" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs font-bold">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Filter Kelas</label>
+                                <label class="field-label mb-0.5">Filter Kelas</label>
                                 <select id="input-rekap-kelas" onchange="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-white">
                                     <option value="ALL">Semua Kelas Aktif</option>
                                     <option value="VII">Kelas VII</option>
@@ -824,8 +824,8 @@
 
                     <div class="border-t border-slate-200 pt-3 space-y-2.5">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold text-slate-800">2. Realisasi Anggaran (BAB V Laporan Akhir)</h3>
-                            <button onclick="addBudgetItem()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer">+ Baris</button>
+                            <h3 class="section-title">Realisasi Anggaran (BAB V Laporan Akhir)</h3>
+                            <button onclick="addBudgetItem()" class="bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer">+ Baris</button>
                         </div>
                         <div class="border border-slate-200 rounded-lg overflow-hidden">
                             <table class="w-full text-left border-collapse text-[11px]">
@@ -843,14 +843,14 @@
                     </div>
 
                     <div class="border-t border-slate-200 pt-3 space-y-2">
-                        <h3 class="text-xs font-bold text-slate-800">3. Data Pelaporan Akhir (LPJ)</h3>
+                        <h3 class="section-title">Data Pelaporan Akhir (LPJ)</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Tanggal Pengesahan LPJ</label>
+                                <label class="field-label mb-0.5">Tanggal Pengesahan LPJ</label>
                                 <input type="text" id="input-lpj-tanggal" value="14 Desember 2026" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">% Kehadiran Peserta</label>
+                                <label class="field-label mb-0.5">% Kehadiran Peserta</label>
                                 <input type="text" id="input-lpj-kehadiran" value="98,8" oninput="updateConfigFromInputs()" class="w-full border border-slate-300 rounded px-2 py-1 text-xs">
                             </div>
                         </div>
@@ -863,16 +863,16 @@
             <div class="hidden lg:flex border-t border-slate-200 bg-slate-50/90 p-2.5 shrink-0 items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="relative shrink-0 cursor-pointer group" onclick="toggleDeveloperModal(true)">
-                        <img id="sidebar-dev-photo" src="" alt="Pramudito Hutomo" class="w-9 h-9 rounded-full object-cover border-2 border-blue-600 shadow-sm bg-red-600">
+                        <img id="sidebar-dev-photo" src="" alt="Pramudito Hutomo" class="w-9 h-9 rounded-full object-cover border-2 border-primary-600 shadow-sm bg-red-600">
                         <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
                     </div>
                     <div class="truncate">
-                        <div class="text-[10px] font-bold uppercase tracking-wider text-blue-600 leading-none">Pengembang Sistem</div>
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-primary-600 leading-none">Pengembang Sistem</div>
                         <div class="text-xs font-bold text-slate-800 truncate mt-0.5">Pramudito Hutomo, M.Pd.</div>
                         <div class="text-[10px] text-slate-500 truncate">Waka Kurikulum / Guru PJOK • SMPN 2 Selagai Lingga</div>
                     </div>
                 </div>
-                <button onclick="toggleDeveloperModal(true)" class="bg-white hover:bg-blue-50 text-blue-600 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition shrink-0 cursor-pointer">
+                <button onclick="toggleDeveloperModal(true)" class="bg-white hover:bg-primary-50 text-primary-600 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-sm transition shrink-0 cursor-pointer">
                     <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                     <span>Profil</span>
                 </button>
@@ -891,7 +891,16 @@
                         </span>
                         <!-- Dropdown Cepat Semua 17 Dokumen -->
                         <button onclick="stepDocMode(-1)" class="icon-btn" title="Dokumen sebelumnya"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <select id="doc-mode-select" onchange="setDocMode(this.value)" class="doc-select flex-1 min-w-0 w-0 max-w-[440px]">
+                        <!-- Galeri dokumen (dibangun dari daftar <select> di bawah) -->
+                        <div class="relative flex-1 min-w-0 max-w-[460px]" data-menu>
+                            <button onclick="toggleDocGallery(event)" id="doc-gallery-btn" class="doc-select w-full flex items-center gap-2 text-left" aria-haspopup="true">
+                                <span id="doc-current-icon" class="doc-icon-sm"></span>
+                                <span id="doc-current-label" class="flex-1 min-w-0 truncate">Pilih dokumen</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                            </button>
+                            <div id="doc-gallery" class="menu-panel doc-gallery hidden"></div>
+                        </div>
+                        <select id="doc-mode-select" onchange="setDocMode(this.value)" class="hidden" aria-hidden="true" tabindex="-1">
                             <optgroup label="A. Kartu, Ruang & Nomor Meja">
                                 <option value="kartu">1. Kartu Peserta Ujian</option>
                                 <option value="denah">2. Denah Tempat Duduk Ruang</option>
@@ -924,13 +933,19 @@
                     <!-- Info & Kontrol Zoom -->
                     <div class="flex items-center gap-2 ml-auto">
                         <span id="preview-summary-text" class="hidden 2xl:inline-block max-w-[360px] truncate text-slate-500 text-[11px]">Memuat...</span>
+                        <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5" title="Halaman">
+                            <button onclick="gotoSheet(-1)" class="zoom-btn" title="Halaman sebelumnya"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
+                            <span class="text-[11px] text-slate-700 font-semibold tabular-nums whitespace-nowrap px-0.5"><span class="hidden sm:inline text-slate-400 font-medium">Hal </span><span id="page-indicator">–</span></span>
+                            <button onclick="gotoSheet(1)" class="zoom-btn" title="Halaman berikutnya"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
+                        </div>
                         <div class="flex items-center gap-0.5 bg-slate-100 border border-slate-200 rounded-lg p-0.5">
-                            <button onclick="adjustZoom(-0.1)" class="zoom-btn" title="Perkecil"><i data-lucide="zoom-out" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="adjustZoom(-0.1)" class="zoom-btn" title="Perkecil (Ctrl + gulir ke bawah)"><i data-lucide="zoom-out" class="w-3.5 h-3.5"></i></button>
                             <span id="zoom-label" class="font-bold w-10 text-center text-[11px] text-slate-700 tabular-nums">100%</span>
-                            <button onclick="adjustZoom(0.1)" class="zoom-btn" title="Perbesar"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="adjustZoom(0.1)" class="zoom-btn" title="Perbesar (Ctrl + gulir ke atas)"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i></button>
                             <span class="w-px h-4 bg-slate-300 mx-0.5"></span>
-                            <button onclick="fitZoom()" id="zoom-fit-btn" class="zoom-btn text-[11px] font-semibold px-1.5" title="Sesuaikan dengan lebar layar">Pas Lebar</button>
-                            <button onclick="resetZoom()" class="zoom-btn text-[11px] font-semibold px-1.5" title="Ukuran asli 100%">100%</button>
+                            <button onclick="fitZoom()" id="zoom-fit-btn" class="zoom-btn" title="Pas Lebar — sesuaikan dengan lebar layar"><i data-lucide="move-horizontal" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="fitPageZoom()" id="zoom-page-btn" class="zoom-btn" title="Pas Halaman — satu halaman utuh terlihat"><i data-lucide="scan" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="resetZoom()" class="zoom-btn text-[11px] font-semibold px-1.5" title="Ukuran asli 100%">1:1</button>
                         </div>
                     </div>
                 </div>

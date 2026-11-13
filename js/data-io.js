@@ -17,7 +17,7 @@ function renderStudentTable() {
         <tr class="${isIncluded ? 'hover:bg-slate-50' : 'bg-slate-100/70 opacity-50'}">
             <td class="p-1.5 text-center text-slate-400 font-medium">${idx + 1}</td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(st.noUjian)}" oninput="appState.students[${idx}].noUjian=this.value;renderAll()" class="w-full font-semibold text-blue-700 bg-transparent outline-none text-[10px]">
+                <input type="text" value="${escapeHtml(st.noUjian)}" oninput="appState.students[${idx}].noUjian=this.value;renderAll()" class="w-full font-semibold text-primary-700 bg-transparent outline-none text-[10px]">
                 <input type="text" value="${escapeHtml(st.nama)}" oninput="appState.students[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent outline-none text-[11px]">
             </td>
             <td class="p-1.5 text-center">
@@ -26,7 +26,7 @@ function renderStudentTable() {
             <td class="p-1.5 text-center">
                 <div class="flex items-center gap-1 justify-center">
                     <input type="text" value="${escapeHtml(st.kelas)}" oninput="appState.students[${idx}].kelas=this.value;renderAll()" onchange="renderStudentTable()" class="w-8 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold" title="Kelas">
-                    <input type="text" value="${escapeHtml(st.ruang)}" oninput="appState.students[${idx}].ruang=this.value;renderAll()" class="w-6 text-center bg-blue-50 text-blue-700 rounded py-0.5 text-[10px] font-bold" title="Ruang">
+                    <input type="text" value="${escapeHtml(st.ruang)}" oninput="appState.students[${idx}].ruang=this.value;renderAll()" class="w-6 text-center bg-primary-50 text-primary-700 rounded py-0.5 text-[10px] font-bold" title="Ruang">
                 </div>
             </td>
             <td class="p-1.5 text-center">

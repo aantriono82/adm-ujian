@@ -40,6 +40,9 @@ npm test             # uji otomatis seluruh menu & fitur (Chrome headless, mode 
 
 `npm test` memakai Chrome di `/usr/bin/google-chrome`; ubah dengan `CHROME_PATH=/lokasi/chrome npm test`.
 
+Warna antarmuka: pakai kelas `primary-*` (mis. `bg-primary-600`, `text-primary-700`), bukan `blue-*`.
+Warna ini otomatis mengikuti mode ASAS (biru), ASAT (hijau), dan ASAJ (ungu); paletnya ada di `css/app.css`.
+
 ## Catatan fitur
 
 - **Cetak / PDF** — hasil paling presisi untuk semua dokumen.
