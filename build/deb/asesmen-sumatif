@@ -1,0 +1,79 @@
+#!/bin/sh
+# Peluncur "Asesmen Sumatif" (dipasang ke /usr/bin oleh paket .deb).
+#
+# Membuka /usr/share/asesmen-sumatif/index.html sebagai jendela aplikasi (tanpa bilah alamat)
+# memakai browser keluarga Chromium yang terpasang, dengan profil browser tersendiri sehingga
+# data aplikasi (localStorage) terpisah dari browser sehari-hari dan ikon di dock/taskbar sesuai.
+#
+# Browser versi Snap (mis. Chromium/Firefox bawaan Ubuntu) tidak bisa membaca /usr/share,
+# jadi berkas aplikasi disalin dulu ke ~/snap/<nama>/common/asesmen-sumatif/.
+set -eu
+
+APP_ID=asesmen-sumatif
+APP_DIR=/usr/share/$APP_ID
+CHROMIUM_LIKE="google-chrome-stable google-chrome chromium chromium-browser microsoft-edge-stable microsoft-edge brave-browser vivaldi-stable vivaldi"
+FIREFOX_LIKE="firefox firefox-esr"
+
+# Cetak nama snap bila perintah $1 sebenarnya adalah aplikasi Snap, kosong bila bukan.
+snap_name() {
+    target=$(readlink -f "$(command -v "$1")" 2>/dev/null || true)
+    case "$target" in
+        /snap/bin/*|/usr/bin/snap) basename "$(command -v "$1")" | sed 's/-browser$//' ;;
+        *)
+            # Skrip transisi Ubuntu (/usr/bin/chromium-browser) yang memanggil snap.
+            if grep -qs '/snap/bin/' "$target" 2>/dev/null; then
+                basename "$1" | sed 's/-browser$//'
+            fi
+            ;;
+    esac
+}
+
+# Salin berkas aplikasi ke folder yang bisa dibaca snap $1 (hanya bila versinya berubah).
+# Mencetak folder tujuan.
+prepare_snap_copy() {
+    dest="$HOME/snap/$1/common/$APP_ID"
+    if ! cmp -s "$APP_DIR/VERSION" "$dest/app/VERSION" 2>/dev/null; then
+        rm -rf "$dest/app.tmp"
+        mkdir -p "$dest"
+        cp -r "$APP_DIR" "$dest/app.tmp"
+        rm -rf "$dest/app"
+        mv "$dest/app.tmp" "$dest/app"
+    fi
+    printf '%s\n' "$dest"
+}
+
+for b in $CHROMIUM_LIKE; do
+    command -v "$b" >/dev/null 2>&1 || continue
+    snap=$(snap_name "$b")
+    if [ -n "$snap" ]; then
+        base=$(prepare_snap_copy "$snap")
+        index="$base/app/index.html"
+        profile="$base/profile"
+    else
+        index="$APP_DIR/index.html"
+        profile="${XDG_CONFIG_HOME:-$HOME/.config}/$APP_ID/profile"
+    fi
+    mkdir -p "$profile"
+    exec "$b" --app="file://$index" --user-data-dir="$profile" --class="$APP_ID" \
+        --no-first-run --no-default-browser-check "$@"
+done
+
+# Tanpa Chromium: buka di Firefox (sebagai tab biasa).
+for b in $FIREFOX_LIKE; do
+    command -v "$b" >/dev/null 2>&1 || continue
+    snap=$(snap_name "$b")
+    if [ -n "$snap" ]; then
+        index="$(prepare_snap_copy "$snap")/app/index.html"
+    else
+        index="$APP_DIR/index.html"
+    fi
+    exec "$b" "file://$index"
+done
+
+# Pilihan terakhir: browser bawaan sistem.
+if command -v xdg-open >/dev/null 2>&1; then
+    exec xdg-open "file://$APP_DIR/index.html"
+fi
+
+echo "Asesmen Sumatif: tidak menemukan browser. Pasang Chromium atau Google Chrome." >&2
+exit 1
