@@ -85,6 +85,7 @@ function syncInputsFromState() {
     setRadio('paperSize', appState.setting.paperSize);
     setRadio('cardSize', appState.setting.cardSize);
     setChk('input-show-watermark', appState.setting.showWatermark);
+    setChk('input-show-foto', appState.setting.showFoto);
     const rc = appState.roomConfig;
     setVal('input-room-max', rc.maxPerRoom);
     setVal('input-seat-pattern', rc.seatPattern);

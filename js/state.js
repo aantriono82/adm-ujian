@@ -54,7 +54,8 @@ let appState = {
         cardSize: "custom",
         paperSize: "A4",
         theme: "klasik",
-        showWatermark: true
+        showWatermark: true,
+        showFoto: true
     },
     docMode: "kartu",
     roomConfig: {
@@ -365,6 +366,7 @@ function loadSavedState() {
 function resetAllData() {
     if (!confirm("Hapus semua data yang tersimpan di browser ini dan kembali ke data contoh?\n\nTips: simpan dulu lewat tombol Backup (.json) bila masih diperlukan.")) return;
     try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
+    clearAllStudentPhotos();
     const photo = appState.developerPhoto;
     appState = JSON.parse(DEFAULT_STATE_SNAPSHOT);
     appState.developerPhoto = photo;
