@@ -40,6 +40,21 @@ npx serve .                     # butuh Node.js
 Lalu buka `http://localhost:8000` (atau alamat yang ditampilkan `npx serve`). Dari perangkat lain, ganti
 `localhost` dengan alamat IP komputer ini, mis. `http://192.168.1.10:8000`. Hentikan server dengan `Ctrl+C`.
 
+### 3. Pasang sebagai aplikasi (PWA, opsional)
+
+Saat dibuka lewat server (Cara B) atau dari hosting **https**, aplikasi bisa dipasang seperti aplikasi biasa
+dan tetap jalan tanpa internet:
+
+- **Chrome/Edge (komputer & Android):** klik menu **Alat → Pasang Aplikasi**, atau ikon pasang di bilah alamat.
+- **Safari (iPhone/iPad):** tombol *Bagikan* → *Tambah ke Layar Utama*.
+
+Setelah dibuka sekali, semua berkas tersimpan di perangkat sehingga aplikasi bisa dibuka walau offline. Bila ada
+versi baru, muncul pemberitahuan *Versi baru aplikasi tersedia* — klik **Muat ulang**.
+
+> Fitur pasang/offline tidak aktif bila `index.html` dibuka langsung (Cara A); browser hanya mengizinkannya
+> lewat `http://localhost` atau `https://`. Dari perangkat lain lewat alamat IP (`http://192.168…`) browser
+> juga menolaknya — gunakan hosting https (mis. GitHub Pages) untuk itu.
+
 > **Penting soal data:** isian tersimpan otomatis di penyimpanan browser, terpisah untuk setiap browser dan
 > setiap cara membuka (Cara A dan Cara B tidak berbagi data). Untuk memindahkan data, gunakan
 > *Data & Backup → Backup (.json)*, lalu *Data & Backup → Muat Backup* di browser/cara yang lain.
@@ -48,6 +63,8 @@ Lalu buka `http://localhost:8000` (atau alamat yang ditampilkan `npx serve`). Da
 
 ```
 index.html              Tata letak halaman (menu, tab, form)
+manifest.webmanifest    Identitas PWA (nama, ikon, warna)
+sw.js                   Service worker: simpan berkas untuk offline (dibuat ulang oleh build:sw)
 css/app.css             Gaya khusus aplikasi (cetak, scrollbar)
 css/tailwind.css        CSS Tailwind hasil build (jangan diedit manual)
 js/                     Kode aplikasi, dimuat berurutan:
@@ -65,6 +82,7 @@ js/                     Kode aplikasi, dimuat berurutan:
   export.js               cetak PDF, ekspor Excel
   export-word.js          ekspor Word (.docx)
   utils.js                zoom, toast, dialog, escapeHtml
+  pwa.js                  daftar service worker, tombol Pasang Aplikasi, pemberitahuan versi baru
 vendor/                 SheetJS 0.20.3, Lucide, docx (Word), font Inter & Tinos
 build/                  konfigurasi Tailwind & uji otomatis
 ```
@@ -76,8 +94,12 @@ Butuh Node.js hanya bila mengubah kode:
 ```bash
 npm install          # sekali saja
 npm run build:css    # WAJIB setelah menambah kelas Tailwind baru di index.html / js/*.js
+npm run build:sw     # WAJIB setelah mengubah/menambah berkas apa pun (memperbarui cache offline PWA)
+npm run build        # keduanya sekaligus
 npm test             # uji otomatis seluruh menu & fitur (Chrome headless, mode offline)
 ```
+
+`npm test` gagal bila `sw.js` belum diperbarui. Ikon PWA dibuat dari `img/favicon.svg` dengan `npm run build:icons`.
 
 `npm test` memakai Chrome di `/usr/bin/google-chrome`; ubah dengan `CHROME_PATH=/lokasi/chrome npm test`.
 

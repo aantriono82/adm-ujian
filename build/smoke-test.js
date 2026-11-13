@@ -3,6 +3,7 @@
 // Ubah lokasi Chrome dengan variabel CHROME_PATH bila perlu.
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const { chromium } = require('playwright-core');
 
 const ROOT = path.join(__dirname, '..');
@@ -120,6 +121,18 @@ async function closeDialog(page, label) {
             ['mode', 'kop', 'panitia', 'jadwal', 'peserta', 'ruang', 'laporan'].forEach(openSection);
             if (document.getElementById('panel-title').textContent !== 'Nilai & LPJ') throw new Error('judul panel tidak berubah');
             toggleNavCollapsed(); toggleNavCollapsed(); toggleNavDrawer(true); toggleNavDrawer(false); openSection('mode');
+        });
+        run('tombol ciutkan menu & panel', () => {
+            setNavCollapsed(false, false); toggleSidebar(false);
+            const panel = document.getElementById('left-sidebar');
+            const state = () => [document.body.classList.contains('nav-collapsed'), panel.classList.contains('panel-hidden')].join('/');
+            toggleWorkspaceCompact();
+            if (state() !== 'true/true') throw new Error('ciutkan: ' + state());
+            openSection('kop'); // klik ikon menu saat diciutkan → panel terbuka, menu tetap ikon
+            if (state() !== 'true/false') throw new Error('buka bagian: ' + state());
+            toggleWorkspaceCompact();
+            if (state() !== 'false/false') throw new Error('lebarkan: ' + state());
+            if (document.getElementById('btn-open-panel')) throw new Error('tombol panel lama masih ada');
         });
         run('galeri dokumen', () => { renderDocGallery(); stepDocMode(1); stepDocMode(-1); });
         run('zoom pas halaman', () => { fitPageZoom(); fitZoom(); gotoSheet(1); });
@@ -445,7 +458,53 @@ async function closeDialog(page, label) {
     await page.setViewportSize({ width: 1500, height: 950 });
     ok(printIssues.length === 0, 'Hanya dokumen yang tercetak, latar putih', printIssues.join('; '));
 
-    console.log('11. Galat JavaScript');
+    console.log('11. PWA: service worker & mode offline (lewat http)');
+    const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml',
+        '.png': 'image/png', '.woff2': 'font/woff2', '.webmanifest': 'application/manifest+json' };
+    const server = http.createServer((req, res) => {
+        const rel = decodeURIComponent(req.url.split('?')[0]).replace(/^\/+/, '') || 'index.html';
+        const file = path.join(ROOT, rel);
+        if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end(); }
+        res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+        fs.createReadStream(file).pipe(res);
+    });
+    await new Promise(r => server.listen(0, '127.0.0.1', r));
+    const base = `http://127.0.0.1:${server.address().port}/`;
+    const pwaCtx = await browser.newContext({ viewport: { width: 1500, height: 950 } });
+    const pwa = await pwaCtx.newPage();
+    const pwaErrors = [];
+    pwa.on('pageerror', e => pwaErrors.push('pageerror: ' + e.message));
+    pwa.on('console', m => { if (m.type() === 'error') pwaErrors.push('console: ' + m.text()); });
+    await pwa.goto(base, { waitUntil: 'load' });
+    const sw = await pwa.evaluate(async () => {
+        const reg = await navigator.serviceWorker.ready;
+        const manifest = document.querySelector('link[rel=manifest]');
+        const m = manifest ? await (await fetch(manifest.href)).json() : null;
+        const keys = await caches.keys();
+        const cached = keys.length ? (await (await caches.open(keys[0])).keys()).length : 0;
+        return { active: !!reg.active, manifest: m && m.name, icons: m ? m.icons.length : 0, cached };
+    });
+    ok(sw.active, 'Service worker aktif');
+    ok(!!sw.manifest && sw.icons >= 3, 'Manifest termuat dengan ikon', `${sw.manifest} (${sw.icons} ikon)`);
+    ok(sw.cached > 40, 'Semua berkas aplikasi tersimpan di cache', sw.cached + ' berkas');
+    await pwa.reload({ waitUntil: 'load' });
+    await pwaCtx.setOffline(true);
+    await pwa.reload({ waitUntil: 'load' });
+    await pwa.waitForTimeout(800);
+    const offline = await pwa.evaluate(async () => ({
+        controlled: !!navigator.serviceWorker.controller,
+        sheets: document.querySelectorAll('#sheets-container .print-sheet').length,
+        font: document.fonts.check('12px Inter'),
+        word: await fetch('vendor/docx/index.iife.js').then(r => r.ok, () => false)
+    }));
+    ok(offline.controlled && offline.sheets > 0, 'Aplikasi terbuka tanpa internet dari cache', `${offline.sheets} lembar`);
+    ok(offline.font, 'Font tetap tersedia saat offline');
+    ok(offline.word, 'Pustaka Word (dimuat belakangan) tersedia saat offline');
+    ok(pwaErrors.length === 0, 'Tidak ada galat di konsol (mode PWA)', pwaErrors.slice(0, 5).join(' | '));
+    await pwaCtx.close();
+    server.close();
+
+    console.log('12. Galat JavaScript');
     ok(errors.length === 0, 'Tidak ada galat di konsol', errors.slice(0, 5).join(' | '));
 
     await browser.close();

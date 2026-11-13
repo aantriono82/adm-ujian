@@ -227,10 +227,32 @@ const NAV_COLLAPSED_KEY = 'asesmen-nav-collapsed';
 function setNavCollapsed(collapsed, save) {
     document.body.classList.toggle('nav-collapsed', collapsed);
     if (save) { try { localStorage.setItem(NAV_COLLAPSED_KEY, collapsed ? '1' : '0'); } catch (err) {} }
+    updateWorkspaceCompactButton();
     setTimeout(() => { if (typeof refreshZoom === 'function') refreshZoom(); }, 220);
 }
 function toggleNavCollapsed() {
     setNavCollapsed(!document.body.classList.contains('nav-collapsed'), true);
+}
+
+// Satu tombol untuk menu & panel (desktop):
+// • Menu & panel sama-sama terbuka → ciutkan menu jadi ikon DAN tutup panel (pratinjau selebar mungkin).
+// • Selain itu (salah satu/keduanya diciutkan) → lebarkan menu DAN tampilkan panel kembali.
+// Klik ikon menu saat diciutkan tetap membuka panel bagian tsb. (lihat openSection).
+function isWorkspaceExpanded() {
+    return !document.body.classList.contains('nav-collapsed') && !appState.sidebarHidden;
+}
+function toggleWorkspaceCompact() {
+    const compact = isWorkspaceExpanded();
+    setNavCollapsed(compact, true);
+    toggleSidebar(compact);
+}
+function updateWorkspaceCompactButton() {
+    const btn = document.getElementById('btn-workspace-compact');
+    if (!btn) return;
+    const expanded = isWorkspaceExpanded();
+    btn.title = expanded ? 'Ciutkan menu & panel (pratinjau lebih lebar)' : 'Lebarkan menu & tampilkan panel';
+    btn.setAttribute('aria-label', btn.title);
+    btn.classList.toggle('is-compact', !expanded);
 }
 function initNavCollapsed() {
     let saved = null;
