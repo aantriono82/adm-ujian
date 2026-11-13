@@ -67,14 +67,6 @@
                 <i data-lucide="building-2" class="w-[18px] h-[18px] shrink-0"></i>
                 <span class="nav-label">KOP & Pengesahan</span>
             </button>
-            <button onclick="openSection('panitia')" id="tab-btn-panitia" class="tab-btn nav-item">
-                <i data-lucide="user-cog" class="w-[18px] h-[18px] shrink-0"></i>
-                <span class="nav-label">Panitia & Korektor</span>
-            </button>
-            <button onclick="openSection('jadwal')" id="tab-btn-jadwal" class="tab-btn nav-item">
-                <i data-lucide="calendar-clock" class="w-[18px] h-[18px] shrink-0"></i>
-                <span class="nav-label">Jadwal & Pengawas</span>
-            </button>
             <button onclick="openSection('peserta')" id="tab-btn-peserta" class="tab-btn nav-item">
                 <i data-lucide="users" class="w-[18px] h-[18px] shrink-0"></i>
                 <span class="nav-label">Peserta</span>
@@ -83,10 +75,19 @@
                 <i data-lucide="layout-grid" class="w-[18px] h-[18px] shrink-0"></i>
                 <span class="nav-label">Ruang & Denah</span>
             </button>
+            <button onclick="openSection('panitia')" id="tab-btn-panitia" class="tab-btn nav-item">
+                <i data-lucide="user-cog" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Panitia & Korektor</span>
+            </button>
+            <button onclick="openSection('jadwal')" id="tab-btn-jadwal" class="tab-btn nav-item">
+                <i data-lucide="calendar-clock" class="w-[18px] h-[18px] shrink-0"></i>
+                <span class="nav-label">Jadwal & Pengawas</span>
+            </button>
             <button onclick="openSection('laporan')" id="tab-btn-laporan" class="tab-btn nav-item">
                 <i data-lucide="wallet" class="w-[18px] h-[18px] shrink-0"></i>
                 <span class="nav-label">Nilai & LPJ</span>
             </button>
+            <div class="nav-section-label nav-section-sub">Alat</div>
             <div class="relative" data-menu>
                 <button onclick="toggleMenu('menu-data', event)" class="nav-item" title="Data: Backup, Muat, Reset" aria-haspopup="true">
                     <i data-lucide="database" class="w-[18px] h-[18px] shrink-0"></i>
