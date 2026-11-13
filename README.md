@@ -59,6 +59,24 @@ versi baru, muncul pemberitahuan *Versi baru aplikasi tersedia* — klik **Muat 
 > setiap cara membuka (Cara A dan Cara B tidak berbagi data). Untuk memindahkan data, gunakan
 > *Data & Backup → Backup (.json)*, lalu *Data & Backup → Muat Backup* di browser/cara yang lain.
 
+### 4. Pasang di Linux sebagai paket `.deb` (Debian/Ubuntu/Mint, opsional)
+
+```bash
+npm run build:deb                                   # hasil: dist/asesmen-sumatif_<versi>_all.deb
+sudo apt install ./dist/asesmen-sumatif_*_all.deb   # pasang
+sudo apt remove asesmen-sumatif                     # hapus
+```
+
+Setelah dipasang, **Asesmen Sumatif** muncul di menu aplikasi dan terbuka sebagai jendela sendiri (tanpa bilah
+alamat) memakai Chrome/Chromium/Edge/Brave yang ada di komputer. Bila tidak ada, aplikasi dibuka di Firefox
+atau browser bawaan. Paket tidak membawa browser, jadi ukurannya kecil (sekitar 1 MB).
+
+- Versi paket diambil dari `"version"` di `package.json`, atau bisa ditentukan sendiri: `VERSION=1.2.0 npm run build:deb`.
+- Data aplikasi disimpan di profil browser tersendiri (`~/.config/asesmen-sumatif/profile`), terpisah dari
+  browser sehari-hari dan dari Cara A/B. Pindahkan data lama lewat *Backup (.json)* → *Muat Backup*.
+- Untuk browser versi Snap (bawaan Ubuntu), berkas aplikasi otomatis disalin ke `~/snap/<browser>/common/asesmen-sumatif/`
+  karena Snap tidak bisa membaca `/usr/share`.
+
 ## Struktur
 
 ```
@@ -84,7 +102,7 @@ js/                     Kode aplikasi, dimuat berurutan:
   utils.js                zoom, toast, dialog, escapeHtml
   pwa.js                  daftar service worker, tombol Pasang Aplikasi, pemberitahuan versi baru
 vendor/                 SheetJS 0.20.3, Lucide, docx (Word), font Inter & Tinos
-build/                  konfigurasi Tailwind & uji otomatis
+build/                  konfigurasi Tailwind, uji otomatis, pembuat paket .deb (make-deb.sh, deb/)
 ```
 
 ## Untuk pengembang

@@ -1,5 +1,6 @@
 {
   "name": "asesmen-sumatif-terpadu",
+  "version": "1.0.0",
   "private": true,
   "description": "Asesmen Sumatif (ASAS, ASAT, ASAJ) — aplikasi statis, buka index.html langsung di browser.",
   "scripts": {
@@ -7,7 +8,8 @@
     "build:sw": "node build/build-sw.js",
     "build:icons": "node build/make-icons.js",
     "build": "npm run build:css && npm run build:sw",
-    "test": "node build/build-sw.js --check && node build/smoke-test.js"
+    "test": "node build/build-sw.js --check && node build/smoke-test.js",
+    "build:deb": "sh build/make-deb.sh"
   },
   "devDependencies": {
     "playwright-core": "^1.48.0",
