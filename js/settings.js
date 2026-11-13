@@ -1,7 +1,8 @@
 // ============================================================================
 // 20. HANDLER INPUT PENGATURAN UMUM
 // ============================================================================
-function updateConfigFromInputs() {
+// fromTyping = dipanggil dari oninput (tiap ketukan): render digabung lewat renderSoon().
+function updateConfigFromInputs(fromTyping) {
     appState.kegiatan.singkatan = document.getElementById('input-singkatan').value;
     appState.kegiatan.semester = document.getElementById('input-semester').value;
     appState.kegiatan.namaLengkap = document.getElementById('input-nama-asesmen').value;
@@ -74,6 +75,7 @@ function updateConfigFromInputs() {
     appState.rekapConfig.lpjTanggal = document.getElementById('input-lpj-tanggal').value;
     appState.rekapConfig.lpjKehadiran = document.getElementById('input-lpj-kehadiran').value;
 
+    if (fromTyping === true) { renderSoon(true); return; }
     renderStudentTable();
     renderAll();
 }

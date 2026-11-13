@@ -449,6 +449,7 @@ async function buildDocxBlob(container) {
 }
 
 async function exportWord() {
+    flushPendingWork();
     if (WORD_PRECISE_DOCS.includes(appState.docMode)) {
         const choice = await showChoiceDialog({
             title: 'Dokumen ini paling rapi dicetak sebagai PDF',

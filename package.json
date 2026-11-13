@@ -1,6 +1,6 @@
 {
   "name": "asesmen-sumatif-terpadu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Asesmen Sumatif (ASAS, ASAT, ASAJ) — aplikasi statis, buka index.html langsung di browser.",
   "scripts": {
@@ -14,5 +14,8 @@
   "devDependencies": {
     "playwright-core": "^1.48.0",
     "tailwindcss": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

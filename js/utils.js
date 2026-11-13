@@ -61,14 +61,22 @@ function measurePreview() {
     const wrapper = document.getElementById('preview-wrapper');
     const container = document.getElementById('sheets-container');
     if (!wrapper || !container || !wrapper.clientWidth) return null;
-    const prev = container.style.zoom;
-    container.style.zoom = '1';
     const firstSheet = container.querySelector('.print-sheet');
-    const m = {
+    const read = () => ({
         width: container.scrollWidth,
         sheetHeight: firstSheet ? firstSheet.offsetHeight : container.scrollHeight
-    };
-    container.style.zoom = prev;
+    });
+    // Browser modern (zoom CSS terstandar) memberi ukuran tanpa zoom, jadi cukup satu kali layout.
+    // Mengubah zoom ke 1 lalu mengembalikannya memaksa 2× layout ulang seluruh dokumen
+    // (±1 detik untuk ratusan kartu) — hanya dilakukan bila browser lama menghitung ukuran ber-zoom.
+    let m = read();
+    const z = parseFloat(container.style.zoom) || 1;
+    if (z !== 1 && firstSheet && Math.abs(firstSheet.getBoundingClientRect().width - firstSheet.offsetWidth * z) > 2) {
+        const prev = container.style.zoom;
+        container.style.zoom = '1';
+        m = read();
+        container.style.zoom = prev;
+    }
     const cs = getComputedStyle(wrapper);
     m.availW = wrapper.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     m.availH = wrapper.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
@@ -91,7 +99,8 @@ function fitPageZoom() {
 
 function applyZoom() {
     const container = document.getElementById('sheets-container');
-    container.style.zoom = appState.zoom;
+    const zoomText = String(appState.zoom);
+    if (container.style.zoom !== zoomText) container.style.zoom = zoomText;
     document.getElementById('zoom-label').textContent = Math.round(appState.zoom * 100) + '%';
     const fitBtn = document.getElementById('zoom-fit-btn');
     if (fitBtn) fitBtn.classList.toggle('is-active', zoomFitMode === 'width');
@@ -362,11 +371,15 @@ function applyIntroTipState() {
     if (el && hidden) el.classList.add('hidden');
 }
 
-function showToast(msg) {
+let toastTimer = null;
+function showToast(msg, durationMs) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     document.getElementById('toast-msg').textContent = msg;
     toast.classList.remove('opacity-0');
-    setTimeout(() => toast.classList.add('opacity-0'), 2800);
+    // Toast baru memperpanjang tampilan; timer toast sebelumnya tidak boleh menutupnya lebih awal.
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add('opacity-0'), durationMs || 2800);
 }
 
 function escapeHtml(str) {
@@ -379,7 +392,7 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
-window.onload = function () {
+window.addEventListener('load', function () {
     const restored = loadSavedState();
     initApp();
     switchTab('mode');
@@ -394,7 +407,7 @@ window.onload = function () {
     });
     if (restored) showToast("Data terakhir dipulihkan dari penyimpanan browser.");
     initStudentPhotos();
-};
+});
 
 // Dialog pilihan sederhana (pengganti confirm() yang hanya punya 2 tombol).
 // buttons: [{ label, value, primary }] — mengembalikan Promise berisi value tombol yang diklik.

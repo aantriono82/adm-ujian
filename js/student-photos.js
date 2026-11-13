@@ -33,10 +33,19 @@ function openPhotoDb() {
     photoDbPromise = new Promise((resolve, reject) => {
         if (!window.indexedDB) { reject(new Error('IndexedDB tidak tersedia')); return; }
         const req = indexedDB.open(PHOTO_DB_NAME, 1);
-        req.onupgradeneeded = () => req.result.createObjectStore(PHOTO_STORE);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    }).catch(err => { photoDbPromise = null; throw err; });
+        req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(PHOTO_STORE)) db.createObjectStore(PHOTO_STORE);
+        };
+        req.onsuccess = () => {
+            const db = req.result;
+            // Tab lain (versi aplikasi lebih baru) ingin meningkatkan struktur DB: lepaskan koneksi
+            // agar tidak saling mengunci; koneksi baru dibuka otomatis pada akses berikutnya.
+            db.onversionchange = () => { db.close(); photoDbPromise = null; };
+            db.onclose = () => { photoDbPromise = null; };
+            resolve(db);
+        };
+        req.onerror = () => reject(req.error);    }).catch(err => { photoDbPromise = null; throw err; });
     return photoDbPromise;
 }
 
@@ -187,7 +196,7 @@ async function pickStudentPhoto(idx) {
     if (studentPhotoCache.has(key)) {
         const choice = await showChoiceDialog({
             title: `Foto ${st.nama}`,
-            html: `<div class="flex justify-center"><img src="${studentPhotoCache.get(key)}" style="width: 90px; height: 120px; object-fit: cover; border: 1px solid #cbd5e1;"></div>`,
+            html: `<div class="flex justify-center"><img src="${imgUrl(studentPhotoCache.get(key))}" style="width: 90px; height: 120px; object-fit: cover; border: 1px solid #cbd5e1;"></div>`,
             buttons: [{ label: 'Ganti Foto', value: 'ganti', primary: true }, { label: 'Hapus Foto', value: 'hapus' }, { label: 'Batal', value: null }]
         });
         if (!choice) return;

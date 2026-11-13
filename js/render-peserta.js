@@ -33,14 +33,14 @@ function renderSingleCardHTML(student, layout) {
         
         ${setting.showWatermark && kop.logoKanan ? `
         <div class="card-watermark pointer-events-none" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 0; opacity: 0.10;">
-            <img src="${kop.logoKanan}" alt="" style="width: ${watermarkSize}cm; height: ${watermarkSize}cm; object-fit: contain;">
+            <img src="${imgUrl(kop.logoKanan)}" alt="" style="width: ${watermarkSize}cm; height: ${watermarkSize}cm; object-fit: contain;">
         </div>
         ` : ''}
 
         <div style="position: relative; z-index: 1;">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.1cm; background-color: ${theme.headerBg}; padding: 0.04cm 0.06cm; border-radius: 2px;">
                 <div style="width: ${logoSize}cm; height: ${logoSize}cm; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    ${kop.logoKiri ? `<img src="${kop.logoKiri}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                    ${kop.logoKiri ? `<img src="${imgUrl(kop.logoKiri)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
                 </div>
                 <div style="flex: 1; text-align: center; line-height: 1.12; color: ${theme.headerText};">
                     ${kop.pemda ? `<div style="font-size: ${fKop1}pt; font-weight: 700;">${escapeHtml(kop.pemda)}</div>` : ''}
@@ -50,7 +50,7 @@ function renderSingleCardHTML(student, layout) {
                     ${kop.alamat ? `<div style="font-size: ${fAlamat}pt; font-style: italic; color: #334155;">${escapeHtml(kop.alamat)}</div>` : ''}
                 </div>
                 <div style="width: ${logoSize}cm; height: ${logoSize}cm; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    ${kop.logoKanan ? `<img src="${kop.logoKanan}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                    ${kop.logoKanan ? `<img src="${imgUrl(kop.logoKanan)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ function renderSingleCardHTML(student, layout) {
                     </table>
                     ${setting.showFoto ? `
                     <div class="card-photo" style="width: ${photoWCm}cm; height: ${photoHCm}cm; margin-top: 0.06cm; outline: 0.6px solid #94a3b8; overflow: hidden; background: #e2e8f0;">
-                        <img src="${photo || PHOTO_PLACEHOLDER_SVG}" alt="" style="width: ${photoWCm}cm; height: ${photoHCm}cm; object-fit: cover; display: block;">
+                        <img src="${imgUrl(photo || PHOTO_PLACEHOLDER_SVG)}" alt="" style="width: ${photoWCm}cm; height: ${photoHCm}cm; object-fit: cover; display: block;">
                     </div>` : ''}
                 </div>
 
@@ -113,8 +113,8 @@ function renderSingleCardHTML(student, layout) {
                     </div>
                     <div style="position: relative; flex: 1; min-height: 0.45cm; display: flex; align-items: center;">
                         ${pengesahan.metode === 'upload' ? `
-                            ${pengesahan.capImg ? `<img src="${pengesahan.capImg}" style="position: absolute; left: -0.22cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
-                            ${pengesahan.ttdImg ? `<img src="${pengesahan.ttdImg}" style="position: absolute; left: 0.15cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.15cm; object-fit: contain; z-index: 3;">` : ''}
+                            ${pengesahan.capImg ? `<img src="${imgUrl(pengesahan.capImg)}" style="position: absolute; left: -0.22cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
+                            ${pengesahan.ttdImg ? `<img src="${imgUrl(pengesahan.ttdImg)}" style="position: absolute; left: 0.15cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.15cm; object-fit: contain; z-index: 3;">` : ''}
                         ` : ''}
                     </div>
                     <div style="position: relative; z-index: 4;">
@@ -219,14 +219,14 @@ function renderSingleDeskLabelHTML(student, seatIndex, widthCm, heightCm) {
         <div style="position: relative; z-index: 1;">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.1cm; border-bottom: 1.5px solid ${theme.lineColor}; padding-bottom: 0.06cm;">
                 <div style="width: 0.75cm; height: 0.75cm; display: flex; align-items: center; justify-content: center;">
-                    ${kop.logoKiri ? `<img src="${kop.logoKiri}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                    ${kop.logoKiri ? `<img src="${imgUrl(kop.logoKiri)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
                 </div>
                 <div style="flex: 1; text-align: center; line-height: 1.1;">
                     <div style="font-size: 7pt; font-weight: 700; text-transform: uppercase;">${escapeHtml(kegiatan.namaLengkap)}</div>
                     <div style="font-size: 7.2pt; font-weight: 700; color: ${theme.schoolText};">${escapeHtml(kop.sekolah)} - T.P. ${escapeHtml(kegiatan.tapelAngka)}</div>
                 </div>
                 <div style="width: 0.75cm; height: 0.75cm; display: flex; align-items: center; justify-content: center;">
-                    ${kop.logoKanan ? `<img src="${kop.logoKanan}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                    ${kop.logoKanan ? `<img src="${imgUrl(kop.logoKanan)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
                 </div>
             </div>
         </div>

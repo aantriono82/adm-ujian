@@ -366,8 +366,8 @@ function renderPOSCompleteHTML(paper) {
             <div style="border-top: 2.5px solid #0f172a; border-bottom: 1px solid #0f172a; height: 3px; margin: 0.35cm 0 0.8cm 0;"></div>
 
             <div style="display: flex; justify-content: center; align-items: center; gap: 1.8cm; margin: 0.8cm 0;">
-                <img src="${kop.logoKiri}" style="width: 3.4cm; height: 3.4cm; object-fit: contain;">
-                <img src="${kop.logoKanan}" style="width: 3.4cm; height: 3.4cm; object-fit: contain;">
+                <img src="${imgUrl(kop.logoKiri)}" style="width: 3.4cm; height: 3.4cm; object-fit: contain;">
+                <img src="${imgUrl(kop.logoKanan)}" style="width: 3.4cm; height: 3.4cm; object-fit: contain;">
             </div>
 
             <div style="font-size: 11pt; font-weight: 700; letter-spacing: 1.5px; color: #475569; margin-top: 0.6cm;">DOKUMEN RESMI SATUAN PENDIDIKAN</div>

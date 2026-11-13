@@ -158,7 +158,7 @@ function updateModeHighlightUI() {
 function updateTapelAngka(val) {
     appState.kegiatan.tapelAngka = val;
     appState.kegiatan.tapel = `TAHUN PELAJARAN ${val}`;
-    renderAll();
+    renderSoon();
 }
 
 // Ambil daftar siswa yang aktif berdasarkan mode (ASAS = 7,8,9 | ASAT = 7,8 | ASAJ = 9)
@@ -369,12 +369,12 @@ function renderCommitteeTable() {
         <tr class="hover:bg-slate-50">
             <td class="p-1.5 text-center font-bold text-slate-400">${idx + 1}</td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(c.nama)}" oninput="appState.committee[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
-                <input type="text" value="${escapeHtml(c.nip)}" oninput="appState.committee[${idx}].nip=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none" placeholder="NIP">
+                <input type="text" value="${escapeHtml(c.nama)}" oninput="appState.committee[${idx}].nama=this.value;renderSoon()" class="w-full font-bold text-slate-800 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
+                <input type="text" value="${escapeHtml(c.nip)}" oninput="appState.committee[${idx}].nip=this.value;renderSoon()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none" placeholder="NIP">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(c.jabatanPanitia)}" oninput="appState.committee[${idx}].jabatanPanitia=this.value;renderAll()" class="w-full font-semibold text-primary-700 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
-                <input type="text" value="${escapeHtml(c.jabatanDinas)}" oninput="appState.committee[${idx}].jabatanDinas=this.value;renderAll()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
+                <input type="text" value="${escapeHtml(c.jabatanPanitia)}" oninput="appState.committee[${idx}].jabatanPanitia=this.value;renderSoon()" class="w-full font-semibold text-primary-700 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
+                <input type="text" value="${escapeHtml(c.jabatanDinas)}" oninput="appState.committee[${idx}].jabatanDinas=this.value;renderSoon()" class="w-full text-[10px] text-slate-500 bg-transparent border-b border-transparent focus:border-primary-400 outline-none">
             </td>
             <td class="p-1.5 text-center">
                 <button onclick="appState.committee.splice(${idx},1);renderCommitteeTable();renderAll()" class="text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
@@ -399,16 +399,16 @@ function renderCorrectorsTable() {
     tbody.innerHTML = appState.correctors.map((cr, idx) => `
         <tr class="hover:bg-slate-50">
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(cr.mapel)}" oninput="appState.correctors[${idx}].mapel=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent outline-none">
+                <input type="text" value="${escapeHtml(cr.mapel)}" oninput="appState.correctors[${idx}].mapel=this.value;renderSoon()" class="w-full font-bold text-slate-800 bg-transparent outline-none">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(cr.k7)}" oninput="appState.correctors[${idx}].k7=this.value;renderAll()" class="w-full text-slate-700 bg-transparent outline-none">
+                <input type="text" value="${escapeHtml(cr.k7)}" oninput="appState.correctors[${idx}].k7=this.value;renderSoon()" class="w-full text-slate-700 bg-transparent outline-none">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(cr.k8)}" oninput="appState.correctors[${idx}].k8=this.value;renderAll()" class="w-full text-slate-700 bg-transparent outline-none">
+                <input type="text" value="${escapeHtml(cr.k8)}" oninput="appState.correctors[${idx}].k8=this.value;renderSoon()" class="w-full text-slate-700 bg-transparent outline-none">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(cr.k9)}" oninput="appState.correctors[${idx}].k9=this.value;renderAll()" class="w-full text-slate-700 bg-transparent outline-none">
+                <input type="text" value="${escapeHtml(cr.k9)}" oninput="appState.correctors[${idx}].k9=this.value;renderSoon()" class="w-full text-slate-700 bg-transparent outline-none">
             </td>
         </tr>
     `).join('');
@@ -431,8 +431,8 @@ function renderScheduleEditor() {
     container.innerHTML = appState.schedule.map((d, idx) => `
         <div class="border border-slate-200 rounded-lg p-2.5 bg-slate-50 space-y-2 text-[11px]">
             <div class="grid grid-cols-3 gap-2">
-                <input type="text" value="${escapeHtml(d.hari)}" oninput="appState.schedule[${idx}].hari=this.value;if(appState.dailyRoster[${idx}])appState.dailyRoster[${idx}].hari=this.value;renderAll()" class="border border-slate-300 rounded px-2 py-1 font-bold bg-white" placeholder="Hari">
-                <input type="text" value="${escapeHtml(d.tanggal)}" oninput="appState.schedule[${idx}].tanggal=this.value;renderAll()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-white" placeholder="Tanggal">
+                <input type="text" value="${escapeHtml(d.hari)}" oninput="appState.schedule[${idx}].hari=this.value;if(appState.dailyRoster[${idx}])appState.dailyRoster[${idx}].hari=this.value;renderSoon()" class="border border-slate-300 rounded px-2 py-1 font-bold bg-white" placeholder="Hari">
+                <input type="text" value="${escapeHtml(d.tanggal)}" oninput="appState.schedule[${idx}].tanggal=this.value;renderSoon()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-white" placeholder="Tanggal">
             </div>
             ${d.sesi.map((ss, sIdx) => {
                 const c = sesiColors[sIdx % sesiColors.length];
@@ -443,8 +443,8 @@ function renderScheduleEditor() {
                     ${sIdx > 0 ? `<button onclick="rotateProctorsForSesi(${idx}, ${sIdx})" class="text-[10px] bg-${c}-50 hover:bg-${c}-100 text-${c}-700 border border-${c}-200 px-1.5 py-0.5 rounded font-semibold cursor-pointer" title="Isi pengawas sesi ini dengan menggeser pengawas sesi sebelumnya satu ruang">Rotasi Otomatis</button>` : ''}
                 </div>
                 <div class="grid grid-cols-3 gap-1.5">
-                    <input type="text" value="${escapeHtml(ss.waktu)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].waktu=this.value;renderAll()" class="border border-slate-300 rounded px-2 py-1 bg-slate-50" placeholder="Waktu">
-                    <input type="text" value="${escapeHtml(ss.mapel)}" title="${escapeHtml(ss.mapel)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].mapel=this.value;this.title=this.value;renderAll()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-slate-50" placeholder="Mata Pelajaran">
+                    <input type="text" value="${escapeHtml(ss.waktu)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].waktu=this.value;renderSoon()" class="border border-slate-300 rounded px-2 py-1 bg-slate-50" placeholder="Waktu">
+                    <input type="text" value="${escapeHtml(ss.mapel)}" title="${escapeHtml(ss.mapel)}" oninput="appState.schedule[${idx}].sesi[${sIdx}].mapel=this.value;this.title=this.value;renderSoon()" class="col-span-2 border border-slate-300 rounded px-2 py-1 font-semibold bg-slate-50" placeholder="Mata Pelajaran">
                 </div>
                 <div class="space-y-1 text-[11px]">
                     <div class="grid ${gridCols} gap-1.5 text-[10px] font-semibold text-slate-500">
@@ -453,8 +453,8 @@ function renderScheduleEditor() {
                     ${ss.pengawas.slice(0, n).map((pair, rIdx) => `
                     <div class="grid ${gridCols} gap-1.5 items-center">
                         <span class="font-bold text-slate-600">R.${rIdx + 1}</span>
-                        <input type="text" value="${escapeHtml(pair[0])}" title="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="${ppr === 1 ? 'Pengawas' : 'Pengawas 1'}">
-                        ${ppr === 2 ? `<input type="text" value="${escapeHtml(pair[1])}" title="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 2">` : ''}
+                        <input type="text" value="${escapeHtml(pair[0])}" title="${escapeHtml(pair[0])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][0]=this.value;this.title=this.value;renderSoon()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="${ppr === 1 ? 'Pengawas' : 'Pengawas 1'}">
+                        ${ppr === 2 ? `<input type="text" value="${escapeHtml(pair[1])}" title="${escapeHtml(pair[1])}" oninput="appState.schedule[${idx}].sesi[${sIdx}].pengawas[${rIdx}][1]=this.value;this.title=this.value;renderSoon()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1" placeholder="Pengawas 2">` : ''}
                     </div>`).join('')}
                 </div>
             </div>`;
@@ -498,7 +498,7 @@ function setPengawasPerRuang(val) {
 // Butir "Tugas Pengawas Ruang" (Lampiran III SK)
 function updateTugasPengawas(val) {
     appState.tugasPengawas = val;
-    renderAll();
+    renderSoon();
 }
 function resetTugasPengawas() {
     appState.tugasPengawas = DEFAULT_TUGAS_PENGAWAS;
@@ -630,7 +630,7 @@ function renderMakeupEditor() {
     if (!container) return;
     const field = (idx, key, ph, extra = '') => {
         const v = escapeHtml(appState.makeupSchedule[idx][key] || '');
-        return `<input type="text" value="${v}" title="${v}" placeholder="${ph}" oninput="appState.makeupSchedule[${idx}].${key}=this.value;this.title=this.value;renderAll()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1 ${extra}">`;
+        return `<input type="text" value="${v}" title="${v}" placeholder="${ph}" oninput="appState.makeupSchedule[${idx}].${key}=this.value;this.title=this.value;renderSoon()" class="w-full min-w-0 border border-slate-200 rounded px-1.5 py-1 ${extra}">`;
     };
     container.innerHTML = appState.makeupSchedule.map((m, idx) => `
         <div class="border border-slate-200 rounded-lg p-2 bg-white text-[11px] space-y-1.5">
@@ -653,13 +653,13 @@ function renderBudgetTable() {
     tbody.innerHTML = appState.budget.map((b, idx) => `
         <tr>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(b.uraian)}" oninput="appState.budget[${idx}].uraian=this.value;renderAll()" class="w-full bg-transparent outline-none font-medium">
+                <input type="text" value="${escapeHtml(b.uraian)}" oninput="appState.budget[${idx}].uraian=this.value;renderSoon()" class="w-full bg-transparent outline-none font-medium">
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(b.volume)}" oninput="appState.budget[${idx}].volume=this.value;renderAll()" class="w-full bg-transparent outline-none">
+                <input type="text" value="${escapeHtml(b.volume)}" oninput="appState.budget[${idx}].volume=this.value;renderSoon()" class="w-full bg-transparent outline-none">
             </td>
             <td class="p-1.5">
-                <input type="number" value="${b.harga * b.qty}" oninput="appState.budget[${idx}].qty=1;appState.budget[${idx}].harga=parseInt(this.value||0,10);renderAll()" class="w-full text-right bg-transparent outline-none font-bold text-slate-800">
+                <input type="number" value="${b.harga * b.qty}" oninput="appState.budget[${idx}].qty=1;appState.budget[${idx}].harga=parseInt(this.value||0,10);renderSoon()" class="w-full text-right bg-transparent outline-none font-bold text-slate-800">
             </td>
             <td class="p-1.5 text-center">
                 <button onclick="appState.budget.splice(${idx},1);renderBudgetTable();renderAll()" class="text-slate-400 hover:text-rose-600"><i data-lucide="x" class="w-3 h-3"></i></button>

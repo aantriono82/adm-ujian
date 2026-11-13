@@ -2,6 +2,7 @@
 // 23. OUTPUT CETAK PDF & UNDUH EXCEL LENGKAP (.XLSX)
 // ============================================================================
 function printPDF() {
+    flushPendingWork();
     const container = document.getElementById('sheets-container');
     const prevZoom = container.style.zoom;
     container.style.zoom = '1';

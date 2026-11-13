@@ -879,7 +879,7 @@ function renderLaporanAkhirHTML(paper) {
         </div>
 
         <div style="margin: 1cm 0;">
-            <img src="${kop.logoKanan}" style="width: 4.2cm; height: 4.2cm; object-fit: contain; margin: 0 auto;">
+            <img src="${imgUrl(kop.logoKanan)}" style="width: 4.2cm; height: 4.2cm; object-fit: contain; margin: 0 auto;">
         </div>
 
         <div>

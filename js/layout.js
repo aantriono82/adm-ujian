@@ -102,7 +102,7 @@ function renderFullPageKopHTML(theme) {
     <div style="width: 100%; margin-bottom: 0.2cm;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.25cm; padding-bottom: 0.1cm;">
             <div style="width: 1.85cm; height: 1.85cm; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                ${kop.logoKiri ? `<img src="${kop.logoKiri}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                ${kop.logoKiri ? `<img src="${imgUrl(kop.logoKiri)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
             </div>
             <div style="flex: 1; text-align: center; line-height: 1.15; color: ${theme.headerText};">
                 ${kop.pemda ? `<div style="font-size: 11pt; font-weight: 700;">${escapeHtml(kop.pemda)}</div>` : ''}
@@ -114,7 +114,7 @@ function renderFullPageKopHTML(theme) {
                 ${kop.kontakDok ? `<div style="font-size: 8.2pt; font-style: italic; color: #1e293b;">${escapeHtml(kop.kontakDok)}</div>` : ''}
             </div>
             <div style="width: 1.85cm; height: 1.85cm; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                ${kop.logoKanan ? `<img src="${kop.logoKanan}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
+                ${kop.logoKanan ? `<img src="${imgUrl(kop.logoKanan)}" style="max-width: 100%; max-height: 100%; object-fit: contain;">` : ''}
             </div>
         </div>
         <div style="border-top: 2.2px solid ${theme.lineColor}; border-bottom: 0.8px solid ${theme.lineColor}; height: 3px;"></div>
@@ -140,8 +140,8 @@ function renderFullPageSignatureHTML(customDateStr = null) {
             <div>${escapeHtml(pengesahan.jabatan2)},</div>
             <div style="position: relative; height: 1.4cm; display: flex; align-items: center;">
                 ${pengesahan.metode === 'upload' ? `
-                    ${pengesahan.capImg ? `<img src="${pengesahan.capImg}" style="position: absolute; left: -0.35cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
-                    ${pengesahan.ttdImg ? `<img src="${pengesahan.ttdImg}" style="position: absolute; left: 0.25cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.55cm; object-fit: contain; z-index: 3;">` : ''}
+                    ${pengesahan.capImg ? `<img src="${imgUrl(pengesahan.capImg)}" style="position: absolute; left: -0.35cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
+                    ${pengesahan.ttdImg ? `<img src="${imgUrl(pengesahan.ttdImg)}" style="position: absolute; left: 0.25cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.55cm; object-fit: contain; z-index: 3;">` : ''}
                 ` : ''}
             </div>
             <div style="font-weight: 700; text-decoration: underline; position: relative; z-index: 4;">${escapeHtml(pengesahan.kepsek)}</div>

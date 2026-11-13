@@ -1,7 +1,51 @@
 // ============================================================================
 // 19. MASTER RENDER DISPATCHER (16 MODUL LENGKAP)
 // ============================================================================
+// Render saat mengetik: dokumen besar (ratusan kartu) butuh ratusan ms per render, jadi
+// ketikan beruntun digabung. Bila render terakhir cepat, tetap tampil di frame berikutnya.
+let renderTimer = null;
+let renderNeedsStudentTable = false;
+let lastRenderMs = 0;
+const RENDER_FAST_MS = 50;
+const RENDER_TYPING_DELAY_MS = 220;
+
+function renderSoon(withStudentTable) {
+    if (withStudentTable) renderNeedsStudentTable = true;
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(flushRender, lastRenderMs < RENDER_FAST_MS ? 0 : RENDER_TYPING_DELAY_MS);
+}
+
+// Jalankan render yang masih tertunda sekarang juga (sebelum cetak/ekspor/menutup halaman).
+function flushRender() {
+    if (renderTimer === null && !renderNeedsStudentTable) return;
+    clearTimeout(renderTimer);
+    renderTimer = null;
+    if (renderNeedsStudentTable) {
+        renderNeedsStudentTable = false;
+        renderStudentTable();
+    }
+    renderAll();
+}
+
+// Jangan sampai ketikan terakhir hilang: simpan segera saat tab ditutup / disembunyikan / dicetak.
+function flushPendingWork() {
+    if (renderTimer !== null) flushRender();
+    if (saveTimer !== null) { clearTimeout(saveTimer); saveTimer = null; saveStateNow(); }
+}
+window.addEventListener('pagehide', flushPendingWork);
+window.addEventListener('beforeprint', flushPendingWork);
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushPendingWork();
+});
+
 function renderAll() {
+    clearTimeout(renderTimer);
+    renderTimer = null;
+    const t0 = performance.now();
+    try { renderAllNow(); } finally { lastRenderMs = performance.now() - t0; }
+}
+
+function renderAllNow() {
     populateRoomFilterDropdown();
     const layout = calculateSheetLayout();
     const paper = layout.paper;

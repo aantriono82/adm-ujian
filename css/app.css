@@ -507,3 +507,13 @@
 .pwa-update-close { display: inline-flex; padding: .25rem; border-radius: .4rem; color: #94a3b8; cursor: pointer; }
 .pwa-update-close:hover { color: #fff; background: rgba(255,255,255,.1); }
 html.dark .pwa-update { background: #1e293b; border: 1px solid #334155; }
+
+/* Performa: lembar pratinjau di luar layar tidak di-layout/di-paint sampai digulir mendekat.
+   Hanya di layar — saat mencetak semua lembar tetap dirender penuh. Tinggi cadangan memakai
+   min-height lembar itu sendiri, dan "auto" mengingat tinggi aslinya setelah pernah tampil. */
+@media screen {
+    #sheets-container > .print-sheet {
+        content-visibility: auto;
+        contain-intrinsic-block-size: auto 0;
+    }
+}

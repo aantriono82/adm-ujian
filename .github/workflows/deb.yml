@@ -13,18 +13,31 @@ on:
 permissions:
   contents: write
 
+# Push beruntun ke cabang yang sama: build lama dibatalkan. Build tag rilis tidak pernah dibatalkan.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - run: npm ci
+
+      - name: Berkas hasil build mutakhir (css/tailwind.css & sw.js)
+        run: |
+          npm run build
+          if ! git diff --exit-code --stat -- css/tailwind.css sw.js; then
+            echo "::error::css/tailwind.css atau sw.js belum dibangun ulang. Jalankan 'npm run build' lalu commit hasilnya."
+            exit 1
+          fi
 
       - name: Uji otomatis
         run: npm test
@@ -58,7 +71,7 @@ jobs:
           dpkg-deb -I dist/*.deb
           dpkg-deb -c dist/*.deb | grep -E 'usr/bin/asesmen-sumatif|index.html|\.desktop'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: asesmen-sumatif-deb
           path: dist/*.deb
@@ -70,7 +83,7 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" dist/*.deb \
             --title "Asesmen Sumatif $GITHUB_REF_NAME" \
-            --notes "$(cat <<'EOF'
+            --notes "$(cat <<'NOTES'
           ## Pasang di Debian/Ubuntu/Mint
 
           1. Unduh berkas `.deb` di bawah.
@@ -79,6 +92,6 @@ jobs:
 
           Butuh Chrome/Chromium/Edge/Brave (atau Firefox). Data versi ini terpisah dari versi browser;
           pindahkan lewat *Data & Backup → Backup (.json)* lalu *Muat Backup*.
-          EOF
+          NOTES
           )" \
             --generate-notes

@@ -314,6 +314,8 @@ function mergeIntoState(raw) {
 }
 
 function saveStateNow() {
+    clearTimeout(saveTimer);
+    saveTimer = null;
     try {
         const toSave = Object.assign({}, appState);
         delete toSave.developerPhoto;
@@ -343,7 +345,7 @@ function saveStateNow() {
 
 function saveStateSoon() {
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(saveStateNow, 600);
+    saveTimer = setTimeout(() => { saveTimer = null; saveStateNow(); }, 600);
 }
 
 // Akses localStorage yang aman: sebagian browser (mode privat / cookie diblokir)
@@ -351,6 +353,15 @@ function saveStateSoon() {
 function safeStorageGet(key) {
     try { return window.localStorage.getItem(key); } catch (err) { return null; }
 }
+
+// Aplikasi terbuka di lebih dari satu tab/jendela: simpan otomatis tiap tab akan saling menimpa.
+// Beri tahu pengguna (sekali) begitu tab lain menyimpan data.
+let otherTabWarned = false;
+window.addEventListener('storage', e => {
+    if (e.key !== STORAGE_KEY || otherTabWarned) return;
+    otherTabWarned = true;
+    showToast('Aplikasi ini juga terbuka di tab/jendela lain. Gunakan satu tab saja agar data tidak saling menimpa — tutup tab lain lalu muat ulang halaman ini.', 9000);
+});
 
 function loadSavedState() {
     try {
