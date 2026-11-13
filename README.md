@@ -5,6 +5,45 @@ semua pustaka, CSS, dan font sudah ada di folder ini.
 
 > Saat menyalin ke komputer/flashdisk lain, salin **seluruh folder** (bukan hanya `index.html`).
 
+## Menjalankan di komputer lokal
+
+### 1. Ambil kodenya
+
+```bash
+git clone https://github.com/aantriono82/adm-ujian.git
+cd adm-ujian
+```
+
+Atau unduh ZIP dari GitHub (*Code → Download ZIP*), lalu ekstrak.
+
+### 2. Buka aplikasi
+
+**Cara A — buka langsung (paling mudah, tanpa instalasi apa pun)**
+
+Klik dua kali `index.html`, atau dari terminal:
+
+```bash
+xdg-open index.html     # Linux
+open index.html         # macOS
+start index.html        # Windows
+```
+
+**Cara B — lewat server lokal (opsional)**
+
+Berguna bila ingin membuka aplikasi dari HP/laptop lain di jaringan yang sama. Pilih salah satu:
+
+```bash
+python3 -m http.server 8000     # butuh Python 3
+npx serve .                     # butuh Node.js
+```
+
+Lalu buka `http://localhost:8000` (atau alamat yang ditampilkan `npx serve`). Dari perangkat lain, ganti
+`localhost` dengan alamat IP komputer ini, mis. `http://192.168.1.10:8000`. Hentikan server dengan `Ctrl+C`.
+
+> **Penting soal data:** isian tersimpan otomatis di penyimpanan browser, terpisah untuk setiap browser dan
+> setiap cara membuka (Cara A dan Cara B tidak berbagi data). Untuk memindahkan data, gunakan
+> *Data & Backup → Backup (.json)*, lalu *Data & Backup → Muat Backup* di browser/cara yang lain.
+
 ## Struktur
 
 ```
