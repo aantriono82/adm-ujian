@@ -17,23 +17,23 @@ function renderStudentTable() {
         <tr class="${isIncluded ? 'hover:bg-slate-50' : 'bg-slate-100/70 opacity-50'}">
             <td class="p-1.5 text-center text-slate-400 font-medium">${idx + 1}</td>
             <td class="p-1 text-center">
-                ${(() => { const ph = getStudentPhoto(st); return `<button onclick="pickStudentPhoto(${idx})" title="${ph ? 'Ganti / hapus foto' : 'Pasang foto'}" class="w-6 h-8 rounded border ${ph ? 'border-slate-300' : 'border-dashed border-slate-400 hover:border-primary-500'} overflow-hidden flex items-center justify-center bg-white cursor-pointer"><img src="${ph || PHOTO_PLACEHOLDER_SVG}" alt="" class="w-full h-full object-cover ${ph ? '' : 'opacity-60'}"></button>`; })()}
+                ${(() => { const ph = getStudentPhoto(st); return `<button onclick="pickStudentPhoto(${idx})" title="${ph ? 'Ganti / hapus foto' : 'Pasang foto'}" class="w-6 h-8 rounded border ${ph ? 'border-slate-300' : 'border-dashed border-slate-400 hover:border-primary-500'} overflow-hidden flex items-center justify-center bg-white cursor-pointer"><img src="${imgUrl(ph || PHOTO_PLACEHOLDER_SVG)}" alt="" class="w-full h-full object-cover ${ph ? '' : 'opacity-60'}"></button>`; })()}
             </td>
             <td class="p-1.5">
-                <input type="text" value="${escapeHtml(st.noUjian)}" oninput="appState.students[${idx}].noUjian=this.value;renderAll()" class="w-full font-semibold text-primary-700 bg-transparent outline-none text-[10px]">
-                <input type="text" value="${escapeHtml(st.nama)}" oninput="appState.students[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent outline-none text-[11px]">
+                <input type="text" value="${escapeHtml(st.noUjian)}" oninput="appState.students[${idx}].noUjian=this.value;renderSoon()" class="w-full font-semibold text-primary-700 bg-transparent outline-none text-[10px]">
+                <input type="text" value="${escapeHtml(st.nama)}" oninput="appState.students[${idx}].nama=this.value;renderSoon()" class="w-full font-bold text-slate-800 bg-transparent outline-none text-[11px]">
             </td>
             <td class="p-1.5 text-center">
-                <input type="text" value="${escapeHtml(st.lp || 'L')}" oninput="appState.students[${idx}].lp=this.value.toUpperCase();renderAll()" class="w-7 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold">
+                <input type="text" value="${escapeHtml(st.lp || 'L')}" oninput="appState.students[${idx}].lp=this.value.toUpperCase();renderSoon()" class="w-7 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold">
             </td>
             <td class="p-1.5 text-center">
                 <div class="flex items-center gap-1 justify-center">
-                    <input type="text" value="${escapeHtml(st.kelas)}" oninput="appState.students[${idx}].kelas=this.value;renderAll()" onchange="renderStudentTable()" class="w-14 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold" title="Kelas">
-                    <input type="text" value="${escapeHtml(st.ruang)}" oninput="appState.students[${idx}].ruang=this.value;renderAll()" class="w-6 text-center bg-primary-50 text-primary-700 rounded py-0.5 text-[10px] font-bold" title="Ruang">
+                    <input type="text" value="${escapeHtml(st.kelas)}" oninput="appState.students[${idx}].kelas=this.value;renderSoon()" onchange="renderStudentTable()" class="w-14 text-center bg-slate-100 rounded py-0.5 text-[10px] font-bold" title="Kelas">
+                    <input type="text" value="${escapeHtml(st.ruang)}" oninput="appState.students[${idx}].ruang=this.value;renderSoon()" class="w-6 text-center bg-primary-50 text-primary-700 rounded py-0.5 text-[10px] font-bold" title="Ruang">
                 </div>
             </td>
             <td class="p-1.5 text-center">
-                <input type="number" min="0" max="100" value="${escapeHtml(st.nilai === undefined || st.nilai === null ? '' : st.nilai)}" oninput="appState.students[${idx}].nilai=parseNilai(this.value);renderAll()" class="w-10 text-center bg-emerald-50 text-emerald-800 rounded py-0.5 text-[10px] font-bold">
+                <input type="number" min="0" max="100" value="${escapeHtml(st.nilai === undefined || st.nilai === null ? '' : st.nilai)}" oninput="appState.students[${idx}].nilai=parseNilai(this.value);renderSoon()" class="w-10 text-center bg-emerald-50 text-emerald-800 rounded py-0.5 text-[10px] font-bold">
             </td>
             <td class="p-1.5 text-center">
                 <button onclick="appState.students.splice(${idx},1);renderStudentTable();renderAll()" class="text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>

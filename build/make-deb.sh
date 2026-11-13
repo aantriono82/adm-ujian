@@ -24,6 +24,8 @@ DEB="$STAGE.deb"
 for f in index.html manifest.webmanifest sw.js css/tailwind.css img/favicon.svg img/icon-512.png; do
     [ -f "$f" ] || { echo "Berkas $f tidak ada — jalankan 'npm run build' dulu." >&2; exit 1; }
 done
+# Daftar cache offline (sw.js) harus cocok dengan berkas yang dipaketkan
+node build/build-sw.js --check >/dev/null || { echo "sw.js usang — jalankan 'npm run build' dulu." >&2; exit 1; }
 
 rm -rf "$STAGE" "$DEB"
 APP="$STAGE/usr/share/$PKG"
@@ -32,7 +34,10 @@ mkdir -p "$APP" "$STAGE/DEBIAN" "$STAGE/usr/bin" "$STAGE/usr/share/applications"
 
 # 1. Berkas aplikasi
 cp -r index.html manifest.webmanifest sw.js css js img vendor "$APP/"
-printf '%s\n' "$VERSION" > "$APP/VERSION"
+# Baris ke-2 = sidik isi berkas (dari sw.js): salinan untuk browser Snap ikut diperbarui
+# walau paket dibangun ulang dengan nomor versi yang sama.
+BUILD_ID=$(sed -n "s/^const CACHE_VERSION = '\([^']*\)';/\1/p" sw.js)
+printf '%s\n%s\n' "$VERSION" "$BUILD_ID" > "$APP/VERSION"
 cp README.md "$STAGE/usr/share/doc/$PKG/"
 
 # 2. Peluncur

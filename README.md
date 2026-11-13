@@ -149,6 +149,17 @@ npm test             # uji otomatis seluruh menu & fitur (Chrome headless, mode 
 
 `npm test` memakai Chrome di `/usr/bin/google-chrome`; ubah dengan `CHROME_PATH=/lokasi/chrome npm test`.
 
+CI (GitHub Actions) juga menjalankan `npm run build` dan gagal bila `css/tailwind.css` atau `sw.js` hasil build
+berbeda dari yang di-commit — jadi selalu commit hasil `npm run build`.
+
+Performa & keandalan (pegangan saat menambah fitur):
+
+- Input yang dipanggil tiap ketukan (`oninput`) memakai `renderSoon()`, bukan `renderAll()`: ketikan beruntun digabung
+  bila dokumen besar. Sebelum membaca DOM pratinjau (cetak, ekspor Word) panggil `flushPendingWork()`.
+- Gambar di template pratinjau ditulis `src="${imgUrl(dataUrl)}"` agar data URL besar tidak disalin ke setiap kartu.
+- Lembar di luar layar memakai `content-visibility: auto` — di tes, baca teks pratinjau lewat `docText()`, bukan `innerText`.
+- Pasang listener dengan `addEventListener` (jangan `window.onload = ...`) agar tidak saling menimpa.
+
 Warna antarmuka: pakai kelas `primary-*` (mis. `bg-primary-600`, `text-primary-700`), bukan `blue-*`.
 Warna ini otomatis mengikuti mode ASAS (biru), ASAT (hijau), dan ASAJ (ungu); paletnya ada di `css/app.css`.
 

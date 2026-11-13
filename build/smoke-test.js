@@ -52,6 +52,16 @@ async function closeDialog(page, label) {
 
     console.log('1. Memuat aplikasi tanpa internet');
     await page.goto(URL, { waitUntil: 'load' });
+    // Lembar di luar layar memakai content-visibility:auto sehingga innerText-nya kosong.
+    // docText() sementara merender semua lembar agar pemeriksaan teks mencakup seluruh dokumen.
+    await page.addStyleTag({ content: '#sheets-container.cv-all > .print-sheet { content-visibility: visible !important; }' });
+    await page.evaluate(() => {
+        window.docText = () => {
+            const c = document.getElementById('sheets-container');
+            c.classList.add('cv-all');
+            try { return c.innerText; } finally { c.classList.remove('cv-all'); }
+        };
+    });
     await page.waitForTimeout(800);
     const env = await page.evaluate(() => ({
         xlsx: typeof XLSX, lucide: typeof lucide,
@@ -74,7 +84,7 @@ async function closeDialog(page, label) {
                     setDocMode(dm);
                     const c = document.getElementById('sheets-container');
                     if (!c.querySelector('.print-sheet')) issues.push(`${am}/${dm}: kosong`);
-                    const m = c.innerText.match(/.{0,30}\b(undefined|NaN|\[object Object\])\b.{0,30}/);
+                    const m = docText().match(/.{0,30}\b(undefined|NaN|\[object Object\])\b.{0,30}/);
                     if (m) issues.push(`${am}/${dm}: "${m[0]}"`);
                 } catch (e) { issues.push(`${am}/${dm}: ${e.message}`); }
             }
@@ -263,7 +273,7 @@ async function closeDialog(page, label) {
         'Jadwal & pengawas 4 ruang dimuat', JSON.stringify(after.r4));
     ok(after.ljk === 1 && after.piket.join() === 'Piket A,Piket B' && after.susulan === 'Pengawas S', 'Korektor, guru piket & susulan dimuat');
     await page.evaluate(() => setDocMode('jadwal_pengawas'));
-    ok(await page.evaluate(() => /Piket A/.test(document.getElementById('sheets-container').innerText)), 'Guru piket tampil di dokumen jadwal');
+    ok(await page.evaluate(() => /Piket A/.test(docText())), 'Guru piket tampil di dokumen jadwal');
 
     console.log('6c. Pengawas per ruang: 1 atau 2');
     const one = await page.evaluate(() => {
@@ -272,7 +282,7 @@ async function closeDialog(page, label) {
         const docs = {};
         for (const dm of ['jadwal_pengawas', 'dh_pengawas', 'berita_acara', 'denah', 'pos']) {
             setDocMode(dm);
-            docs[dm] = document.getElementById('sheets-container').innerText;
+            docs[dm] = docText();
         }
         // data pengawas 2 tetap tersimpan meski disembunyikan
         const kept = appState.schedule[0].sesi[0].pengawas[0][1];
@@ -349,7 +359,7 @@ async function closeDialog(page, label) {
 
         // Lampiran III mengambil NIP dari daftar guru
         setDocMode('sk');
-        const sk = document.getElementById('sheets-container').innerText;
+        const sk = docText();
         return { parsed, total, rows, capOk, res, allFilled, noDup, piketFree, sameRoom, spread: [Math.min(...counts.values()), Math.max(...counts.values())],
             badge, b10: counts.get(names[10].toLowerCase()), capLow, badgeTab, res2, refillActive, nSesi: sessions.length,
             nipInSk: /19800101200501\s*1\s*001|198001012005011001/.test(sk) };
@@ -433,6 +443,27 @@ async function closeDialog(page, label) {
     await page.reload();
     await page.waitForTimeout(800);
     ok(await page.evaluate(() => appState.kegiatan.singkatan) === 'UJI-SIMPAN', 'Data bertahan setelah halaman dimuat ulang');
+
+    // Ketikan terakhir (render & simpan masih tertunda) tidak boleh hilang saat halaman langsung ditutup/dimuat ulang
+    await page.evaluate(() => { switchTab('mode'); });
+    await page.evaluate(() => { lastRenderMs = 999; }); // paksa jalur "dokumen besar" (render ditunda)
+    await page.fill('#input-singkatan', 'KETIK-CEPAT');
+    const pending = await page.evaluate(() => renderTimer !== null);
+    await page.reload();
+    await page.waitForTimeout(800);
+    ok(pending && await page.evaluate(() => appState.kegiatan.singkatan) === 'KETIK-CEPAT', 'Ketikan terakhir tersimpan walau halaman langsung dimuat ulang');
+
+    // Data besar: render kartu tetap cepat (lembar di luar layar tidak dirender)
+    const perf = await page.evaluate(() => {
+        const base = appState.students;
+        const saved = appState.students;
+        appState.students = Array.from({ length: 600 }, (_, i) => ({ ...base[i % base.length], noUjian: 'P' + i, nama: 'Peserta ' + i, kelas: 'IX', ruang: String(1 + (i % 20)) }));
+        setDocMode('kartu');
+        const t0 = performance.now(); renderAll(); const ms = performance.now() - t0;
+        appState.students = saved; renderAll();
+        return Math.round(ms);
+    });
+    ok(perf < 1200, 'Render 600 kartu peserta cukup cepat', `${perf} ms`);
 
     console.log('10. Tampilan cetak (desktop & HP, terang & gelap)');
     const printIssues = [];
