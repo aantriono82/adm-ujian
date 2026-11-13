@@ -49,6 +49,7 @@ function updateConfigFromInputs() {
     if (selectedPaperSize) appState.setting.paperSize = selectedPaperSize.value;
 
     appState.setting.showWatermark = document.getElementById('input-show-watermark').checked;
+    appState.setting.showFoto = document.getElementById('input-show-foto').checked;
 
     // Ruang Config
     appState.roomConfig.filterRuang = document.getElementById('input-room-filter').value;

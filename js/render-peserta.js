@@ -18,6 +18,14 @@ function renderSingleCardHTML(student, layout) {
     const ttdWidthCm = (2.1 * scale * (pengesahan.ttdScale / 100)).toFixed(2);
     const capSizeCm = (1.35 * scale * (pengesahan.capScale / 100)).toFixed(2);
     const isThemedBanner = theme.bannerBg !== 'transparent';
+    // Lebar kolom label & titik dua dibuat tetap (bukan persen) agar tabel atas
+    // dan baris Ruang tetap sejajar walau lebar wadahnya berbeda.
+    const labelColW = '5.6em';
+    const colonColW = '0.9em';
+    // Pas foto 2×3 di bawah baris Ruang (ukuran mengikuti skala kartu agar muat di sisa tinggi)
+    const photo = setting.showFoto ? getStudentPhoto(student) : '';
+    const photoHCm = (CARD_PHOTO_H_CM * scale).toFixed(2);
+    const photoWCm = (CARD_PHOTO_W_CM * scale).toFixed(2);
 
     return `
     <div class="exam-card font-serif-formal relative select-none overflow-hidden flex flex-col justify-between"
@@ -54,12 +62,12 @@ function renderSingleCardHTML(student, layout) {
             </div>
         </div>
 
-        <div style="position: relative; z-index: 1; flex: 1; display: flex; justify-content: space-between; align-items: stretch; gap: 0.12cm; padding-top: 0.02cm;">
-            <div style="width: 55%; font-size: ${fBody}pt; line-height: 1.26; color: #0f172a;">
-                <table style="width: 100%; border-collapse: collapse;">
+        <div style="position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; padding-top: 0.02cm; font-size: ${fBody}pt; line-height: 1.26; color: #0f172a;">
+            <div>
+                <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
                     <tr>
-                        <td style="width: 37%; vertical-align: top; white-space: nowrap;">Nomor Ujian</td>
-                        <td style="width: 4%; vertical-align: top; padding: 0 2px;">:</td>
+                        <td style="width: ${labelColW}; vertical-align: top; white-space: nowrap;">Nomor Ujian</td>
+                        <td style="width: ${colonColW}; vertical-align: top; padding: 0 2px;">:</td>
                         <td style="vertical-align: top; font-weight: 700;">${escapeHtml(student.noUjian)}</td>
                     </tr>
                     <tr>
@@ -78,29 +86,41 @@ function renderSingleCardHTML(student, layout) {
                         <td style="vertical-align: top; padding: 0 2px;">:</td>
                         <td style="vertical-align: top;">${escapeHtml(student.kelas)}</td>
                     </tr>
-                    <tr>
-                        <td style="vertical-align: top;">Ruang</td>
-                        <td style="vertical-align: top; padding: 0 2px;">:</td>
-                        <td style="vertical-align: top; font-weight: 700;">${escapeHtml(student.ruang)}</td>
-                    </tr>
                 </table>
             </div>
 
-            <div style="width: 45%; font-size: ${fSign}pt; line-height: 1.16; color: #0f172a; display: flex; flex-direction: column; justify-content: space-between; position: relative; padding-left: 0.08cm;">
-                <div>
-                    <div style="white-space: nowrap;">${escapeHtml(pengesahan.tempat)}, ${escapeHtml(pengesahan.tanggal)}</div>
-                    <div style="white-space: nowrap;">${escapeHtml(pengesahan.jabatan1)}</div>
-                    <div style="white-space: nowrap;">${escapeHtml(pengesahan.jabatan2)}</div>
+            <!-- Baris Ruang + blok pengesahan: baris tanggal sejajar dengan baris Ruang -->
+            <div style="flex: 1; display: flex; justify-content: space-between; align-items: stretch; gap: 0.12cm;">
+                <div style="flex: 1; min-width: 0;">
+                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+                        <tr>
+                            <td style="width: ${labelColW}; vertical-align: top; white-space: nowrap;">Ruang</td>
+                            <td style="width: ${colonColW}; vertical-align: top; padding: 0 2px;">:</td>
+                            <td style="vertical-align: top; font-weight: 700;">${escapeHtml(student.ruang)}</td>
+                        </tr>
+                    </table>
+                    ${setting.showFoto ? `
+                    <div class="card-photo" style="width: ${photoWCm}cm; height: ${photoHCm}cm; margin-top: 0.06cm; outline: 0.6px solid #94a3b8; overflow: hidden; background: #e2e8f0;">
+                        <img src="${photo || PHOTO_PLACEHOLDER_SVG}" alt="" style="width: ${photoWCm}cm; height: ${photoHCm}cm; object-fit: cover; display: block;">
+                    </div>` : ''}
                 </div>
-                <div style="position: relative; flex: 1; min-height: 0.72cm; display: flex; align-items: center;">
-                    ${pengesahan.metode === 'upload' ? `
-                        ${pengesahan.capImg ? `<img src="${pengesahan.capImg}" style="position: absolute; left: -0.22cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
-                        ${pengesahan.ttdImg ? `<img src="${pengesahan.ttdImg}" style="position: absolute; left: 0.15cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.15cm; object-fit: contain; z-index: 3;">` : ''}
-                    ` : ''}
-                </div>
-                <div style="position: relative; z-index: 4;">
-                    <div style="font-weight: 700; text-decoration: underline; white-space: nowrap;">${escapeHtml(pengesahan.kepsek)}</div>
-                    <div style="white-space: nowrap;">NIP. ${escapeHtml(pengesahan.nip)}</div>
+
+                <div style="flex: 0 0 auto; font-size: ${fSign}pt; line-height: 1.16; display: flex; flex-direction: column; justify-content: space-between; position: relative; padding-left: 0.08cm;">
+                    <div>
+                        <div style="white-space: nowrap;">${escapeHtml(pengesahan.tempat)}, ${escapeHtml(pengesahan.tanggal)}</div>
+                        <div style="white-space: nowrap;">${escapeHtml(pengesahan.jabatan1)}</div>
+                        <div style="white-space: nowrap;">${escapeHtml(pengesahan.jabatan2)}</div>
+                    </div>
+                    <div style="position: relative; flex: 1; min-height: 0.45cm; display: flex; align-items: center;">
+                        ${pengesahan.metode === 'upload' ? `
+                            ${pengesahan.capImg ? `<img src="${pengesahan.capImg}" style="position: absolute; left: -0.22cm; top: 50%; transform: translateY(-50%); width: ${capSizeCm}cm; height: ${capSizeCm}cm; object-fit: contain; z-index: 2;">` : ''}
+                            ${pengesahan.ttdImg ? `<img src="${pengesahan.ttdImg}" style="position: absolute; left: 0.15cm; top: 50%; transform: translateY(-50%); width: ${ttdWidthCm}cm; max-height: 1.15cm; object-fit: contain; z-index: 3;">` : ''}
+                        ` : ''}
+                    </div>
+                    <div style="position: relative; z-index: 4;">
+                        <div style="font-weight: 700; text-decoration: underline; white-space: nowrap;">${escapeHtml(pengesahan.kepsek)}</div>
+                        <div style="white-space: nowrap;">NIP. ${escapeHtml(pengesahan.nip)}</div>
+                    </div>
                 </div>
             </div>
         </div>

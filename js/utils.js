@@ -378,6 +378,7 @@ window.onload = function () {
         resizeTimer = setTimeout(() => { if (zoomFitMode) refreshZoom(); }, 120);
     });
     if (restored) showToast("Data terakhir dipulihkan dari penyimpanan browser.");
+    initStudentPhotos();
 };
 
 // Dialog pilihan sederhana (pengganti confirm() yang hanya punya 2 tombol).

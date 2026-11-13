@@ -242,7 +242,7 @@ const INITIAL_BUDGET = [
 // ============================================================================
 const CARD_SIZES = {
     id1: { id: 'id1', name: 'Standar ID-1 (KTP/ATM)', widthCm: 8.56, heightCm: 5.4, fontScale: 0.96 },
-    custom: { id: 'custom', name: 'Standar Custom', widthCm: 9.0, heightCm: 5.3, fontScale: 1.0 },
+    custom: { id: 'custom', name: 'Standar Custom', widthCm: 8.0, heightCm: 5.3, fontScale: 1.0 },
     b2: { id: 'b2', name: 'Kantong Plastik B2', widthCm: 10.5, heightCm: 6.5, fontScale: 1.16 }
 };
 

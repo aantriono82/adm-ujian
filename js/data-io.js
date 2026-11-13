@@ -16,6 +16,9 @@ function renderStudentTable() {
         return `
         <tr class="${isIncluded ? 'hover:bg-slate-50' : 'bg-slate-100/70 opacity-50'}">
             <td class="p-1.5 text-center text-slate-400 font-medium">${idx + 1}</td>
+            <td class="p-1 text-center">
+                ${(() => { const ph = getStudentPhoto(st); return `<button onclick="pickStudentPhoto(${idx})" title="${ph ? 'Ganti / hapus foto' : 'Pasang foto'}" class="w-6 h-8 rounded border ${ph ? 'border-slate-300' : 'border-dashed border-slate-400 hover:border-primary-500'} overflow-hidden flex items-center justify-center bg-white cursor-pointer"><img src="${ph || PHOTO_PLACEHOLDER_SVG}" alt="" class="w-full h-full object-cover ${ph ? '' : 'opacity-60'}"></button>`; })()}
+            </td>
             <td class="p-1.5">
                 <input type="text" value="${escapeHtml(st.noUjian)}" oninput="appState.students[${idx}].noUjian=this.value;renderAll()" class="w-full font-semibold text-primary-700 bg-transparent outline-none text-[10px]">
                 <input type="text" value="${escapeHtml(st.nama)}" oninput="appState.students[${idx}].nama=this.value;renderAll()" class="w-full font-bold text-slate-800 bg-transparent outline-none text-[11px]">
@@ -37,7 +40,7 @@ function renderStudentTable() {
             </td>
         </tr>`;
     }).join('');
-    if (!appState.students.length) tbody.innerHTML = emptyRowHTML(6, 'users', 'Daftar peserta masih kosong',
+    if (!appState.students.length) tbody.innerHTML = emptyRowHTML(7, 'users', 'Daftar peserta masih kosong',
         'Impor dari Excel (pakai template agar kolomnya cocok) atau tambah peserta satu per satu.',
         `<button onclick="document.getElementById('excel-upload').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">Impor Excel</button>
          <button onclick="downloadTemplateExcel()" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer">Unduh Template</button>`);
@@ -342,6 +345,8 @@ function saveConfigJSON() {
     // Foto profil pengembang tidak ikut dicadangkan (bukan data sekolah, memperbesar berkas)
     const toSave = Object.assign({}, appState);
     delete toSave.developerPhoto;
+    const photos = collectStudentPhotosForBackup();
+    if (Object.keys(photos).length) toSave.studentPhotos = photos;
     const dataStr = JSON.stringify(toSave, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -359,8 +364,8 @@ function loadConfigJSON(event) {
     const input = event.target;
     const file = input.files[0];
     if (!file) return;
-    if (file.size > 20 * 1024 * 1024) {
-        showToast('Berkas backup terlalu besar (maksimal 20 MB).');
+    if (file.size > 50 * 1024 * 1024) {
+        showToast('Berkas backup terlalu besar (maksimal 50 MB, termasuk foto peserta).');
         input.value = '';
         return;
     }
@@ -391,6 +396,11 @@ function loadConfigJSON(event) {
             const warnings = mergeIntoState(loaded);
             initApp();
             saveStateNow();
+            if (loaded.studentPhotos) {
+                restoreStudentPhotosFromBackup(loaded.studentPhotos).then(n => {
+                    if (n) { renderStudentTable(); renderAll(); }
+                });
+            }
             if (warnings.length) {
                 showChoiceDialog({
                     title: 'Backup dimuat dengan beberapa perbaikan',
