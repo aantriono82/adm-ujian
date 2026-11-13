@@ -374,13 +374,12 @@ function resetAllData() {
     showToast("Data dikembalikan ke contoh bawaan.");
 }
 
-// Tutup / tampilkan panel pengaturan (pratinjau jadi lebih lebar)
-function toggleSidebar() {
-    appState.sidebarHidden = !appState.sidebarHidden;
+// Tutup / tampilkan panel pengaturan (pratinjau jadi lebih lebar).
+// Di layar, panel diatur bersama menu lewat satu tombol: toggleWorkspaceCompact() (ui.js).
+function toggleSidebar(force) {
+    appState.sidebarHidden = typeof force === 'boolean' ? force : !appState.sidebarHidden;
     const panel = document.getElementById('left-sidebar');
-    const openBtn = document.getElementById('btn-open-panel');
     if (panel) panel.classList.toggle('panel-hidden', appState.sidebarHidden);
-    if (openBtn) openBtn.classList.toggle('hidden', !appState.sidebarHidden);
-    refreshIcons();
+    if (typeof updateWorkspaceCompactButton === 'function') updateWorkspaceCompactButton();
     if (typeof refreshZoom === 'function') refreshZoom();
 }

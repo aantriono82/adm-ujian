@@ -113,9 +113,30 @@
     }
     .nav-item.is-active svg { color: var(--accent); }
     .nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-    .nav-bottom { border-top: 1px solid #e5e9f0; padding-top: .5rem; margin-top: .5rem; }
+    .nav-bottom { border-top: 1px solid #e5e9f0; padding-top: .5rem; margin-top: .5rem; margin-bottom: .5rem; } /* menu pengembang sedikit naik dari garis footer */
     .nav-autosave { display: flex; align-items: center; gap: .45rem; padding: .2rem .7rem .45rem; font-size: .6875rem; white-space: nowrap; }
-    .nav-collapse-icon { transition: transform .2s; }
+    /* Footer aplikasi + hati merah marun berdenyut */
+    .app-footer { display: flex; align-items: center; justify-content: center; gap: .3rem; height: 48px; padding-top: 6px; font-size: .75rem; background: #e2e8f0; }
+    html.dark .app-footer { background: #0b1120; }
+    /* Desktop: menu & panel berupa kartu yang berakhir sejajar dengan lembar output, di atas jarak footer */
+    @media screen and (min-width: 1024px) {
+        .print-layout-wrapper { background: #e2e8f0; }
+        html.dark .print-layout-wrapper { background: #0b1120; }
+        .app-nav, .settings-panel { border-bottom: 1px solid #e5e9f0; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; box-shadow: 0 6px 14px -8px rgba(15,23,42,.18); }
+        html.dark .app-nav, html.dark .settings-panel { border-bottom-color: #1e293b; }
+    }
+    .footer-heart { width: 14px; height: 14px; fill: #800020; stroke: #800020; stroke-width: 1; animation: heartbeat 1.2s ease-in-out infinite; transform-origin: center; }
+    @keyframes heartbeat {
+        0%, 40%, 100% { transform: scale(1); }
+        10% { transform: scale(1.28); }
+        20% { transform: scale(.95); }
+        30% { transform: scale(1.18); }
+    }
+    html.dark .footer-heart { fill: #b0243f; stroke: #b0243f; } /* marun sedikit lebih terang agar terlihat di latar gelap */
+
+    /* Tombol ciutkan/lebarkan menu & panel: ikon berganti sesuai keadaan */
+    #btn-workspace-compact .ws-icon-open, #btn-workspace-compact.is-compact .ws-icon-close { display: none; }
+    #btn-workspace-compact.is-compact .ws-icon-open { display: block; }
 
     /* Lencana kelengkapan di menu */
     .tab-badge {
@@ -159,7 +180,6 @@
         body.nav-collapsed .tab-badge { position: absolute; top: .15rem; right: .35rem; min-width: .8rem; height: .8rem; line-height: .8rem; font-size: .5rem; }
         body.nav-collapsed .nav-autosave { justify-content: center; padding: .2rem 0 .45rem; }
         body.nav-collapsed .nav-autosave::before { width: 8px; height: 8px; }
-        body.nav-collapsed .nav-collapse-icon { transform: rotate(180deg); }
     }
 
     /* Layar kecil: sidebar menjadi menu laci */
@@ -171,7 +191,6 @@
         body.nav-open .app-nav { transform: none; }
         body.nav-open .nav-backdrop { display: block; position: fixed; inset: 0; z-index: 50; background: rgba(15,23,42,.45); }
         .menu-panel.menu-side { left: .25rem; top: calc(100% + .4rem); }
-        .nav-collapse-btn { display: none; }
     }
 
     /* Form pengaturan: setiap kelompok isian tampil sebagai kartu */
@@ -285,6 +304,8 @@
         background-image: radial-gradient(rgba(100,116,139,.22) 1px, transparent 1px);
         background-size: 18px 18px;
     }
+    /* Tanpa jarak bawah: lembar terakhir berakhir tepat di garis footer, sejajar dengan menu & panel */
+    @media screen { #preview-wrapper { padding-bottom: 0; } }
     #sheets-container .print-sheet {
         border-color: transparent !important;
         box-shadow: 0 1px 2px rgba(15,23,42,.08), 0 10px 30px -6px rgba(15,23,42,.25) !important;

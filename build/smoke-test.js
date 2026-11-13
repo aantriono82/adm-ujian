@@ -121,6 +121,18 @@ async function closeDialog(page, label) {
             if (document.getElementById('panel-title').textContent !== 'Nilai & LPJ') throw new Error('judul panel tidak berubah');
             toggleNavCollapsed(); toggleNavCollapsed(); toggleNavDrawer(true); toggleNavDrawer(false); openSection('mode');
         });
+        run('tombol ciutkan menu & panel', () => {
+            setNavCollapsed(false, false); toggleSidebar(false);
+            const panel = document.getElementById('left-sidebar');
+            const state = () => [document.body.classList.contains('nav-collapsed'), panel.classList.contains('panel-hidden')].join('/');
+            toggleWorkspaceCompact();
+            if (state() !== 'true/true') throw new Error('ciutkan: ' + state());
+            openSection('kop'); // klik ikon menu saat diciutkan → panel terbuka, menu tetap ikon
+            if (state() !== 'true/false') throw new Error('buka bagian: ' + state());
+            toggleWorkspaceCompact();
+            if (state() !== 'false/false') throw new Error('lebarkan: ' + state());
+            if (document.getElementById('btn-open-panel')) throw new Error('tombol panel lama masih ada');
+        });
         run('galeri dokumen', () => { renderDocGallery(); stepDocMode(1); stepDocMode(-1); });
         run('zoom pas halaman', () => { fitPageZoom(); fitZoom(); gotoSheet(1); });
         run('tanda kelengkapan tab', () => { updateTabBadges(); if (!document.querySelector('.tab-badge')) throw new Error('lencana tidak muncul'); });
