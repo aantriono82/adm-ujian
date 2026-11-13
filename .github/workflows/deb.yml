@@ -1,0 +1,84 @@
+# Membuat paket .deb di setiap push/PR (hasil bisa diunduh dari tab Actions → Artifacts),
+# dan menerbitkan GitHub Release berisi .deb setiap kali tag v* didorong, mis.:
+#   git tag v1.0.0 && git push origin v1.0.0
+name: Paket .deb
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Uji otomatis
+        run: npm test
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+
+      - name: Tentukan versi
+        id: ver
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION=${GITHUB_REF_NAME#v}
+            if [ "$VERSION" != "$PKG_VERSION" ]; then
+              echo "::error::Tag $GITHUB_REF_NAME tidak cocok dengan versi package.json ($PKG_VERSION)"
+              exit 1
+            fi
+          else
+            # Build uji: tandai dengan nomor run agar tidak tertukar dengan rilis resmi.
+            VERSION="${PKG_VERSION}~dev${GITHUB_RUN_NUMBER}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Buat paket .deb
+        run: npm run build:deb
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+          MAINTAINER: ${{ github.repository_owner }} <${{ github.repository_owner }}@users.noreply.github.com>
+
+      - name: Periksa isi paket
+        run: |
+          dpkg-deb -I dist/*.deb
+          dpkg-deb -c dist/*.deb | grep -E 'usr/bin/asesmen-sumatif|index.html|\.desktop'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asesmen-sumatif-deb
+          path: dist/*.deb
+
+      - name: Terbitkan Release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.deb \
+            --title "Asesmen Sumatif $GITHUB_REF_NAME" \
+            --notes "$(cat <<'EOF'
+          ## Pasang di Debian/Ubuntu/Mint
+
+          1. Unduh berkas `.deb` di bawah.
+          2. Pasang: `sudo apt install ./asesmen-sumatif_*_all.deb`
+          3. Buka **Asesmen Sumatif** dari menu aplikasi.
+
+          Butuh Chrome/Chromium/Edge/Brave (atau Firefox). Data versi ini terpisah dari versi browser;
+          pindahkan lewat *Data & Backup → Backup (.json)* lalu *Muat Backup*.
+          EOF
+          )" \
+            --generate-notes

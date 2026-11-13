@@ -71,6 +71,9 @@ Setelah dipasang, **Asesmen Sumatif** muncul di menu aplikasi dan terbuka sebaga
 alamat) memakai Chrome/Chromium/Edge/Brave yang ada di komputer. Bila tidak ada, aplikasi dibuka di Firefox
 atau browser bawaan. Paket tidak membawa browser, jadi ukurannya kecil (sekitar 1 MB).
 
+- Paket siap pakai juga tersedia di halaman **Releases** GitHub. Untuk merilis versi baru: naikkan `"version"`
+  di `package.json`, lalu `git tag v<versi> && git push origin v<versi>`. GitHub Actions akan menguji, membuat
+  `.deb`, dan menerbitkan Release-nya. Setiap push/PR juga menghasilkan `.deb` uji di tab Actions (bagian *Artifacts*).
 - Versi paket diambil dari `"version"` di `package.json`, atau bisa ditentukan sendiri: `VERSION=1.2.0 npm run build:deb`.
 - Data aplikasi disimpan di profil browser tersendiri (`~/.config/asesmen-sumatif/profile`), terpisah dari
   browser sehari-hari dan dari Cara A/B. Pindahkan data lama lewat *Backup (.json)* → *Muat Backup*.
