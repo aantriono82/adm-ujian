@@ -1,4 +1,4 @@
-# Sistem Administrasi Asesmen Sumatif Terpadu (ASAS • ASAT • ASAJ)
+# Asesmen Sumatif (ASAS • ASAT • ASAJ)
 
 Aplikasi statis — cukup buka `index.html` di Chrome/Edge/Firefox. **Tidak perlu internet**:
 semua pustaka, CSS, dan font sudah ada di folder ini.
